@@ -280,40 +280,37 @@ const faqSchema = {
                 d="M520 520 C 612 650, 696 842, 706 1160"
               />
               <g class="road-vehicle road-vehicle-truck" aria-hidden="true">
-                <rect class="vehicle-trailer" x="-24" y="-8" width="28" height="16" rx="3" />
-                <rect class="vehicle-cab" x="3" y="-7" width="14" height="14" rx="3" />
-                <circle class="vehicle-wheel" cx="-16" cy="9" r="2.4" />
-                <circle class="vehicle-wheel" cx="10" cy="9" r="2.4" />
+                <rect class="vehicle-trailer" x="-34" y="-7" width="38" height="14" rx="3" />
+                <rect class="vehicle-cab" x="4" y="-6" width="17" height="12" rx="3" />
+                <rect class="vehicle-window" x="8" y="-3" width="7" height="6" rx="1.5" />
                 <animateMotion
-                  dur="10s"
-                  begin="-4s"
+                  dur="16s"
+                  begin="-3s"
                   repeatCount="indefinite"
                   rotate="auto"
-                  path="M590 0 C 570 112, 620 214, 552 330 S 492 454, 520 520"
+                  path="M590 0 C 570 112, 620 214, 552 330 S 492 454, 520 520 C 612 650, 696 842, 706 1160"
                 />
               </g>
               <g class="road-vehicle road-vehicle-car road-vehicle-small" aria-hidden="true">
-                <rect class="vehicle-body" x="-12" y="-6" width="24" height="12" rx="5" />
-                <circle class="vehicle-wheel" cx="-7" cy="7" r="2" />
-                <circle class="vehicle-wheel" cx="7" cy="7" r="2" />
+                <rect class="vehicle-body" x="-16" y="-6" width="32" height="12" rx="6" />
+                <rect class="vehicle-roof" x="-5" y="-4" width="10" height="8" rx="3" />
                 <animateMotion
-                  dur="13s"
-                  begin="-7s"
+                  dur="14s"
+                  begin="-8s"
                   repeatCount="indefinite"
                   rotate="auto"
-                  path="M520 520 C 420 650, 318 842, 252 1160"
+                  path="M590 0 C 570 112, 620 214, 552 330 S 492 454, 520 520 C 420 650, 318 842, 252 1160"
                 />
               </g>
               <g class="road-vehicle road-vehicle-car road-vehicle-big" aria-hidden="true">
-                <rect class="vehicle-body" x="-12" y="-6" width="24" height="12" rx="5" />
-                <circle class="vehicle-wheel" cx="-7" cy="7" r="2" />
-                <circle class="vehicle-wheel" cx="7" cy="7" r="2" />
+                <rect class="vehicle-body" x="-15" y="-6" width="30" height="12" rx="6" />
+                <rect class="vehicle-roof" x="-5" y="-4" width="10" height="8" rx="3" />
                 <animateMotion
-                  dur="12s"
-                  begin="-2s"
+                  dur="15s"
+                  begin="-12s"
                   repeatCount="indefinite"
                   rotate="auto"
-                  path="M520 520 C 612 650, 696 842, 706 1160"
+                  path="M590 0 C 570 112, 620 214, 552 330 S 492 454, 520 520 C 612 650, 696 842, 706 1160"
                 />
               </g>
               <circle class="road-dot" data-road-dot cx="590" cy="0" r="10" />
@@ -349,6 +346,7 @@ const faqSchema = {
       </section>
 
       <script is:inline>
+        window.addEventListener("DOMContentLoaded", () => {
         const routeBoard = document.querySelector(".route-board");
         const stageButtons = document.querySelectorAll("[data-stage]");
         const closeButton = document.querySelector(".route-detail-close");
@@ -361,6 +359,14 @@ const faqSchema = {
         const routeTargets = document.querySelectorAll("[data-route-target]");
         const routeReveal = document.querySelector("[data-route-reveal]");
         const roadStartButton = document.querySelector("[data-road-start]");
+        const enterpriseFlow = document.querySelector("[data-enterprise-flow]");
+        const enterpriseStartButton = document.querySelector("[data-enterprise-start]");
+        const enterpriseNextButtons = document.querySelectorAll("[data-enterprise-next]");
+        const enterpriseScenes = document.querySelectorAll("[data-enterprise-scene]");
+        const enterpriseRoadStage = enterpriseFlow?.querySelector(".enterprise-road-stage");
+        const enterpriseRoadSvg = enterpriseFlow?.querySelector(".enterprise-road-svg");
+        const enterpriseRoadPath = enterpriseFlow?.querySelector(".enterprise-road-glow");
+        const enterpriseStepCount = 4;
         let roadFrame = 0;
         let roadChoice = "none";
         let isRoadAutoScrolling = false;
@@ -368,7 +374,20 @@ const faqSchema = {
         let roadRenderedProgress = 0;
         let hasRenderedRoad = false;
         let roadDriveFrame = 0;
+        let enterpriseDriveFrame = 0;
+        let enterpriseTruckFrame = 0;
+        let enterpriseStep = -1;
         const roadForkProgress = 0.58;
+        let enterpriseRoadLength = 0;
+        const enterpriseEntryProgress = 0.04;
+        const enterpriseStepProgress = [0.18, 0.42, 0.64, 0.82];
+        const enterpriseExitProgress = 0.988;
+        const enterpriseDotFallback = [
+          { x: "55%", y: "29%" },
+          { x: "68%", y: "58%" },
+          { x: "30%", y: "83%" },
+          { x: "38%", y: "93%" },
+        ];
         const roadLengths = {
           trunk: 0,
           small: 0,
@@ -414,6 +433,9 @@ const faqSchema = {
         const syncRoadChoice = (choice, shouldScroll = false) => {
           roadChoice = choice;
           road?.setAttribute("data-road-choice", choice);
+          if (choice !== "big") {
+            enterpriseFlow?.classList.remove("is-visible");
+          }
           roadChoiceButtons.forEach((button) => {
             const isSelected = button.dataset.roadChoiceButton === choice;
             button.classList.toggle("is-selected", isSelected);
@@ -581,6 +603,235 @@ const faqSchema = {
           roadDriveFrame = window.requestAnimationFrame(tick);
         };
 
+        const getEnterpriseScrollTarget = (step) => {
+          const target = enterpriseFlow?.querySelector(`[data-scheme-stop="${step}"]`);
+          return target
+            ? window.scrollY + target.getBoundingClientRect().top - window.innerHeight * 0.34
+            : window.scrollY;
+        };
+
+        const getEnterprisePathPosition = (progress, lookAhead = 0.01) => {
+          if (!enterpriseFlow || !enterpriseRoadStage || !enterpriseRoadSvg || !enterpriseRoadPath) return false;
+
+          if (!enterpriseRoadLength) {
+            enterpriseRoadLength = enterpriseRoadPath.getTotalLength();
+          }
+
+          const clampedProgress = clamp(progress, 0, 1);
+          const point = enterpriseRoadPath.getPointAtLength(enterpriseRoadLength * clampedProgress);
+          const aheadPoint = enterpriseRoadPath.getPointAtLength(
+            enterpriseRoadLength * clamp(clampedProgress + lookAhead, 0, 1),
+          );
+          const stageRect = enterpriseRoadStage.getBoundingClientRect();
+          const svgRect = enterpriseRoadSvg.getBoundingClientRect();
+          const viewBox = enterpriseRoadSvg.viewBox?.baseVal;
+          const viewBoxWidth = viewBox?.width || 1040;
+          const viewBoxHeight = viewBox?.height || 2300;
+          const x = svgRect.left - stageRect.left + (point.x / viewBoxWidth) * svgRect.width;
+          const y = svgRect.top - stageRect.top + (point.y / viewBoxHeight) * svgRect.height;
+          const angle = Math.atan2(aheadPoint.y - point.y, aheadPoint.x - point.x) * (180 / Math.PI);
+
+          return { x, y, angle };
+        };
+
+        const setEnterpriseDotPoint = (point) => {
+          if (!enterpriseFlow || !point) return false;
+
+          enterpriseFlow.style.setProperty("--enterprise-dot-x", `${point.x}px`);
+          enterpriseFlow.style.setProperty("--enterprise-dot-y", `${point.y}px`);
+          return true;
+        };
+
+        const setEnterpriseDotProgress = (progress) => setEnterpriseDotPoint(getEnterprisePathPosition(progress));
+
+        const getEnterpriseStepProgress = (step) => enterpriseStepProgress[step] ?? enterpriseEntryProgress;
+
+        const closeEnterpriseStops = () => {
+          if (!enterpriseFlow) return;
+
+          enterpriseFlow.dataset.enterpriseStep = "moving";
+          enterpriseScenes.forEach((scene) => {
+            scene.classList.remove("is-active");
+          });
+        };
+
+        const setEnterpriseDotPosition = (step) => {
+          const progress = getEnterpriseStepProgress(step);
+          if (setEnterpriseDotProgress(progress)) return;
+
+          const point = enterpriseDotFallback[step] ?? { x: "56%", y: "4%" };
+          enterpriseFlow?.style.setProperty("--enterprise-dot-x", point.x);
+          enterpriseFlow?.style.setProperty("--enterprise-dot-y", point.y);
+        };
+
+        const syncEnterpriseStepContent = (step) => {
+          if (!enterpriseFlow) return;
+
+          enterpriseFlow.dataset.enterpriseStep = String(step);
+
+          enterpriseScenes.forEach((scene, index) => {
+            scene.classList.toggle("is-active", index === step);
+          });
+
+          enterpriseNextButtons.forEach((button) => {
+            button.textContent = "Дальше";
+          });
+        };
+
+        const animateEnterpriseScroll = (targetY, duration = 1550, onDone, options = {}) => {
+          if (!enterpriseFlow) return;
+
+          document.documentElement.classList.add("is-route-scroll-locked");
+          enterpriseFlow.classList.add("is-driving");
+
+          const startY = window.scrollY;
+          const distance = targetY - startY;
+          const startTime = performance.now();
+          const startProgress = options.fromProgress ?? getEnterpriseStepProgress(options.fromStep ?? enterpriseStep);
+          const endProgress = options.toProgress ?? getEnterpriseStepProgress(options.toStep ?? enterpriseStep);
+          const revealAt = options.revealStep === undefined ? 1 : clamp(1 - 500 / duration, 0, 1);
+          let hasRevealed = false;
+
+          if (enterpriseDriveFrame) {
+            window.cancelAnimationFrame(enterpriseDriveFrame);
+            enterpriseDriveFrame = 0;
+          }
+
+          const tick = (time) => {
+            const elapsed = clamp((time - startTime) / duration, 0, 1);
+            const eased = easeCarDrive(elapsed);
+
+            jumpToScrollPosition(startY + distance * eased);
+            setEnterpriseDotProgress(lerp(startProgress, endProgress, eased));
+
+            if (!hasRevealed && options.revealStep !== undefined && elapsed >= revealAt) {
+              hasRevealed = true;
+              enterpriseStep = options.revealStep;
+              enterpriseFlow.classList.add("is-opening");
+              syncEnterpriseStepContent(options.revealStep);
+            }
+
+            if (elapsed < 1) {
+              enterpriseDriveFrame = window.requestAnimationFrame(tick);
+              return;
+            }
+
+            enterpriseDriveFrame = 0;
+            setEnterpriseDotProgress(endProgress);
+            onDone?.();
+            enterpriseFlow.classList.remove("is-driving");
+            enterpriseFlow.classList.remove("is-opening");
+            document.documentElement.classList.remove("is-route-scroll-locked");
+          };
+
+          enterpriseDriveFrame = window.requestAnimationFrame(tick);
+        };
+
+        const setEnterpriseStep = (step, shouldScroll = false) => {
+          if (!enterpriseFlow) return;
+
+          enterpriseStep = (step + enterpriseStepCount) % enterpriseStepCount;
+          syncEnterpriseStepContent(enterpriseStep);
+          setEnterpriseDotPosition(enterpriseStep);
+
+          if (shouldScroll) {
+            animateEnterpriseScroll(getEnterpriseScrollTarget(enterpriseStep), 1550, undefined, {
+              fromProgress: enterpriseEntryProgress,
+              toStep: enterpriseStep,
+              revealStep: enterpriseStep,
+            });
+          }
+        };
+
+        const getTruckExitScrollTarget = () => {
+          const target = enterpriseFlow?.querySelector(".enterprise-route-warehouse") ?? document.querySelector(".directions-section");
+          return target
+            ? window.scrollY + target.getBoundingClientRect().top - window.innerHeight * 0.34
+            : window.scrollY;
+        };
+
+        const animateEnterpriseTruckExit = () => {
+          if (!enterpriseFlow || enterpriseFlow.classList.contains("is-driving")) return;
+
+          document.documentElement.classList.add("is-route-scroll-locked");
+          enterpriseFlow.classList.add("is-driving", "is-dispatching");
+          enterpriseFlow.setAttribute("data-enterprise-target", "exit");
+
+          const startY = window.scrollY;
+          const targetY = getTruckExitScrollTarget();
+          const distance = targetY - startY;
+          const startProgress = getEnterpriseStepProgress(enterpriseStep);
+          const roadDuration = 2500;
+
+          if (enterpriseTruckFrame) {
+            window.cancelAnimationFrame(enterpriseTruckFrame);
+            enterpriseTruckFrame = 0;
+          }
+
+          const startTime = performance.now();
+
+          const tick = (time) => {
+            const elapsed = clamp((time - startTime) / roadDuration, 0, 1);
+            const eased = easeCarDrive(elapsed);
+
+            setEnterpriseDotProgress(lerp(startProgress, enterpriseExitProgress, eased));
+            jumpToScrollPosition(startY + distance * eased);
+
+            if (elapsed < 1) {
+              enterpriseTruckFrame = window.requestAnimationFrame(tick);
+              return;
+            }
+
+            enterpriseTruckFrame = 0;
+            setEnterpriseDotProgress(enterpriseExitProgress);
+            enterpriseFlow.classList.remove("is-driving", "is-dispatching");
+            enterpriseFlow.removeAttribute("data-enterprise-target");
+            document.documentElement.classList.remove("is-route-scroll-locked");
+          };
+
+          enterpriseTruckFrame = window.requestAnimationFrame(tick);
+        };
+
+        enterpriseStartButton?.addEventListener("click", () => {
+          if (enterpriseFlow?.classList.contains("is-driving")) return;
+
+          enterpriseFlow?.classList.add("is-visible");
+          enterpriseFlow?.classList.remove("is-dispatching");
+          enterpriseFlow?.removeAttribute("data-enterprise-target");
+          enterpriseStep = -1;
+          closeEnterpriseStops();
+          setEnterpriseDotProgress(enterpriseEntryProgress);
+          animateEnterpriseScroll(
+            getEnterpriseScrollTarget(0),
+            1850,
+            () => setEnterpriseStep(0),
+            { fromProgress: enterpriseEntryProgress, toStep: 0, revealStep: 0 },
+          );
+        });
+
+        enterpriseNextButtons.forEach((button) => button.addEventListener("click", () => {
+          if (enterpriseFlow?.classList.contains("is-driving")) return;
+
+          if (enterpriseStep === enterpriseStepCount - 1) {
+            animateEnterpriseTruckExit();
+            return;
+          }
+
+          const fromStep = enterpriseStep < 0 ? 0 : enterpriseStep;
+          const nextStep = (enterpriseStep + 1) % enterpriseStepCount;
+          closeEnterpriseStops();
+          enterpriseFlow?.setAttribute("data-enterprise-target", String(nextStep));
+          animateEnterpriseScroll(
+            getEnterpriseScrollTarget(nextStep),
+            1850,
+            () => {
+              enterpriseFlow?.removeAttribute("data-enterprise-target");
+              setEnterpriseStep(nextStep);
+            },
+            { fromStep, toStep: nextStep, revealStep: nextStep },
+          );
+        }));
+
         roadStartButton?.addEventListener("click", () => {
           if (isRoadAutoScrolling) return;
 
@@ -601,6 +852,7 @@ const faqSchema = {
           roadLengths.small = 0;
           roadLengths.big = 0;
           requestRoadProgress();
+        });
         });
       </script>
 
@@ -633,6 +885,25 @@ const faqSchema = {
                 <li>упаковка, маркировка и консолидация</li>
                 <li>маршрут под скорость и экономику</li>
               </ul>
+              <div class="mode-detail" aria-label="Подробности для малого бизнеса">
+                <div class="mode-detail-grid">
+                  <div class="mode-stat">
+                    <span>формат</span>
+                    <strong>от коробок до паллет</strong>
+                    <p>Подходит для регулярного пополнения остатков без сложной импортной схемы.</p>
+                  </div>
+                  <div class="mode-stat">
+                    <span>фокус</span>
+                    <strong>цена и скорость</strong>
+                    <p>Собираем груз, проверяем упаковку, считаем понятный маршрут до склада.</p>
+                  </div>
+                </div>
+                <ol class="mode-steps">
+                  <li><span>01</span><strong>Забираем у поставщика</strong><p>Можно от нескольких фабрик или магазинов.</p></li>
+                  <li><span>02</span><strong>Готовим к продаже</strong><p>Консолидация, упаковка, маркировка, фото по запросу.</p></li>
+                  <li><span>03</span><strong>Довозим до России</strong><p>До склада, ТК или точки передачи для маркетплейса.</p></li>
+                </ol>
+              </div>
             </article>
 
             <article class="mode-panel mode-panel-big" data-route-target="big">
@@ -650,8 +921,212 @@ const faqSchema = {
                 <li>проверка поставщика и документов</li>
                 <li>маршрут под сроки, объем и оформление</li>
               </ul>
+              <div class="mode-detail" aria-label="Подробности для крупного бизнеса">
+                <div class="mode-detail-grid">
+                  <div class="mode-stat">
+                    <span>формат</span>
+                    <strong>контрактная партия</strong>
+                    <p>Для груза, который должен пройти бухгалтерию, учет и понятную цепочку ответственности.</p>
+                  </div>
+                  <div class="mode-stat">
+                    <span>фокус</span>
+                    <strong>документы и контроль</strong>
+                    <p>Согласуем схему, проверяем инвойс, упаковку, маршрут и финальную передачу.</p>
+                  </div>
+                </div>
+                <ol class="mode-steps">
+                  <li><span>01</span><strong>Собираем схему</strong><p>Что везем, кто поставщик, какие документы нужны.</p></li>
+                  <li><span>02</span><strong>Проверяем до отправки</strong><p>Поставщик, упаковка, инвойс, условия и риски.</p></li>
+                  <li><span>03</span><strong>Ведем до передачи</strong><p>Контроль этапов, сроки, склад и ответственное лицо в России.</p></li>
+                </ol>
+                <button class="mode-next-button" type="button" data-enterprise-start>
+                  Продолжить маршрут
+                </button>
+              </div>
             </article>
           </div>
+        </div>
+      </section>
+
+      <section class="section enterprise-flow-section" data-enterprise-flow data-enterprise-step="idle" aria-label="Схема крупной поставки">
+        <div class="enterprise-road-stage">
+          <svg class="enterprise-road-svg" viewBox="0 0 1040 2300" preserveAspectRatio="none" aria-hidden="true">
+            <path
+              class="enterprise-road-bed"
+              d="M710 -40 C 660 90, 556 130, 526 250 S 710 410, 642 552 S 368 690, 374 860 S 690 1030, 654 1190 S 336 1348, 322 1520 S 492 1718, 464 1900 S 430 2100, 438 2248"
+            />
+            <path
+              class="enterprise-road-marking"
+              d="M710 -40 C 660 90, 556 130, 526 250 S 710 410, 642 552 S 368 690, 374 860 S 690 1030, 654 1190 S 336 1348, 322 1520 S 492 1718, 464 1900 S 430 2100, 438 2248"
+            />
+            <path
+              class="enterprise-road-glow"
+              d="M710 -40 C 660 90, 556 130, 526 250 S 710 410, 642 552 S 368 690, 374 860 S 690 1030, 654 1190 S 336 1348, 322 1520 S 492 1718, 464 1900 S 430 2100, 438 2248"
+            />
+          </svg>
+          <div class="enterprise-iso-map" aria-hidden="true">
+            <span class="iso-tile iso-tile-cargo"></span>
+            <span class="iso-tile iso-tile-docs"></span>
+            <span class="iso-tile iso-tile-route"></span>
+            <span class="iso-tile iso-tile-control"></span>
+            <span class="iso-building iso-cargo-yard">
+              <span class="iso-container iso-container-a"></span>
+              <span class="iso-container iso-container-b"></span>
+              <span class="iso-crane"></span>
+            </span>
+            <span class="iso-building iso-docs-office">
+              <span class="iso-office-roof"></span>
+              <span class="iso-office-window iso-office-window-a"></span>
+              <span class="iso-office-window iso-office-window-b"></span>
+            </span>
+            <span class="iso-building iso-transfer-yard">
+              <span class="iso-yard-ramp"></span>
+              <span class="iso-yard-loader"></span>
+              <span class="iso-yard-pallets"></span>
+            </span>
+            <span class="iso-building iso-control-post">
+              <span class="iso-post-gate"></span>
+              <span class="iso-post-barrier"></span>
+              <span class="iso-post-light"></span>
+            </span>
+          </div>
+          <span class="enterprise-road-dot" aria-hidden="true"></span>
+          <span class="enterprise-road-truck" data-enterprise-truck aria-hidden="true">
+            <span class="enterprise-truck-trailer"></span>
+            <span class="enterprise-truck-cab"></span>
+          </span>
+
+          <div class="scheme-heading">
+            <p class="eyebrow">Схема поставки</p>
+            <h2>Двигаемся по этапам, а не по догадкам</h2>
+            <p>
+              Для крупной партии сначала собираем рабочую схему: груз, документы и маршрут. Каждый шаг фиксируется до движения товара.
+            </p>
+          </div>
+
+          <article class="scheme-stop scheme-stop-cargo" data-scheme-stop="0">
+            <div class="scheme-stop-copy">
+              <span>01 / груз</span>
+              <h3>Сначала понимаем, что именно везем</h3>
+              <p>
+                Категория, упаковка, вес, объем, ограничения, требования к хранению и приемке. Без этого нельзя честно посчитать маршрут и документы.
+              </p>
+              <ul>
+                <li>описание партии и состава груза</li>
+                <li>габариты, вес, объем и упаковка</li>
+                <li>риски повреждения, маркировки и приемки</li>
+              </ul>
+              <button class="enterprise-next-button scheme-stop-next" type="button" data-enterprise-next>Дальше</button>
+            </div>
+            <div class="cargo-crane-scene" aria-hidden="true">
+              <span class="cargo-yard"></span>
+              <span class="cargo-gate"></span>
+              <span class="cargo-scale"></span>
+              <span class="crane-mast"></span>
+              <span class="crane-boom"></span>
+              <span class="crane-cable"></span>
+              <span class="crane-hook"></span>
+              <span class="crane-container crane-container-lift"></span>
+              <span class="crane-container crane-container-ground"></span>
+              <span class="crane-ground"></span>
+            </div>
+          </article>
+
+          <article class="scheme-stop scheme-stop-docs" data-scheme-stop="1">
+            <div class="scheme-stop-copy">
+              <span>02 / документы</span>
+              <h3>Понимаем, какие бумаги нужны до отправки</h3>
+              <p>
+                Документы не собираются “по дороге”. До выхода груза согласуем инвойс, контрактную часть, упаковочный лист и требования к белой схеме.
+              </p>
+              <ul>
+                <li>инвойс и упаковочный лист</li>
+                <li>контрактная логика и реквизиты</li>
+                <li>требования к оформлению и передаче</li>
+              </ul>
+              <button class="enterprise-next-button scheme-stop-next" type="button" data-enterprise-next>Дальше</button>
+            </div>
+            <div class="docs-assembly-scene" aria-hidden="true">
+              <span class="docs-office"></span>
+              <span class="docs-window docs-window-a"></span>
+              <span class="docs-window docs-window-b"></span>
+              <span class="docs-counter"></span>
+              <span class="docs-archive"></span>
+              <span class="docs-folder"></span>
+              <span class="docs-sheet docs-sheet-a"></span>
+              <span class="docs-sheet docs-sheet-b"></span>
+              <span class="docs-stamp">ok</span>
+              <span class="docs-line docs-line-a"></span>
+              <span class="docs-line docs-line-b"></span>
+            </div>
+          </article>
+
+          <article class="scheme-stop scheme-stop-route" data-scheme-stop="2">
+            <div class="scheme-stop-copy">
+              <span>03 / маршрут</span>
+              <h3>После этого собираем путь под объем и сроки</h3>
+              <p>
+                Авто, ЖД или контейнер выбираются не как абстрактный тариф, а как решение под конкретный груз, документы, сроки и точку передачи.
+              </p>
+              <ul>
+                <li>транспорт под объем и бюджет</li>
+                <li>контрольные точки маршрута</li>
+                <li>ответственная передача в России</li>
+              </ul>
+              <button class="enterprise-next-button scheme-stop-next" type="button" data-enterprise-next>Дальше</button>
+            </div>
+            <div class="route-assembly-scene" aria-hidden="true">
+              <span class="route-loading-yard"></span>
+              <span class="route-loading-ramp"></span>
+              <span class="route-loader"></span>
+              <span class="route-loader-arm"></span>
+              <span class="route-pallets"></span>
+              <span class="route-mini-road"></span>
+              <span class="route-mini-truck"></span>
+              <span class="route-mini-train"></span>
+              <span class="route-mini-container"></span>
+              <span class="route-checkpoint"></span>
+            </div>
+          </article>
+
+          <article class="scheme-stop scheme-stop-control" data-scheme-stop="3">
+            <div class="scheme-stop-copy">
+              <span>04 / контроль</span>
+              <h3>Склад фиксирует движение, документы и ответственность</h3>
+              <p>
+                После согласования маршрута груз попадает в понятную систему контроля: статусы, фото, документы, ответственные точки и передача в России.
+              </p>
+              <ul>
+                <li>статус груза на складе и в пути</li>
+                <li>подтверждения, фото и документы по этапам</li>
+                <li>ответственный менеджер до финальной передачи</li>
+              </ul>
+              <button class="enterprise-next-button scheme-stop-next" type="button" data-enterprise-next>Дальше</button>
+            </div>
+            <div class="control-warehouse-scene" aria-hidden="true">
+              <span class="control-warehouse-building"></span>
+              <span class="control-warehouse-door"></span>
+              <span class="control-warehouse-dock"></span>
+              <span class="control-warehouse-truck"></span>
+              <span class="control-status-board"></span>
+              <span class="control-doc-stack"></span>
+              <span class="control-beacon"></span>
+            </div>
+          </article>
+
+          <div class="enterprise-route-warehouse" aria-hidden="true">
+            <span class="warehouse-3d-shadow"></span>
+            <span class="warehouse-3d-side"></span>
+            <span class="warehouse-3d-front"></span>
+            <span class="warehouse-3d-roof"></span>
+            <span class="warehouse-3d-door"></span>
+            <span class="warehouse-3d-dock"></span>
+            <span class="warehouse-3d-window warehouse-3d-window-a"></span>
+            <span class="warehouse-3d-window warehouse-3d-window-b"></span>
+            <span class="warehouse-3d-light warehouse-3d-light-a"></span>
+            <span class="warehouse-3d-light warehouse-3d-light-b"></span>
+          </div>
+
         </div>
       </section>
 
