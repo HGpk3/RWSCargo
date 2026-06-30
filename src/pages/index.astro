@@ -1,60 +1,329 @@
 ---
 import "../styles/global.css";
 
-const siteUrl = "https://rwscargo.ru";
-const pageTitle = "Доставка грузов из Китая в Россию в белую - RWSCargo";
+const siteUrl = "https://rwscargo.ru/";
+const brandName = "RWSCargo";
+const brandNameRu = "РВС Карго";
+const pageTitle =
+  "Доставка грузов из Китая в Россию под ключ и в белую - RWSCargo / РВС Карго";
 const pageDescription =
-  "RWSCargo организует доставку коммерческих грузов из Китая в Россию в белую: документы, проверка поставщика, контроль качества, контейнерные и сборные партии для бизнеса.";
+  "RWSCargo / РВС Карго организует импорт, доставку грузов и товаров из Китая в Россию для бизнеса: поиск поставщика, выкуп, контроль качества, склады в Гуанчжоу и Иу, авто, авиа, ЖД, контейнеры, сборные грузы и официальное оформление.";
+
+const highlights = [
+  { value: "2018", label: "работаем с Китаем" },
+  { value: "2", label: "склада в Китае" },
+  { value: "10-45", label: "дней в зависимости от маршрута" },
+  { value: "РФ", label: "доставка по всей России" },
+];
+
+const taskCards = [
+  {
+    title: "Найти поставщика",
+    text: "Нужна фабрика, цена, образцы или проверка производителя до закупки.",
+  },
+  {
+    title: "Выкупить товар",
+    text: "Есть ссылка или контакт в Китае, нужно безопасно оплатить и принять товар.",
+  },
+  {
+    title: "Доставить партию",
+    text: "Груз уже готов, нужен маршрут, склад, консолидация и понятный срок.",
+  },
+  {
+    title: "Оформить импорт",
+    text: "Нужны документы, ответственность и схема, которую можно показать бухгалтерии.",
+  },
+];
+
+const services = [
+  {
+    title: "Поиск поставщика или фабрики",
+    text: "Подбираем производителей под товар, запрашиваем реальные фото и видео, проверяем образцы и согласуем условия закупки.",
+    points: ["фабрики и альтернативные поставщики", "цены, MOQ и сроки производства", "брендирование и упаковка"],
+  },
+  {
+    title: "Выкуп товаров из Китая",
+    text: "Вы присылаете ссылку или контакт поставщика, мы проверяем условия, выкупаем товар, принимаем его на склад и готовим к отправке.",
+    points: ["1688, Alibaba и прямые фабрики", "оплата поставщику", "приемка и консолидация"],
+  },
+  {
+    title: "Контроль качества и образцов",
+    text: "Проверяем количество, комплектацию, упаковку и качество партии до того, как груз уйдет из Китая.",
+    points: ["фото- и видеоотчет", "тестирование по ТЗ", "рекомендация до закупки"],
+  },
+  {
+    title: "Доставка грузов из Китая",
+    text: "Считаем маршрут под вес, объем, срочность и экономику партии: авто, авиа, железная дорога, контейнер или сборный груз.",
+    points: ["авто 10-30 дней", "авиа для срочных партий", "ЖД и контейнеры для объема"],
+  },
+  {
+    title: "Официальное оформление",
+    text: "Для коммерческих партий заранее обсуждаем документы, формат ввоза, инвойсы, контрактную часть и закрывающие документы.",
+    points: ["документы до отправки", "понятная ответственность", "поставка для бухгалтерии"],
+  },
+  {
+    title: "Переговоры с поставщиком",
+    text: "Организуем онлайн-переговоры с китайским поставщиком, переводчиком и фиксацией договоренностей по цене, срокам и доработкам.",
+    points: ["перевод и смысл без потерь", "условия производства", "контроль спорных деталей"],
+  },
+];
+
+const serviceCards = [
+  services[3],
+  services[0],
+  services[1],
+  services[2],
+  services[4],
+  services[5],
+];
+
+const deliveryModes = [
+  {
+    name: "Автодоставка",
+    term: "10-30 дней",
+    text: "Универсальный маршрут для регулярных партий, маркетплейсов, электроники, текстиля, товаров для дома и запасных частей.",
+  },
+  {
+    name: "Авиадоставка",
+    term: "быстрее всего",
+    text: "Для образцов, срочных небольших партий, ценных товаров и ситуаций, когда остатки на складе нужно пополнить быстро.",
+  },
+  {
+    name: "ЖД доставка",
+    term: "стабильно для объема",
+    text: "Рациональный вариант для крупных партий, оборудования, комплектующих и грузов, где важен баланс сроков и стоимости.",
+  },
+  {
+    name: "Контейнеры и сборные грузы",
+    term: "под ключ",
+    text: "Для коммерческого импорта, крупногабаритных грузов, контейнерных партий и поставок с официальным оформлением.",
+  },
+];
+
+const fitCards = [
+  {
+    title: "Маркетплейсы",
+    text: "Регулярные партии, упаковка, маркировка, консолидация и понятный срок пополнения склада.",
+    best: "товары для Ozon / Wildberries",
+  },
+  {
+    title: "Коммерческая партия",
+    text: "Документы, ответственность, официальный импорт и передача груза компании или складу.",
+    best: "партии для бизнеса",
+  },
+  {
+    title: "Оборудование",
+    text: "Габариты, вес, упаковка, маршрут под объем и заранее согласованные документы.",
+    best: "станки, узлы, комплектующие",
+  },
+  {
+    title: "Срочная поставка",
+    text: "Когда важнее скорость: образцы, небольшие партии, дефицит остатков и быстрый запуск продаж.",
+    best: "авиа или быстрый авто-маршрут",
+  },
+];
+
+const enterpriseCards = [
+  {
+    title: "Регулярные поставки",
+    text: "Собираем повторяемый процесс для контейнерных, сборных и смешанных партий: от заявки отдела закупок до передачи груза в России.",
+  },
+  {
+    title: "Несколько поставщиков",
+    text: "Консолидируем товары от разных фабрик на складах в Гуанчжоу и Иу, сверяем места, упаковку, документы и готовность к отправке.",
+  },
+  {
+    title: "Контроль для ВЭД и бухгалтерии",
+    text: "Заранее обсуждаем инвойсы, упаковочные листы, контрактную часть, формат оформления и список данных для точного расчета.",
+  },
+  {
+    title: "Единая точка управления",
+    text: "Фиксируем ответственного менеджера, маршрут, сроки, статусы и следующие шаги, чтобы поставка не распадалась на разрозненные переписки.",
+  },
+];
+
+const enterpriseStats = [
+  { value: "SLA", label: "маршрут, сроки и контрольные точки" },
+  { value: "ВЭД", label: "документы и официальный импорт" },
+  { value: "FCL/LCL", label: "контейнеры и сборные партии" },
+];
+
+const documentItems = [
+  "инвойс",
+  "упаковочный лист",
+  "контрактная часть",
+  "описание товара",
+  "фото- и видеоотчет",
+  "закрывающие документы",
+];
+
+const promises = [
+  "не называем финальную цену без веса, объема и города получения",
+  "не обещаем срок без маршрута, склада и формата оформления",
+  "не берем запрещенные к перевозке или ввозу грузы",
+  "не подменяем договор перепиской в мессенджере",
+];
+
+const trustItems = [
+  "товар и количество мест",
+  "вес, объем и упаковка",
+  "поставщик и условия закупки",
+  "фото- и видеоотчет",
+  "инвойс и упаковочный лист",
+  "маршрут и формат оформления",
+  "город получения и ответственное лицо",
+  "следующий шаг до оплаты",
+];
+
+const routeLanes = [
+  {
+    from: "Гуанчжоу",
+    to: "Москва / Санкт-Петербург",
+    label: "авто и ЖД",
+    text: "Для регулярных поставок, маркетплейсов, электроники, текстиля и товаров для дома.",
+  },
+  {
+    from: "Иу",
+    to: "Регионы РФ",
+    label: "сборные грузы",
+    text: "Для небольших партий, закупок у нескольких поставщиков и консолидации на складе.",
+  },
+  {
+    from: "Порт / склад",
+    to: "Склад клиента",
+    label: "контейнер",
+    text: "Для объемных партий, оборудования, комплектующих и официального коммерческого импорта.",
+  },
+];
+
+const process = [
+  {
+    title: "Разбираем задачу",
+    text: "Уточняем товар, объем, вес, город получения, сроки, требования к документам и формат поставки.",
+  },
+  {
+    title: "Проверяем поставщика",
+    text: "При необходимости ищем фабрику, сравниваем предложения, проверяем образцы и фиксируем условия закупки.",
+  },
+  {
+    title: "Принимаем груз в Китае",
+    text: "Склад в Гуанчжоу или Иу принимает товары, сверяет количество, консолидирует партии и готовит упаковку.",
+  },
+  {
+    title: "Собираем маршрут и документы",
+    text: "Подбираем способ доставки, заранее обсуждаем инвойсы, упаковочные листы, оформление и ответственность.",
+  },
+  {
+    title: "Доставляем в Россию",
+    text: "Контролируем движение груза, передаем партию в России и помогаем с дальнейшей отправкой по регионам.",
+  },
+];
+
+const scenarios = [
+  {
+    title: "Партия для маркетплейса",
+    meta: "Иу / Гуанчжоу -> склад РФ",
+    steps: ["поставщик найден", "выкуп и приемка", "проверка упаковки", "авто или сборный груз", "передача в РФ"],
+  },
+  {
+    title: "Оборудование или комплектующие",
+    meta: "фабрика -> контейнер / ЖД",
+    steps: ["сверяем документы", "фиксируем габариты", "выбираем маршрут", "готовим оформление", "контролируем передачу"],
+  },
+];
+
+const cargoTypes = [
+  "товары для Ozon и Wildberries",
+  "электроника и техника",
+  "одежда, обувь и текстиль",
+  "мебель и товары для дома",
+  "оборудование и станки",
+  "автозапчасти и комплектующие",
+  "образцы и малогабаритные партии",
+  "контейнерные и сборные грузы",
+];
+
+const briefOptions = [
+  "поставщик уже найден",
+  "нужен поиск фабрики",
+  "нужен выкуп товара",
+  "нужна проверка качества",
+  "нужны документы",
+  "нужна доставка по РФ",
+];
+
 const faqItems = [
   {
-    question: "Что значит доставка грузов из Китая в белую?",
+    question: "Какой срок доставки из Китая в Россию?",
     answer:
-      "Это поставка с документами и понятной схемой оформления для бизнеса: маршрут, инвойсы, контрактная часть, таможенные и закрывающие документы обсуждаются до отправки груза.",
+      "Обычно доставка занимает от 10 до 45 дней. Срок зависит от способа перевозки, города отправления, региона получения, веса, объема и требований к оформлению.",
   },
   {
-    question: "RWSCargo работает с мелкими заказами или с коммерческими партиями?",
+    question: "Можно ли выкупить товар у поставщика за меня?",
     answer:
-      "Основной фокус проекта - коммерческие грузы, регулярные поставки, контейнеры и сборные партии для бизнеса, которому важны документы, контроль и предсказуемость.",
+      "Да. Вы присылаете ссылку на товар или контакт поставщика, а мы проверяем условия, выкупаем товар, принимаем его на склад в Китае и организуем доставку.",
   },
   {
-    question: "Можно ли проверить поставщика и товар до отправки?",
+    question: "Вы занимаетесь таможенным оформлением?",
     answer:
-      "Да. В процесс можно включить проверку поставщика, согласование образцов, контроль упаковки и качества до отправки груза из Китая.",
+      "Да, для коммерческих партий можно заранее собрать схему поставки с документами и официальным оформлением. Формат зависит от товара, документов поставщика и задачи бизнеса.",
   },
   {
-    question: "Какие грузы можно доставлять из Китая?",
+    question: "С какими товарами работает RWSCargo / РВС Карго?",
     answer:
-      "Оборудование, комплектующие, товары для маркетплейсов, мебель, текстиль, электронику, автотовары, промышленные партии и другие коммерческие грузы после проверки условий перевозки и оформления.",
+      "Мы доставляем промышленные и потребительские товары: электронику, текстиль, мебель, комплектующие, оборудование, автозапчасти, товары для маркетплейсов и другие разрешенные к ввозу грузы.",
+  },
+  {
+    question: "Есть ли склад в Китае?",
+    answer:
+      "Да. На старом сайте RWSCargo / РВС Карго указаны склады в Гуанчжоу и Иу: они используются для приемки, консолидации, проверки и подготовки грузов к отправке.",
+  },
+  {
+    question: "Что нужно для расчета доставки?",
+    answer:
+      "Нужны название товара, ссылка или контакт поставщика, вес и объем, количество мест, город отправления в Китае, город получения в России и желаемые сроки.",
+  },
+];
+
+const faqGroups = [
+  {
+    title: "Доставка",
+    questions: [faqItems[0], faqItems[5]],
+  },
+  {
+    title: "Закупка и склад",
+    questions: [faqItems[1], faqItems[4]],
+  },
+  {
+    title: "Документы",
+    questions: [faqItems[2], faqItems[3]],
   },
 ];
 
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "RWSCargo",
+  name: brandName,
+  alternateName: brandNameRu,
   url: siteUrl,
+  email: "info@rwscargo.ru",
+  telephone: "+7 921 655-65-60",
+  areaServed: ["Россия", "Китай"],
   description: pageDescription,
-  areaServed: ["RU", "CN"],
-  knowsAbout: [
-    "доставка грузов из Китая",
-    "импорт из Китая для бизнеса",
-    "доставка в белую",
-    "контейнерные перевозки из Китая",
-    "проверка поставщика в Китае",
-  ],
 };
 
 const serviceSchema = {
   "@context": "https://schema.org",
   "@type": "Service",
-  name: "Доставка коммерческих грузов из Китая в Россию в белую",
+  name: "Доставка грузов из Китая в Россию",
   provider: {
     "@type": "Organization",
-    name: "RWSCargo",
+    name: brandName,
+    alternateName: brandNameRu,
     url: siteUrl,
   },
   areaServed: ["Россия", "Китай"],
-  serviceType: "Международная логистика и импорт из Китая",
+  serviceType: "Международная логистика, импорт из Китая, доставка под ключ",
   description: pageDescription,
 };
 
@@ -80,1179 +349,779 @@ const faqSchema = {
     <meta name="description" content={pageDescription} />
     <link rel="canonical" href={siteUrl} />
     <meta name="robots" content="index, follow" />
-    <meta name="theme-color" content="#fffaf3" />
+    <meta name="theme-color" content="#f6f4ef" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="ru_RU" />
     <meta property="og:url" content={siteUrl} />
-    <meta property="og:site_name" content="RWSCargo" />
+    <meta property="og:site_name" content="RWSCargo / РВС Карго" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={pageDescription} />
+    <meta property="og:image" content={`${siteUrl}images/hero-logistics-import.png`} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={pageTitle} />
-    <meta name="twitter:description" content={pageDescription} />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(serviceSchema)} />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
   </head>
   <body>
-    <main class="page-shell">
-      <header class="site-header" aria-label="Основная навигация">
-        <a class="brand" href="/" aria-label="RWSCargo">
-          <span>RWS</span>Cargo
-        </a>
-        <nav class="nav-links">
-          <a href="#services">Услуги</a>
-          <a href="#directions">Грузы</a>
-          <a href="#process">Как работаем</a>
-          <a href="#faq">FAQ</a>
-          <a href="#contacts">Контакты</a>
-        </nav>
-        <a class="header-cta" href="#contacts">Рассчитать поставку</a>
-      </header>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="RWSCargo / РВС Карго">
+        <strong><span>RWS</span>Cargo</strong>
+        <small>РВС Карго</small>
+      </a>
+      <nav class="nav-links" aria-label="Основная навигация">
+        <a href="#services">Услуги</a>
+        <a href="#delivery">Доставка</a>
+        <a href="#calculator">Калькулятор</a>
+        <a href="#process">Процесс</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contacts">Контакты</a>
+      </nav>
+      <a class="header-phone" href="tel:+79216556560">+7 (921) 655-65-60</a>
+      <a class="header-cta" href="#calculator">Рассчитать поставку</a>
+    </header>
 
-      <section class="ops-hero">
-        <div class="ops-layout">
-          <div class="ops-copy">
-            <p class="eyebrow">Для бизнеса, который вырос из хаоса</p>
-            <h1>Белый импорт из Китая</h1>
-            <p class="hero-text">
-              Когда партия становится серьёзной, одной переписки уже мало.
-              RWSCargo проверяет поставщика, собирает документы, считает
-              маршрут и доводит коммерческий груз до России без серых обещаний.
-            </p>
-            <div class="hero-actions">
-              <a class="primary-button" href="#contacts">Разобрать поставку</a>
-              <a class="secondary-button" href="#process">Как устроен процесс</a>
-            </div>
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Импорт из Китая для бизнеса</p>
+          <h1>Доставка грузов из Китая под ключ и в белую</h1>
+          <p class="lead">
+            RWSCargo / РВС Карго помогает предпринимателям и компаниям покупать, проверять,
+            оформлять и доставлять товары из Китая в Россию. Сначала собираем
+            понятную схему поставки, потом везем груз.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#calculator">Получить расчет</a>
+            <a class="button secondary" href="#process">Посмотреть процесс</a>
           </div>
-
-          <div class="ops-visual">
-            <div class="route-board" tabindex="0" aria-label="Кадр маршрута поставки">
-              <div class="board-grid"></div>
-              <div class="board-title">
-                <span>не обещание в чате</span>
-                <strong>Маршрут. Документы. Груз.</strong>
-              </div>
-              <div class="cursor-ghost" aria-hidden="true"></div>
-              <svg class="route-line" viewBox="0 0 900 520" aria-hidden="true">
-                <path
-                  d="M86 352 C 230 172, 370 190, 478 286 S 690 414, 812 150"
-                  pathLength="1"
-                />
-              </svg>
-
-              <button class="route-node node-china" type="button" data-stage="supplier" aria-label="Подробнее про проверку поставщика">
-                <span>Китай</span>
-                <strong>Поставщик</strong>
-                <small>проверка, образцы, склад</small>
-              </button>
-              <button class="route-node node-border" type="button" data-stage="documents" aria-label="Подробнее про документы до отправки">
-                <span>До отправки</span>
-                <strong>Документы</strong>
-                <small>инвойс, контракт, упаковка</small>
-              </button>
-              <button class="route-node node-russia" type="button" data-stage="handoff" aria-label="Подробнее про передачу груза в России">
-                <span>Россия</span>
-                <strong>Передача</strong>
-                <small>город, склад, ответственное лицо</small>
-              </button>
-
-              <div class="cargo-stack" aria-hidden="true">
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
-
-              <button class="shipment-card" type="button" data-stage="dossier" aria-label="Подробнее про схему поставки">
-                <span class="card-kicker">досье поставки</span>
-                <strong>Сначала схема. Потом груз.</strong>
-                <dl>
-                  <div>
-                    <dt>Формат</dt>
-                    <dd>коммерческая партия</dd>
-                  </div>
-                  <div>
-                    <dt>Оформление</dt>
-                    <dd>в белую</dd>
-                  </div>
-                  <div>
-                    <dt>Контроль</dt>
-                    <dd>до отправки</dd>
-                  </div>
-                </dl>
-              </button>
-
-              <p class="route-caption">
-                Чем крупнее партия, тем дороже ошибка. Поэтому маршрут,
-                документы и проверка идут до движения груза, а не после.
-              </p>
-
-              <div class="route-detail" aria-live="polite">
-                <button class="route-detail-close" type="button" aria-label="Закрыть описание этапа">×</button>
-                <article class="detail-copy detail-supplier">
-                  <span>Китай</span>
-                  <strong>Сначала проверяем сторону, от которой зависит партия.</strong>
-                  <p>Уточняем поставщика, склад, образцы, упаковку и риски до оплаты или отправки, чтобы проблема не приехала вместе с грузом.</p>
-                </article>
-                <article class="detail-copy detail-documents">
-                  <span>До отправки</span>
-                  <strong>Документы собираются до движения груза.</strong>
-                  <p>Обсуждаем схему оформления, инвойс, контрактную часть и требования к партии заранее, а не когда груз уже стоит на маршруте.</p>
-                </article>
-                <article class="detail-copy detail-handoff">
-                  <span>Россия</span>
-                  <strong>Передача должна быть понятной для бизнеса.</strong>
-                  <p>Фиксируем город, склад, ответственное лицо и формат закрытия поставки, чтобы финальный этап не превращался в поиски груза.</p>
-                </article>
-                <article class="detail-copy detail-dossier">
-                  <span>Досье поставки</span>
-                  <strong>Одна партия — одна понятная схема.</strong>
-                  <p>Собираем ключевые решения в единый сценарий: что везём, как оформляем, где проверяем и каким маршрутом доставляем.</p>
-                </article>
-              </div>
-            </div>
+          <div class="hero-badges" aria-label="Ключевые преимущества">
+            <span>поиск поставщика</span>
+            <span>выкуп товара</span>
+            <span>контроль качества</span>
+            <span>документы</span>
           </div>
         </div>
 
-      </section>
-
-      <div class="route-start" aria-label="Запуск маршрута поставки">
-        <button class="route-start-button" type="button" data-road-start>
-          <span></span>
-          Показать маршрут поставки
-        </button>
-      </div>
-
-      <section class="route-road" id="cargo-transition" data-road data-road-choice="none" aria-label="Маршрут поставки">
-        <div class="road-layout">
-          <div class="road-canvas">
-            <svg class="road-svg" viewBox="0 0 900 1160" preserveAspectRatio="none" aria-hidden="true">
-              <path
-                class="road-bed"
-                d="M590 0 C 570 112, 620 214, 552 330 S 492 454, 520 520"
-              />
-              <path
-                class="road-bed road-bed-branch"
-                d="M520 520 C 420 650, 318 842, 252 1160"
-              />
-              <path
-                class="road-bed road-bed-branch"
-                d="M520 520 C 612 650, 696 842, 706 1160"
-              />
-              <path
-                class="road-marking"
-                d="M590 0 C 570 112, 620 214, 552 330 S 492 454, 520 520"
-              />
-              <path
-                class="road-marking road-marking-branch"
-                d="M520 520 C 420 650, 318 842, 252 1160"
-              />
-              <path
-                class="road-marking road-marking-branch"
-                d="M520 520 C 612 650, 696 842, 706 1160"
-              />
-              <path
-                class="road-shadow"
-                d="M590 0 C 570 112, 620 214, 552 330 S 492 454, 520 520"
-              />
-              <path
-                class="road-shadow road-shadow-branch"
-                d="M520 520 C 420 650, 318 842, 252 1160"
-              />
-              <path
-                class="road-shadow road-shadow-branch"
-                d="M520 520 C 612 650, 696 842, 706 1160"
-              />
-              <path
-                class="road-line road-trunk"
-                data-road-trunk
-                d="M590 0 C 570 112, 620 214, 552 330 S 492 454, 520 520"
-              />
-              <path
-                class="road-line road-branch road-branch-small"
-                data-road-branch-small
-                d="M520 520 C 420 650, 318 842, 252 1160"
-              />
-              <path
-                class="road-line road-branch road-branch-big"
-                data-road-branch-big
-                d="M520 520 C 612 650, 696 842, 706 1160"
-              />
-              <g class="road-vehicle road-vehicle-truck" aria-hidden="true">
-                <rect class="vehicle-trailer" x="-34" y="-7" width="38" height="14" rx="3" />
-                <rect class="vehicle-cab" x="4" y="-6" width="17" height="12" rx="3" />
-                <rect class="vehicle-window" x="8" y="-3" width="7" height="6" rx="1.5" />
-                <animateMotion
-                  dur="16s"
-                  begin="-3s"
-                  repeatCount="indefinite"
-                  rotate="auto"
-                  path="M590 0 C 570 112, 620 214, 552 330 S 492 454, 520 520 C 612 650, 696 842, 706 1160"
-                />
-              </g>
-              <g class="road-vehicle road-vehicle-car road-vehicle-small" aria-hidden="true">
-                <rect class="vehicle-body" x="-16" y="-6" width="32" height="12" rx="6" />
-                <rect class="vehicle-roof" x="-5" y="-4" width="10" height="8" rx="3" />
-                <animateMotion
-                  dur="14s"
-                  begin="-8s"
-                  repeatCount="indefinite"
-                  rotate="auto"
-                  path="M590 0 C 570 112, 620 214, 552 330 S 492 454, 520 520 C 420 650, 318 842, 252 1160"
-                />
-              </g>
-              <g class="road-vehicle road-vehicle-car road-vehicle-big" aria-hidden="true">
-                <rect class="vehicle-body" x="-15" y="-6" width="30" height="12" rx="6" />
-                <rect class="vehicle-roof" x="-5" y="-4" width="10" height="8" rx="3" />
-                <animateMotion
-                  dur="15s"
-                  begin="-12s"
-                  repeatCount="indefinite"
-                  rotate="auto"
-                  path="M590 0 C 570 112, 620 214, 552 330 S 492 454, 520 520 C 612 650, 696 842, 706 1160"
-                />
-              </g>
-              <circle class="road-dot" data-road-dot cx="590" cy="0" r="10" />
-            </svg>
-            <div class="road-atmosphere" aria-hidden="true">
-              <div class="rail-crossing">
-                <span class="rail-line rail-line-top"></span>
-                <span class="rail-line rail-line-bottom"></span>
-                <div class="rail-train">
-                  <span class="train-car train-engine"></span>
-                  <span class="train-car"></span>
-                  <span class="train-car"></span>
-                </div>
-              </div>
-              <div class="road-traffic-light">
-                <span class="traffic-light traffic-light-red"></span>
-                <span class="traffic-light traffic-light-yellow"></span>
-                <span class="traffic-light traffic-light-green"></span>
-              </div>
-              <span class="road-sign road-sign-small">wb / ozon</span>
-              <span class="road-sign road-sign-big">белый ввоз</span>
+        <div class="hero-visual" aria-label="Операционный штаб поставки">
+          <img src="/images/hero-logistics-import.png" alt="Грузовик с контейнером и коробками на складе" />
+          <div class="photo-brand" aria-hidden="true">
+            <strong>RWSCargo</strong>
+            <span>РВС Карго</span>
+          </div>
+          <div class="shipment-panel">
+            <div class="panel-top">
+              <span>Поставка Китай - Россия</span>
+              <strong>в работе</strong>
             </div>
-            <div class="road-choice" data-road-choice-panel>
-              <span>Развилка маршрута</span>
-              <strong>Что вам нужно?</strong>
-              <div class="road-choice-actions">
-                <button type="button" data-road-choice-button="small" aria-pressed="false">Малый бизнес</button>
-                <button type="button" data-road-choice-button="big" aria-pressed="false">Крупный бизнес</button>
+            <dl>
+              <div>
+                <dt>Поставщик</dt>
+                <dd>проверка условий</dd>
               </div>
-            </div>
+              <div>
+                <dt>Склад</dt>
+                <dd>Гуанчжоу / Иу</dd>
+              </div>
+              <div>
+                <dt>Документы</dt>
+                <dd>до отправки</dd>
+              </div>
+              <div>
+                <dt>Маршрут</dt>
+                <dd>авто, авиа, ЖД, контейнер</dd>
+              </div>
+            </dl>
+          </div>
+          <div class="status-card">
+            <span>Следующий шаг</span>
+            <strong>сверить объем и город получения</strong>
           </div>
         </div>
       </section>
 
-      <script is:inline>
-        window.addEventListener("DOMContentLoaded", () => {
-        const routeBoard = document.querySelector(".route-board");
-        const stageButtons = document.querySelectorAll("[data-stage]");
-        const closeButton = document.querySelector(".route-detail-close");
-        const road = document.querySelector("[data-road]");
-        const roadTrunk = document.querySelector("[data-road-trunk]");
-        const roadBranchSmall = document.querySelector("[data-road-branch-small]");
-        const roadBranchBig = document.querySelector("[data-road-branch-big]");
-        const roadDot = document.querySelector("[data-road-dot]");
-        const roadChoiceButtons = document.querySelectorAll("[data-road-choice-button]");
-        const routeTargets = document.querySelectorAll("[data-route-target]");
-        const routeReveal = document.querySelector("[data-route-reveal]");
-        const roadStartButton = document.querySelector("[data-road-start]");
-        const enterpriseFlow = document.querySelector("[data-enterprise-flow]");
-        const enterpriseStartButton = document.querySelector("[data-enterprise-start]");
-        const enterpriseNextButtons = document.querySelectorAll("[data-enterprise-next]");
-        const enterpriseScenes = document.querySelectorAll("[data-enterprise-scene]");
-        const enterpriseRoadStage = enterpriseFlow?.querySelector(".enterprise-road-stage");
-        const enterpriseRoadSvg = enterpriseFlow?.querySelector(".enterprise-road-svg");
-        const enterpriseRoadPath = enterpriseFlow?.querySelector(".enterprise-road-glow");
-        const enterpriseStepCount = 4;
-        let roadFrame = 0;
-        let roadChoice = "none";
-        let isRoadAutoScrolling = false;
-        let roadTargetProgress = 0;
-        let roadRenderedProgress = 0;
-        let hasRenderedRoad = false;
-        let roadDriveFrame = 0;
-        let enterpriseDriveFrame = 0;
-        let enterpriseTruckFrame = 0;
-        let enterpriseStep = -1;
-        const roadForkProgress = 0.58;
-        let enterpriseRoadLength = 0;
-        const enterpriseEntryProgress = 0.04;
-        const enterpriseStepProgress = [0.18, 0.42, 0.64, 0.82];
-        const enterpriseExitProgress = 0.988;
-        const enterpriseDotFallback = [
-          { x: "55%", y: "29%" },
-          { x: "68%", y: "58%" },
-          { x: "30%", y: "83%" },
-          { x: "38%", y: "93%" },
-        ];
-        const roadLengths = {
-          trunk: 0,
-          small: 0,
-          big: 0,
-        };
-
-        const setStage = (stage) => {
-          routeBoard?.classList.remove(
-            "active-supplier",
-            "active-documents",
-            "active-handoff",
-            "active-dossier",
-          );
-          routeBoard?.classList.add("has-active", `active-${stage}`);
-          stageButtons.forEach((button) => {
-            button.classList.toggle("is-selected", button.dataset.stage === stage);
-            button.setAttribute("aria-pressed", String(button.dataset.stage === stage));
-          });
-        };
-
-        stageButtons.forEach((button) => {
-          button.setAttribute("aria-pressed", "false");
-          button.addEventListener("click", () => setStage(button.dataset.stage));
-        });
-
-        closeButton?.addEventListener("click", () => {
-          routeBoard?.classList.remove(
-            "has-active",
-            "active-supplier",
-            "active-documents",
-            "active-handoff",
-            "active-dossier",
-          );
-          stageButtons.forEach((button) => {
-            button.classList.remove("is-selected");
-            button.setAttribute("aria-pressed", "false");
-          });
-        });
-
-        const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
-        const lerp = (start, end, amount) => start + (end - start) * amount;
-
-        const syncRoadChoice = (choice, shouldScroll = false) => {
-          roadChoice = choice;
-          road?.setAttribute("data-road-choice", choice);
-          if (choice !== "big") {
-            enterpriseFlow?.classList.remove("is-visible");
-          }
-          roadChoiceButtons.forEach((button) => {
-            const isSelected = button.dataset.roadChoiceButton === choice;
-            button.classList.toggle("is-selected", isSelected);
-            button.setAttribute("aria-pressed", String(isSelected));
-          });
-
-          routeTargets.forEach((target) => {
-            target.classList.remove("is-route-selected");
-          });
-
-          applyRoadState(roadRenderedProgress);
-
-          if (shouldScroll) {
-            const target = document.querySelector(`[data-route-target="${choice}"]`);
-            const targetY = target
-              ? window.scrollY + target.getBoundingClientRect().top - window.innerHeight * 0.58
-              : getRoadScrollPoints().arrival;
-            animateRoadScroll(targetY, 1750, { targetProgress: 1 });
-          }
-        };
-
-        roadChoiceButtons.forEach((button) => {
-          button.addEventListener("click", () => {
-            syncRoadChoice(button.dataset.roadChoiceButton, true);
-            requestRoadProgress();
-          });
-        });
-
-        const getRoadPoint = (progress) => {
-          if (!road || !roadTrunk || !roadBranchSmall || !roadBranchBig || !roadDot) return;
-
-          if (!roadLengths.trunk) {
-            roadLengths.trunk = roadTrunk.getTotalLength();
-            roadLengths.small = roadBranchSmall.getTotalLength();
-            roadLengths.big = roadBranchBig.getTotalLength();
-          }
-
-          const isPastFork = progress >= roadForkProgress;
-          const branch = roadChoice === "big" ? roadBranchBig : roadBranchSmall;
-          const branchLength = roadChoice === "big" ? roadLengths.big : roadLengths.small;
-
-          if (!isPastFork || roadChoice === "none") {
-            const trunkProgress = clamp(progress / roadForkProgress, 0, 1);
-            return roadTrunk.getPointAtLength(roadLengths.trunk * trunkProgress);
-          }
-
-          const branchProgress = clamp((progress - roadForkProgress) / (1 - roadForkProgress), 0, 1);
-          return branch.getPointAtLength(branchLength * branchProgress);
-        };
-
-        const drawRoadProgress = (progress) => {
-          const point = getRoadPoint(progress);
-          if (!point || !roadDot) return;
-
-          roadDot.setAttribute("cx", String(point.x));
-          roadDot.setAttribute("cy", String(point.y));
-        };
-
-        const applyRoadState = (progress) => {
-          road?.classList.toggle("is-road-active", progress > 0.01 && progress < 0.99);
-          road?.classList.toggle("is-choice-visible", progress >= roadForkProgress - 0.01);
-          road?.classList.toggle("is-route-arrived", roadChoice !== "none" && progress > 0.94);
-          routeReveal?.classList.toggle("is-route-revealed", roadChoice !== "none" && progress > 0.92);
-
-          routeTargets.forEach((target) => {
-            target.classList.toggle(
-              "is-route-selected",
-              roadChoice !== "none" && target.dataset.routeTarget === roadChoice && progress > 0.88,
-            );
-          });
-        };
-
-        const updateRoadProgress = () => {
-          if (!road || !roadTrunk || !roadBranchSmall || !roadBranchBig || !roadDot) return;
-
-          if (!hasRenderedRoad) {
-            hasRenderedRoad = true;
-            drawRoadProgress(roadRenderedProgress);
-          }
-
-          applyRoadState(roadRenderedProgress);
-        };
-
-        const requestRoadProgress = () => {
-          if (roadFrame) return;
-          roadFrame = window.requestAnimationFrame(() => {
-            roadFrame = 0;
-            updateRoadProgress();
-          });
-        };
-
-        const easeCarDrive = (value) => {
-          const eased = value * value * value * (value * (value * 6 - 15) + 10);
-          return clamp(eased, 0, 1);
-        };
-
-        const getRoadScrollPoints = () => {
-          if (!road) return { hero: 0, fork: window.scrollY, arrival: window.scrollY };
-
-          const roadTop = window.scrollY + road.getBoundingClientRect().top;
-          const hero = Math.max(0, roadTop - window.innerHeight * 0.84);
-          const fork = roadTop + road.offsetHeight * 0.42 - window.innerHeight * 0.48;
-          const arrival = roadTop + road.offsetHeight * 0.96 - window.innerHeight * 0.52;
-          return { hero, fork, arrival };
-        };
-
-        const jumpToScrollPosition = (top) => {
-          try {
-            window.scrollTo({
-              top,
-              left: 0,
-              behavior: "instant",
-            });
-          } catch {
-            window.scrollTo(0, top);
-          }
-        };
-
-        const animateRoadScroll = (targetY, duration = 1700, options = {}) => {
-          if (isRoadAutoScrolling) return;
-
-          isRoadAutoScrolling = true;
-          document.documentElement.classList.add("is-route-scroll-locked");
-          roadStartButton?.classList.add("is-driving");
-          roadStartButton?.setAttribute("aria-disabled", "true");
-
-          const startY = window.scrollY;
-          const distance = targetY - startY;
-          const driveStartProgress = roadRenderedProgress;
-          const driveEndProgress = options.targetProgress ?? roadTargetProgress;
-          const startTime = performance.now();
-
-          if (roadDriveFrame) {
-            window.cancelAnimationFrame(roadDriveFrame);
-            roadDriveFrame = 0;
-          }
-
-          const tick = (time) => {
-            const elapsed = clamp((time - startTime) / duration, 0, 1);
-            const driveEased = easeCarDrive(elapsed);
-
-            roadRenderedProgress = lerp(driveStartProgress, driveEndProgress, driveEased);
-            roadTargetProgress = roadRenderedProgress;
-            drawRoadProgress(roadRenderedProgress);
-            applyRoadState(roadRenderedProgress);
-            jumpToScrollPosition(startY + distance * driveEased);
-            requestRoadProgress();
-
-            if (elapsed < 1) {
-              roadDriveFrame = window.requestAnimationFrame(tick);
-              return;
-            }
-
-            roadDriveFrame = 0;
-            roadRenderedProgress = driveEndProgress;
-            roadTargetProgress = driveEndProgress;
-            drawRoadProgress(roadRenderedProgress);
-            applyRoadState(roadRenderedProgress);
-            isRoadAutoScrolling = false;
-            document.documentElement.classList.remove("is-route-scroll-locked");
-            roadStartButton?.classList.remove("is-driving");
-            roadStartButton?.removeAttribute("aria-disabled");
-          };
-
-          roadDriveFrame = window.requestAnimationFrame(tick);
-        };
-
-        const getEnterpriseScrollTarget = (step) => {
-          const target = enterpriseFlow?.querySelector(`[data-scheme-stop="${step}"]`);
-          return target
-            ? window.scrollY + target.getBoundingClientRect().top - window.innerHeight * 0.34
-            : window.scrollY;
-        };
-
-        const getEnterprisePathPosition = (progress, lookAhead = 0.01) => {
-          if (!enterpriseFlow || !enterpriseRoadStage || !enterpriseRoadSvg || !enterpriseRoadPath) return false;
-
-          if (!enterpriseRoadLength) {
-            enterpriseRoadLength = enterpriseRoadPath.getTotalLength();
-          }
-
-          const clampedProgress = clamp(progress, 0, 1);
-          const point = enterpriseRoadPath.getPointAtLength(enterpriseRoadLength * clampedProgress);
-          const aheadPoint = enterpriseRoadPath.getPointAtLength(
-            enterpriseRoadLength * clamp(clampedProgress + lookAhead, 0, 1),
-          );
-          const stageRect = enterpriseRoadStage.getBoundingClientRect();
-          const svgRect = enterpriseRoadSvg.getBoundingClientRect();
-          const viewBox = enterpriseRoadSvg.viewBox?.baseVal;
-          const viewBoxWidth = viewBox?.width || 1040;
-          const viewBoxHeight = viewBox?.height || 2300;
-          const x = svgRect.left - stageRect.left + (point.x / viewBoxWidth) * svgRect.width;
-          const y = svgRect.top - stageRect.top + (point.y / viewBoxHeight) * svgRect.height;
-          const angle = Math.atan2(aheadPoint.y - point.y, aheadPoint.x - point.x) * (180 / Math.PI);
-
-          return { x, y, angle };
-        };
-
-        const setEnterpriseDotPoint = (point) => {
-          if (!enterpriseFlow || !point) return false;
-
-          enterpriseFlow.style.setProperty("--enterprise-dot-x", `${point.x}px`);
-          enterpriseFlow.style.setProperty("--enterprise-dot-y", `${point.y}px`);
-          return true;
-        };
-
-        const setEnterpriseDotProgress = (progress) => setEnterpriseDotPoint(getEnterprisePathPosition(progress));
-
-        const getEnterpriseStepProgress = (step) => enterpriseStepProgress[step] ?? enterpriseEntryProgress;
-
-        const closeEnterpriseStops = () => {
-          if (!enterpriseFlow) return;
-
-          enterpriseFlow.dataset.enterpriseStep = "moving";
-          enterpriseScenes.forEach((scene) => {
-            scene.classList.remove("is-active");
-          });
-        };
-
-        const setEnterpriseDotPosition = (step) => {
-          const progress = getEnterpriseStepProgress(step);
-          if (setEnterpriseDotProgress(progress)) return;
-
-          const point = enterpriseDotFallback[step] ?? { x: "56%", y: "4%" };
-          enterpriseFlow?.style.setProperty("--enterprise-dot-x", point.x);
-          enterpriseFlow?.style.setProperty("--enterprise-dot-y", point.y);
-        };
-
-        const syncEnterpriseStepContent = (step) => {
-          if (!enterpriseFlow) return;
-
-          enterpriseFlow.dataset.enterpriseStep = String(step);
-
-          enterpriseScenes.forEach((scene, index) => {
-            scene.classList.toggle("is-active", index === step);
-          });
-
-          enterpriseNextButtons.forEach((button) => {
-            button.textContent = "Дальше";
-          });
-        };
-
-        const animateEnterpriseScroll = (targetY, duration = 1550, onDone, options = {}) => {
-          if (!enterpriseFlow) return;
-
-          document.documentElement.classList.add("is-route-scroll-locked");
-          enterpriseFlow.classList.add("is-driving");
-
-          const startY = window.scrollY;
-          const distance = targetY - startY;
-          const startTime = performance.now();
-          const startProgress = options.fromProgress ?? getEnterpriseStepProgress(options.fromStep ?? enterpriseStep);
-          const endProgress = options.toProgress ?? getEnterpriseStepProgress(options.toStep ?? enterpriseStep);
-          const revealAt = options.revealStep === undefined ? 1 : clamp(1 - 500 / duration, 0, 1);
-          let hasRevealed = false;
-
-          if (enterpriseDriveFrame) {
-            window.cancelAnimationFrame(enterpriseDriveFrame);
-            enterpriseDriveFrame = 0;
-          }
-
-          const tick = (time) => {
-            const elapsed = clamp((time - startTime) / duration, 0, 1);
-            const eased = easeCarDrive(elapsed);
-
-            jumpToScrollPosition(startY + distance * eased);
-            setEnterpriseDotProgress(lerp(startProgress, endProgress, eased));
-
-            if (!hasRevealed && options.revealStep !== undefined && elapsed >= revealAt) {
-              hasRevealed = true;
-              enterpriseStep = options.revealStep;
-              enterpriseFlow.classList.add("is-opening");
-              syncEnterpriseStepContent(options.revealStep);
-            }
-
-            if (elapsed < 1) {
-              enterpriseDriveFrame = window.requestAnimationFrame(tick);
-              return;
-            }
-
-            enterpriseDriveFrame = 0;
-            setEnterpriseDotProgress(endProgress);
-            onDone?.();
-            enterpriseFlow.classList.remove("is-driving");
-            enterpriseFlow.classList.remove("is-opening");
-            document.documentElement.classList.remove("is-route-scroll-locked");
-          };
-
-          enterpriseDriveFrame = window.requestAnimationFrame(tick);
-        };
-
-        const setEnterpriseStep = (step, shouldScroll = false) => {
-          if (!enterpriseFlow) return;
-
-          enterpriseStep = (step + enterpriseStepCount) % enterpriseStepCount;
-          syncEnterpriseStepContent(enterpriseStep);
-          setEnterpriseDotPosition(enterpriseStep);
-
-          if (shouldScroll) {
-            animateEnterpriseScroll(getEnterpriseScrollTarget(enterpriseStep), 1550, undefined, {
-              fromProgress: enterpriseEntryProgress,
-              toStep: enterpriseStep,
-              revealStep: enterpriseStep,
-            });
-          }
-        };
-
-        const getTruckExitScrollTarget = () => {
-          const target = enterpriseFlow?.querySelector(".enterprise-route-warehouse") ?? document.querySelector(".directions-section");
-          return target
-            ? window.scrollY + target.getBoundingClientRect().top - window.innerHeight * 0.34
-            : window.scrollY;
-        };
-
-        const animateEnterpriseTruckExit = () => {
-          if (!enterpriseFlow || enterpriseFlow.classList.contains("is-driving")) return;
-
-          document.documentElement.classList.add("is-route-scroll-locked");
-          enterpriseFlow.classList.add("is-driving", "is-dispatching");
-          enterpriseFlow.setAttribute("data-enterprise-target", "exit");
-
-          const startY = window.scrollY;
-          const targetY = getTruckExitScrollTarget();
-          const distance = targetY - startY;
-          const startProgress = getEnterpriseStepProgress(enterpriseStep);
-          const roadDuration = 2500;
-
-          if (enterpriseTruckFrame) {
-            window.cancelAnimationFrame(enterpriseTruckFrame);
-            enterpriseTruckFrame = 0;
-          }
-
-          const startTime = performance.now();
-
-          const tick = (time) => {
-            const elapsed = clamp((time - startTime) / roadDuration, 0, 1);
-            const eased = easeCarDrive(elapsed);
-
-            setEnterpriseDotProgress(lerp(startProgress, enterpriseExitProgress, eased));
-            jumpToScrollPosition(startY + distance * eased);
-
-            if (elapsed < 1) {
-              enterpriseTruckFrame = window.requestAnimationFrame(tick);
-              return;
-            }
-
-            enterpriseTruckFrame = 0;
-            setEnterpriseDotProgress(enterpriseExitProgress);
-            enterpriseFlow.classList.remove("is-driving", "is-dispatching");
-            enterpriseFlow.removeAttribute("data-enterprise-target");
-            document.documentElement.classList.remove("is-route-scroll-locked");
-          };
-
-          enterpriseTruckFrame = window.requestAnimationFrame(tick);
-        };
-
-        enterpriseStartButton?.addEventListener("click", () => {
-          if (enterpriseFlow?.classList.contains("is-driving")) return;
-
-          enterpriseFlow?.classList.add("is-visible");
-          enterpriseFlow?.classList.remove("is-dispatching");
-          enterpriseFlow?.removeAttribute("data-enterprise-target");
-          enterpriseStep = -1;
-          closeEnterpriseStops();
-          setEnterpriseDotProgress(enterpriseEntryProgress);
-          animateEnterpriseScroll(
-            getEnterpriseScrollTarget(0),
-            1850,
-            () => setEnterpriseStep(0),
-            { fromProgress: enterpriseEntryProgress, toStep: 0, revealStep: 0 },
-          );
-        });
-
-        enterpriseNextButtons.forEach((button) => button.addEventListener("click", () => {
-          if (enterpriseFlow?.classList.contains("is-driving")) return;
-
-          if (enterpriseStep === enterpriseStepCount - 1) {
-            animateEnterpriseTruckExit();
-            return;
-          }
-
-          const fromStep = enterpriseStep < 0 ? 0 : enterpriseStep;
-          const nextStep = (enterpriseStep + 1) % enterpriseStepCount;
-          closeEnterpriseStops();
-          enterpriseFlow?.setAttribute("data-enterprise-target", String(nextStep));
-          animateEnterpriseScroll(
-            getEnterpriseScrollTarget(nextStep),
-            1850,
-            () => {
-              enterpriseFlow?.removeAttribute("data-enterprise-target");
-              setEnterpriseStep(nextStep);
-            },
-            { fromStep, toStep: nextStep, revealStep: nextStep },
-          );
-        }));
-
-        roadStartButton?.addEventListener("click", () => {
-          if (isRoadAutoScrolling) return;
-
-          syncRoadChoice("none");
-          roadRenderedProgress = 0;
-          roadTargetProgress = 0;
-          drawRoadProgress(roadRenderedProgress);
-          applyRoadState(roadRenderedProgress);
-
-          const points = getRoadScrollPoints();
-          animateRoadScroll(points.fork, 2200, { targetProgress: roadForkProgress });
-        });
-
-        updateRoadProgress();
-        window.addEventListener("scroll", requestRoadProgress, { passive: true });
-        window.addEventListener("resize", () => {
-          roadLengths.trunk = 0;
-          roadLengths.small = 0;
-          roadLengths.big = 0;
-          requestRoadProgress();
-        });
-        });
-      </script>
-
-      <section class="section supply-modes-section" id="services" data-route-reveal>
-        <div class="modes-layout">
-          <div class="modes-copy">
-            <p class="eyebrow">Форматы поставки</p>
-            <h2>Один маршрут. Два режима поставки.</h2>
-            <p>
-              Один грузовой маршрут может работать по-разному. Для крупной
-              компании - белая схема, документы и ответственность. Для малого
-              бизнеса - быстрая партия, понятная цена и пополнение остатков на
-              Ozon или Wildberries.
-            </p>
-          </div>
-
-          <div class="modes-board" aria-label="Два режима поставки из Китая">
-            <article class="mode-panel mode-panel-small" data-route-target="small">
-              <div class="mode-label">
-                <span>01</span>
-                <strong>Малый бизнес</strong>
-              </div>
-              <h3>Быстро и экономично для Ozon, Wildberries и регулярных закупок</h3>
-              <p>
-                Когда нужна не тяжелая схема импорта, а рабочая доставка товара
-                из Китая с понятной стоимостью, сроком и подготовкой партии.
-              </p>
-              <ul>
-                <li>сборные партии и небольшие объемы</li>
-                <li>упаковка, маркировка и консолидация</li>
-                <li>маршрут под скорость и экономику</li>
-              </ul>
-              <div class="mode-detail" aria-label="Подробности для малого бизнеса">
-                <div class="mode-detail-grid">
-                  <div class="mode-stat">
-                    <span>формат</span>
-                    <strong>от коробок до паллет</strong>
-                    <p>Подходит для регулярного пополнения остатков без сложной импортной схемы.</p>
-                  </div>
-                  <div class="mode-stat">
-                    <span>фокус</span>
-                    <strong>цена и скорость</strong>
-                    <p>Собираем груз, проверяем упаковку, считаем понятный маршрут до склада.</p>
-                  </div>
-                </div>
-                <ol class="mode-steps">
-                  <li><span>01</span><strong>Забираем у поставщика</strong><p>Можно от нескольких фабрик или магазинов.</p></li>
-                  <li><span>02</span><strong>Готовим к продаже</strong><p>Консолидация, упаковка, маркировка, фото по запросу.</p></li>
-                  <li><span>03</span><strong>Довозим до России</strong><p>До склада, ТК или точки передачи для маркетплейса.</p></li>
-                </ol>
-              </div>
+      <section class="metric-strip" aria-label="Факты о RWSCargo / РВС Карго">
+        {
+          highlights.map((item) => (
+            <article>
+              <strong>{item.value}</strong>
+              <span>{item.label}</span>
             </article>
-
-            <article class="mode-panel mode-panel-big" data-route-target="big">
-              <div class="mode-label">
-                <span>02</span>
-                <strong>Крупный бизнес</strong>
-              </div>
-              <h3>В белую, с документами и контролем</h3>
-              <p>
-                Для партий, которые должны пройти через бухгалтерию, контракт,
-                инвойс и понятную цепочку ответственности.
-              </p>
-              <ul>
-                <li>схема поставки до движения груза</li>
-                <li>проверка поставщика и документов</li>
-                <li>маршрут под сроки, объем и оформление</li>
-              </ul>
-              <div class="mode-detail" aria-label="Подробности для крупного бизнеса">
-                <div class="mode-detail-grid">
-                  <div class="mode-stat">
-                    <span>формат</span>
-                    <strong>контрактная партия</strong>
-                    <p>Для груза, который должен пройти бухгалтерию, учет и понятную цепочку ответственности.</p>
-                  </div>
-                  <div class="mode-stat">
-                    <span>фокус</span>
-                    <strong>документы и контроль</strong>
-                    <p>Согласуем схему, проверяем инвойс, упаковку, маршрут и финальную передачу.</p>
-                  </div>
-                </div>
-                <ol class="mode-steps">
-                  <li><span>01</span><strong>Собираем схему</strong><p>Что везем, кто поставщик, какие документы нужны.</p></li>
-                  <li><span>02</span><strong>Проверяем до отправки</strong><p>Поставщик, упаковка, инвойс, условия и риски.</p></li>
-                  <li><span>03</span><strong>Ведем до передачи</strong><p>Контроль этапов, сроки, склад и ответственное лицо в России.</p></li>
-                </ol>
-                <button class="mode-next-button" type="button" data-enterprise-start>
-                  Продолжить маршрут
-                </button>
-              </div>
-            </article>
-          </div>
-        </div>
+          ))
+        }
       </section>
 
-      <section class="section enterprise-flow-section" data-enterprise-flow data-enterprise-step="idle" aria-label="Схема крупной поставки">
-        <div class="enterprise-road-stage">
-          <svg class="enterprise-road-svg" viewBox="0 0 1040 2300" preserveAspectRatio="none" aria-hidden="true">
-            <path
-              class="enterprise-road-bed"
-              d="M710 -40 C 660 90, 556 130, 526 250 S 710 410, 642 552 S 368 690, 374 860 S 690 1030, 654 1190 S 336 1348, 322 1520 S 492 1718, 464 1900 S 430 2100, 438 2248"
-            />
-            <path
-              class="enterprise-road-marking"
-              d="M710 -40 C 660 90, 556 130, 526 250 S 710 410, 642 552 S 368 690, 374 860 S 690 1030, 654 1190 S 336 1348, 322 1520 S 492 1718, 464 1900 S 430 2100, 438 2248"
-            />
-            <path
-              class="enterprise-road-glow"
-              d="M710 -40 C 660 90, 556 130, 526 250 S 710 410, 642 552 S 368 690, 374 860 S 690 1030, 654 1190 S 336 1348, 322 1520 S 492 1718, 464 1900 S 430 2100, 438 2248"
-            />
-          </svg>
-          <div class="enterprise-iso-map" aria-hidden="true">
-            <span class="iso-tile iso-tile-cargo"></span>
-            <span class="iso-tile iso-tile-docs"></span>
-            <span class="iso-tile iso-tile-route"></span>
-            <span class="iso-tile iso-tile-control"></span>
-            <span class="iso-building iso-cargo-yard">
-              <span class="iso-container iso-container-a"></span>
-              <span class="iso-container iso-container-b"></span>
-              <span class="iso-crane"></span>
-            </span>
-            <span class="iso-building iso-docs-office">
-              <span class="iso-office-roof"></span>
-              <span class="iso-office-window iso-office-window-a"></span>
-              <span class="iso-office-window iso-office-window-b"></span>
-            </span>
-            <span class="iso-building iso-transfer-yard">
-              <span class="iso-yard-ramp"></span>
-              <span class="iso-yard-loader"></span>
-              <span class="iso-yard-pallets"></span>
-            </span>
-            <span class="iso-building iso-control-post">
-              <span class="iso-post-gate"></span>
-              <span class="iso-post-barrier"></span>
-              <span class="iso-post-light"></span>
-            </span>
-          </div>
-          <span class="enterprise-road-dot" aria-hidden="true"></span>
-          <span class="enterprise-road-truck" data-enterprise-truck aria-hidden="true">
-            <span class="enterprise-truck-trailer"></span>
-            <span class="enterprise-truck-cab"></span>
-          </span>
-
-          <div class="scheme-heading">
-            <p class="eyebrow">Схема поставки</p>
-            <h2>Двигаемся по этапам, а не по догадкам</h2>
-            <p>
-              Для крупной партии сначала собираем рабочую схему: груз, документы и маршрут. Каждый шаг фиксируется до движения товара.
-            </p>
-          </div>
-
-          <article class="scheme-stop scheme-stop-cargo" data-scheme-stop="0">
-            <div class="scheme-stop-copy">
-              <span>01 / груз</span>
-              <h3>Сначала понимаем, что именно везем</h3>
-              <p>
-                Категория, упаковка, вес, объем, ограничения, требования к хранению и приемке. Без этого нельзя честно посчитать маршрут и документы.
-              </p>
-              <ul>
-                <li>описание партии и состава груза</li>
-                <li>габариты, вес, объем и упаковка</li>
-                <li>риски повреждения, маркировки и приемки</li>
-              </ul>
-              <button class="enterprise-next-button scheme-stop-next" type="button" data-enterprise-next>Дальше</button>
-            </div>
-            <div class="cargo-crane-scene" aria-hidden="true">
-              <span class="cargo-yard"></span>
-              <span class="cargo-gate"></span>
-              <span class="cargo-scale"></span>
-              <span class="crane-mast"></span>
-              <span class="crane-boom"></span>
-              <span class="crane-cable"></span>
-              <span class="crane-hook"></span>
-              <span class="crane-container crane-container-lift"></span>
-              <span class="crane-container crane-container-ground"></span>
-              <span class="crane-ground"></span>
-            </div>
-          </article>
-
-          <article class="scheme-stop scheme-stop-docs" data-scheme-stop="1">
-            <div class="scheme-stop-copy">
-              <span>02 / документы</span>
-              <h3>Понимаем, какие бумаги нужны до отправки</h3>
-              <p>
-                Документы не собираются “по дороге”. До выхода груза согласуем инвойс, контрактную часть, упаковочный лист и требования к белой схеме.
-              </p>
-              <ul>
-                <li>инвойс и упаковочный лист</li>
-                <li>контрактная логика и реквизиты</li>
-                <li>требования к оформлению и передаче</li>
-              </ul>
-              <button class="enterprise-next-button scheme-stop-next" type="button" data-enterprise-next>Дальше</button>
-            </div>
-            <div class="docs-assembly-scene" aria-hidden="true">
-              <span class="docs-office"></span>
-              <span class="docs-window docs-window-a"></span>
-              <span class="docs-window docs-window-b"></span>
-              <span class="docs-counter"></span>
-              <span class="docs-archive"></span>
-              <span class="docs-folder"></span>
-              <span class="docs-sheet docs-sheet-a"></span>
-              <span class="docs-sheet docs-sheet-b"></span>
-              <span class="docs-stamp">ok</span>
-              <span class="docs-line docs-line-a"></span>
-              <span class="docs-line docs-line-b"></span>
-            </div>
-          </article>
-
-          <article class="scheme-stop scheme-stop-route" data-scheme-stop="2">
-            <div class="scheme-stop-copy">
-              <span>03 / маршрут</span>
-              <h3>После этого собираем путь под объем и сроки</h3>
-              <p>
-                Авто, ЖД или контейнер выбираются не как абстрактный тариф, а как решение под конкретный груз, документы, сроки и точку передачи.
-              </p>
-              <ul>
-                <li>транспорт под объем и бюджет</li>
-                <li>контрольные точки маршрута</li>
-                <li>ответственная передача в России</li>
-              </ul>
-              <button class="enterprise-next-button scheme-stop-next" type="button" data-enterprise-next>Дальше</button>
-            </div>
-            <div class="route-assembly-scene" aria-hidden="true">
-              <span class="route-loading-yard"></span>
-              <span class="route-loading-ramp"></span>
-              <span class="route-loader"></span>
-              <span class="route-loader-arm"></span>
-              <span class="route-pallets"></span>
-              <span class="route-mini-road"></span>
-              <span class="route-mini-truck"></span>
-              <span class="route-mini-train"></span>
-              <span class="route-mini-container"></span>
-              <span class="route-checkpoint"></span>
-            </div>
-          </article>
-
-          <article class="scheme-stop scheme-stop-control" data-scheme-stop="3">
-            <div class="scheme-stop-copy">
-              <span>04 / контроль</span>
-              <h3>Склад фиксирует движение, документы и ответственность</h3>
-              <p>
-                После согласования маршрута груз попадает в понятную систему контроля: статусы, фото, документы, ответственные точки и передача в России.
-              </p>
-              <ul>
-                <li>статус груза на складе и в пути</li>
-                <li>подтверждения, фото и документы по этапам</li>
-                <li>ответственный менеджер до финальной передачи</li>
-              </ul>
-              <button class="enterprise-next-button scheme-stop-next" type="button" data-enterprise-next>Дальше</button>
-            </div>
-            <div class="control-warehouse-scene" aria-hidden="true">
-              <span class="control-warehouse-building"></span>
-              <span class="control-warehouse-door"></span>
-              <span class="control-warehouse-dock"></span>
-              <span class="control-warehouse-truck"></span>
-              <span class="control-status-board"></span>
-              <span class="control-doc-stack"></span>
-              <span class="control-beacon"></span>
-            </div>
-          </article>
-
-          <div class="enterprise-route-warehouse" aria-hidden="true">
-            <span class="warehouse-3d-shadow"></span>
-            <span class="warehouse-3d-side"></span>
-            <span class="warehouse-3d-front"></span>
-            <span class="warehouse-3d-roof"></span>
-            <span class="warehouse-3d-door"></span>
-            <span class="warehouse-3d-dock"></span>
-            <span class="warehouse-3d-window warehouse-3d-window-a"></span>
-            <span class="warehouse-3d-window warehouse-3d-window-b"></span>
-            <span class="warehouse-3d-light warehouse-3d-light-a"></span>
-            <span class="warehouse-3d-light warehouse-3d-light-b"></span>
-          </div>
-
+      <section class="task-section" aria-label="Быстрый выбор задачи">
+        <div class="task-intro">
+          <p class="eyebrow">С чего начать</p>
+          <h2>Выберите задачу, а не услугу из списка</h2>
         </div>
-      </section>
-
-      <section class="section directions-section" id="directions">
-        <div class="section-head split-head">
-          <div>
-            <p class="eyebrow">Грузы и направления</p>
-            <h2>Для коммерческих партий, где важны документы и контроль</h2>
-          </div>
-          <p>
-            Финальный список категорий нужно уточнить с владельцем, но SEO-ядро
-            уже строим вокруг реальных B2B-запросов: доставка из Китая,
-            контейнерные перевозки, сборные грузы, импорт в белую и проверка
-            поставщика.
-          </p>
-        </div>
-        <div class="direction-grid">
-          <article>
-            <span>01</span>
-            <h3>Оборудование и комплектующие</h3>
-            <p>Промышленные партии, станки, узлы, запчасти и товары для производства.</p>
-          </article>
-          <article>
-            <span>02</span>
-            <h3>Товары для маркетплейсов</h3>
-            <p>Регулярные партии для продавцов, которым нужна понятная экономика поставки.</p>
-          </article>
-          <article>
-            <span>03</span>
-            <h3>Контейнеры и сборные грузы</h3>
-            <p>Маршрут под объём, сроки, оформление и город получения в России.</p>
-          </article>
-          <article>
-            <span>04</span>
-            <h3>Проверка перед отправкой</h3>
-            <p>Поставщик, образцы, упаковка и качество до того, как груз покинет Китай.</p>
-          </article>
-        </div>
-      </section>
-
-      <section class="section dark-section" id="process">
-        <p class="eyebrow">Процесс</p>
-        <h2>Берём на себя этапы, где чаще всего теряются деньги и сроки</h2>
-        <ol class="process-list">
-          <li>
-            <span>01</span>
-            Разбираем груз, маршрут и требования к документам.
-          </li>
-          <li>
-            <span>02</span>
-            Считаем варианты доставки и экономику поставки.
-          </li>
-          <li>
-            <span>03</span>
-            Организуем проверку, склад, упаковку и отправку.
-          </li>
-          <li>
-            <span>04</span>
-            Сопровождаем груз до передачи в России.
-          </li>
-        </ol>
-      </section>
-
-      <section class="section seo-section">
-        <div class="seo-copy">
-          <p class="eyebrow">Продвижение и смысл</p>
-          <h2>Страница должна ранжироваться не только по бренду</h2>
-          <p>
-            Поэтому в структуре есть естественные запросы: доставка грузов из
-            Китая в Россию, импорт из Китая для бизнеса, доставка в белую,
-            контейнерные перевозки из Китая, сборные грузы, проверка поставщика
-            и контроль качества перед отправкой.
-          </p>
-          <p>
-            Тексты не перегружаем ключами. Главная задача - объяснить услугу
-            человеку, а поисковой системе дать ясную структуру: один H1,
-            понятные H2, FAQ, schema.org и технически чистая страница.
-          </p>
-        </div>
-      </section>
-
-      <section class="section faq-section" id="faq">
-        <div class="section-head split-head">
-          <div>
-            <p class="eyebrow">FAQ</p>
-            <h2>Вопросы, которые помогают и клиенту, и SEO</h2>
-          </div>
-        </div>
-        <div class="faq-list">
+        <div class="task-grid">
           {
-            faqItems.map((item) => (
-              <details>
-                <summary>{item.question}</summary>
-                <p>{item.answer}</p>
-              </details>
+            taskCards.map((task) => (
+              <a href="#contacts" class="task-card">
+                <strong>{task.title}</strong>
+                <span>{task.text}</span>
+              </a>
             ))
           }
         </div>
       </section>
 
-      <section class="section contact-section" id="contacts">
-        <div>
-          <p class="eyebrow">Заявка</p>
-          <h2>Обсудим груз, маршрут и формат поставки</h2>
-          <p class="contact-note">
-            На следующем этапе подключим нормальную обработку заявок: email,
-            VK-бот, резервное сохранение и, если нужно, Telegram как
-            дополнительный канал.
+      <section class="section intro-section">
+        <div class="section-kicker">Что изменили в подходе</div>
+        <div class="intro-grid">
+          <h2>Не просто перевозим коробки. Собираем управляемую поставку.</h2>
+          <p>
+            Старый сайт RWSCargo / РВС Карго делал акцент на снижении себестоимости,
+            маркетплейс-бизнесе и полном цикле работы с Китаем. В новой версии
+            этот смысл вынесен вперед: поставщик, закупка, проверка, склад,
+            маршрут, документы и передача груза должны быть понятны до оплаты и
+            отправки.
           </p>
         </div>
-        <form class="lead-form">
+      </section>
+
+      <section class="section services-section" id="services">
+        <div class="section-head">
+          <p class="eyebrow">Услуги RWSCargo / РВС Карго</p>
+          <h2>Все этапы импорта из Китая в одном процессе</h2>
+          <p>
+            Можно подключить только доставку или собрать поставку под ключ: от
+            поиска фабрики и выкупа товара до оформления документов и передачи
+            партии в России.
+          </p>
+        </div>
+
+        <div class="services-grid">
+          {
+            serviceCards.map((service, index) => (
+              <article class={`service-card ${index === 0 ? "service-card-main" : ""}`}>
+                <span class="card-number">{String(index + 1).padStart(2, "0")}</span>
+                <h3>{service.title}</h3>
+                <p>{service.text}</p>
+                <ul>
+                  {service.points.map((point) => (
+                    <li>{point}</li>
+                  ))}
+                </ul>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+
+      <section class="control-section">
+        <div class="control-media">
+          <img src="/images/cargo-bridge-realistic.png" alt="Контейнерный грузовик рядом со складом" />
+          <div class="control-photo-brand" aria-hidden="true">
+            <span>RWSCargo</span>
+            <small>РВС Карго</small>
+          </div>
+        </div>
+        <div class="control-copy">
+          <p class="eyebrow">Белый импорт и контроль</p>
+          <h2>Импорт, который можно показать бухгалтерии</h2>
+          <p>
+            Для коммерческих партий важны не только сроки. Нужны понятные
+            документы, прогнозируемый маршрут, ответственная передача и
+            контроль до отправки. Поэтому RWSCargo / РВС Карго сначала уточняет товар,
+            поставщика, объем и формат оформления, а потом предлагает маршрут.
+          </p>
+          <div class="control-list">
+            <span>инвойс и упаковочный лист</span>
+            <span>контроль поставщика</span>
+            <span>консолидация на складе</span>
+            <span>поставка в белую</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section trust-section">
+        <div class="section-head split">
+          <div>
+            <p class="eyebrow">Что фиксируем до отправки</p>
+            <h2>Меньше сюрпризов, больше управляемости</h2>
+          </div>
+          <p>
+            Дизайн этого блока намеренно похож на операционный чек-лист: клиент
+            быстро видит, что поставка не строится на устных обещаниях.
+          </p>
+        </div>
+        <div class="trust-grid">
+          {
+            trustItems.map((item, index) => (
+              <article>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <strong>{item}</strong>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+
+      <section class="section delivery-section" id="delivery">
+        <div class="section-head split">
+          <div>
+            <p class="eyebrow">Способы доставки</p>
+            <h2>Подбираем маршрут под экономику партии</h2>
+          </div>
+          <p>
+            Не каждый груз нужно вести самым быстрым способом. Мы сравниваем
+            стоимость, сроки, риски и требования к документам, чтобы маршрут не
+            съел маржинальность товара.
+          </p>
+        </div>
+
+        <div class="delivery-grid">
+          {
+            deliveryModes.map((mode) => (
+              <article class="delivery-card">
+                <div>
+                  <h3>{mode.name}</h3>
+                  <span>{mode.term}</span>
+                </div>
+                <p>{mode.text}</p>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+
+      <section class="section fit-section">
+        <div class="section-head">
+          <p class="eyebrow">Какой формат подходит</p>
+          <h2>Покажите задачу, а не пытайтесь выбрать тариф</h2>
+          <p>
+            Для клиента это проще: он узнает свой сценарий, а менеджер уже
+            предлагает маршрут, документы и следующий шаг.
+          </p>
+        </div>
+        <div class="fit-grid">
+          {
+            fitCards.map((card) => (
+              <article class="fit-card">
+                <span>{card.best}</span>
+                <h3>{card.title}</h3>
+                <p>{card.text}</p>
+                <a href="#contacts">Обсудить формат</a>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+
+      <section class="section enterprise-section" id="enterprise">
+        <div class="enterprise-shell">
+          <div class="enterprise-copy">
+            <p class="eyebrow">Для крупного бизнеса</p>
+            <h2>Регулярный импорт из Китая без потери контроля между отделами</h2>
+            <p>
+              Для компаний с постоянными поставками важны не только цена и срок, а управляемость:
+              кто отвечает за груз, какие документы готовы, где находится партия, какие риски уже проверены
+              и что нужно для следующей отгрузки.
+            </p>
+            <a class="button primary" href="#calculator">Обсудить регулярные поставки</a>
+          </div>
+          <div class="enterprise-board" aria-label="Форматы работы с крупным бизнесом">
+            {
+              enterpriseStats.map((item) => (
+                <article>
+                  <strong>{item.value}</strong>
+                  <span>{item.label}</span>
+                </article>
+              ))
+            }
+          </div>
+        </div>
+        <div class="enterprise-grid">
+          {
+            enterpriseCards.map((card, index) => (
+              <article class="enterprise-card">
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <h3>{card.title}</h3>
+                <p>{card.text}</p>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+
+      <section class="section route-section">
+        <div class="section-head">
+          <p class="eyebrow">Китай -> Россия</p>
+          <h2>Маршруты выглядят по-разному, но логика одна</h2>
+          <p>
+            Мы показываем не абстрактную карту, а рабочие направления:
+            где принимаем груз, как консолидируем и куда передаем партию.
+          </p>
+        </div>
+        <div class="route-lanes">
+          {
+            routeLanes.map((lane) => (
+              <article class="route-lane">
+                <div>
+                  <span>{lane.from}</span>
+                  <strong>{lane.to}</strong>
+                </div>
+                <em>{lane.label}</em>
+                <p>{lane.text}</p>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+
+      <section class="section docs-section">
+        <div class="docs-panel">
+          <div>
+            <p class="eyebrow">Документы до отправки</p>
+            <h2>Сначала сверяем бумажную часть, потом двигаем груз</h2>
+          </div>
+          <div class="docs-grid">
+            {
+              documentItems.map((item, index) => (
+                <article>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <strong>{item}</strong>
+                </article>
+              ))
+            }
+          </div>
+        </div>
+      </section>
+
+      <section class="section cargo-section" id="directions">
+        <div class="section-head">
+          <p class="eyebrow">Грузы и товары</p>
+          <h2>Работаем с коммерческими партиями, маркетплейсами и производством</h2>
+        </div>
+        <div class="cargo-tags">
+          {cargoTypes.map((item) => <span>{item}</span>)}
+        </div>
+      </section>
+
+      <section class="section process-section" id="process">
+        <div class="section-head split">
+          <div>
+            <p class="eyebrow">Как работаем</p>
+            <h2>Пять шагов без хаоса в переписках</h2>
+          </div>
+          <p>
+            Процесс построен так, чтобы клиент видел не набор обещаний, а
+            последовательность решений: что покупаем, где проверяем, как везем,
+            какие документы нужны и кто отвечает за следующий этап.
+          </p>
+        </div>
+        <ol class="process-list">
+          {
+            process.map((step, index) => (
+              <li>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <div>
+                  <h3>{step.title}</h3>
+                  <p>{step.text}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </section>
+
+      <section class="section scenario-section">
+        <div class="section-head split">
+          <div>
+            <p class="eyebrow">Операционные сценарии</p>
+            <h2>Два типовых маршрута вместо абстрактного процесса</h2>
+          </div>
+          <p>
+            Такой блок помогает быстрее узнать свой случай: регулярная закупка
+            для продаж или коммерческая партия с документами и габаритами.
+          </p>
+        </div>
+        <div class="scenario-grid">
+          {
+            scenarios.map((scenario) => (
+              <article class="scenario-card">
+                <span>{scenario.meta}</span>
+                <h3>{scenario.title}</h3>
+                <ol>
+                  {scenario.steps.map((step) => (
+                    <li>{step}</li>
+                  ))}
+                </ol>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+
+      <section class="section promise-section">
+        <div class="section-head split">
+          <div>
+            <p class="eyebrow">Что не обещаем</p>
+            <h2>Честные ограничения делают расчет точнее</h2>
+          </div>
+          <p>
+            Этот блок работает на доверие и снижает юридические риски:
+            пользователь видит, что условия зависят от реальных данных о грузе.
+          </p>
+        </div>
+        <div class="promise-list">
+          {
+            promises.map((item) => (
+              <article>
+                <span>не обещаем</span>
+                <strong>{item}</strong>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+
+      <section class="section seo-section">
+        <div class="seo-copy">
+          <p class="eyebrow">Для SEO и для клиента</p>
+          <h2>Доставка товаров из Китая в Россию с понятной ответственностью</h2>
+          <p>
+            RWSCargo / РВС Карго работает с задачами, которые часто ищут как доставка
+            грузов из Китая, доставка товаров из Китая в Россию, доставка из
+            Китая под ключ, выкуп товаров из Китая, доставка для маркетплейсов,
+            сборные грузы из Китая, контейнерная доставка и белый импорт.
+          </p>
+          <p>
+            Но для бизнеса важнее не ключевые слова, а результат: найти
+            надежного производителя, снизить закупочную цену, проверить товар,
+            принять партию на складе в Китае, выбрать маршрут и получить груз в
+            России без потери контроля. Поэтому на сайте мы говорим не только о
+            перевозке, но и о закупке, документах, качестве и экономике партии.
+          </p>
+        </div>
+      </section>
+
+      <section class="section faq-section" id="faq">
+        <div class="section-head">
+          <p class="eyebrow">FAQ</p>
+          <h2>Частые вопросы о доставке из Китая</h2>
+        </div>
+        <div class="faq-groups">
+          {
+            faqGroups.map((group) => (
+              <section class="faq-group">
+                <h3>{group.title}</h3>
+                <div class="faq-list">
+                  {group.questions.map((item) => (
+                    <details>
+                      <summary>{item.question}</summary>
+                      <p>{item.answer}</p>
+                    </details>
+                  ))}
+                </div>
+              </section>
+            ))
+          }
+        </div>
+      </section>
+
+      <section class="section calculator-section" id="calculator">
+        <div class="section-head split">
+          <div>
+            <p class="eyebrow">Калькулятор доставки</p>
+            <h2>Прикиньте ориентир по стоимости до заявки</h2>
+          </div>
+          <p>
+            Расчет показывает предварительный диапазон по логистике из Китая в Россию. Финальная цена,
+            сроки, документы и формат оформления зависят от товара, веса, объема, города получения,
+            ограничений по ввозу и проверки груза.
+          </p>
+        </div>
+        <div class="calculator-layout">
+          <form class="calculator-form" data-calculator>
+            <div class="form-grid">
+              <label>
+                Вес, кг
+                <input type="number" name="weight" min="1" step="1" value="300" inputmode="decimal" />
+              </label>
+              <label>
+                Объем, м³
+                <input type="number" name="volume" min="0.1" step="0.1" value="2.4" inputmode="decimal" />
+              </label>
+            </div>
+            <label>
+              Способ доставки
+              <select name="mode">
+                <option value="auto">Авто, 10-30 дней</option>
+                <option value="rail">ЖД / контейнер, для объема</option>
+                <option value="air">Авиа, срочная партия</option>
+              </select>
+            </label>
+            <label>
+              Город получения
+              <select name="zone">
+                <option value="central">Москва / Санкт-Петербург</option>
+                <option value="regional">Регионы России</option>
+                <option value="remote">Удаленный регион</option>
+              </select>
+            </label>
+            <fieldset class="calculator-options">
+              <legend>Дополнительно</legend>
+              <label>
+                <input type="checkbox" name="inspect" checked />
+                Проверка и фотоотчет
+              </label>
+              <label>
+                <input type="checkbox" name="documents" />
+                Подготовка документов
+              </label>
+              <label>
+                <input type="checkbox" name="pickup" />
+                Забор у поставщика
+              </label>
+            </fieldset>
+          </form>
+
+          <aside class="calculator-result" aria-live="polite">
+            <span>Предварительный диапазон</span>
+            <strong data-calc-total>от 0 до 0 ₽</strong>
+            <dl>
+              <div>
+                <dt>Расчетный вес</dt>
+                <dd data-calc-chargeable>0 кг</dd>
+              </div>
+              <div>
+                <dt>Ориентир по сроку</dt>
+                <dd data-calc-term>10-30 дней</dd>
+              </div>
+              <div>
+                <dt>Что включено</dt>
+                <dd data-calc-includes>логистика, проверка</dd>
+              </div>
+            </dl>
+            <p>
+              Не является публичной офертой. Точный расчет возможен после проверки товара,
+              упаковки, документов, маршрута и условий поставщика.
+            </p>
+            <a class="button primary" href="#contacts">Получить точный расчет</a>
+          </aside>
+        </div>
+      </section>
+
+      <section class="contact-section" id="contacts">
+        <div class="contact-copy">
+          <p class="eyebrow">Расчет поставки</p>
+          <h2>Обсудим груз, поставщика и маршрут</h2>
+          <p>
+            Опишите товар, объем, ссылку на поставщика или фабрику, город
+            получения и желаемые сроки. Менеджер RWSCargo / РВС Карго предложит формат
+            доставки и список данных для точного расчета.
+          </p>
+          <p class="cta-microcopy">
+            Ответим, какие данные нужны для точного расчета. Без автоматической
+            рассылки и без передачи заявки третьим лицам для рекламы.
+          </p>
+          <div class="contact-details">
+            <a href="tel:+79216556560">+7 (921) 655-65-60</a>
+            <a href="mailto:info@rwscargo.ru">info@rwscargo.ru</a>
+            <span>Менеджеры: 10:00-20:00 ПН-ПТ, 10:00-18:00 СБ-ВС</span>
+          </div>
+          <div class="legal-note">
+            <strong>Юридически аккуратно</strong>
+            <span>
+              Информация на сайте носит справочный характер. Итоговая стоимость,
+              сроки, маршрут, документы и формат оформления определяются после
+              проверки груза и не являются публичной офертой.
+            </span>
+          </div>
+        </div>
+        <form class="lead-form" data-lead-form>
           <label>
             Имя
-            <input type="text" name="name" autocomplete="name" />
+            <input name="name" autocomplete="name" required />
           </label>
           <label>
             Телефон или мессенджер
-            <input type="text" name="contact" autocomplete="tel" />
+            <input name="contact" autocomplete="tel" required />
           </label>
           <label>
             Что нужно привезти
-            <textarea name="cargo" rows="4"></textarea>
+            <textarea name="cargo" rows="4" required></textarea>
+          </label>
+          <fieldset class="brief-options">
+            <legend>Что уже понятно по задаче?</legend>
+            <div>
+              {
+                briefOptions.map((option) => (
+                  <label>
+                    <input type="checkbox" name="brief" value={option} />
+                    <span>{option}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+          <div class="form-grid">
+            <label>
+              Вес / объем
+              <input name="volume" />
+            </label>
+            <label>
+              Город получения
+              <input name="city" />
+            </label>
+          </div>
+          <label class="consent-check">
+            <input type="checkbox" name="personalDataConsent" required />
+            <span>
+              Даю отдельное согласие на обработку персональных данных согласно
+              <a href="/personal-data-consent/">Согласию</a> и подтверждаю, что
+              ознакомился с <a href="/privacy/">Политикой обработки персональных данных</a>.
+            </span>
           </label>
           <button type="submit">Отправить заявку</button>
+          <p class="form-disclaimer">
+            Отправка формы нужна только для обратной связи и предварительного
+            расчета. Договор, условия перевозки и документы согласуются отдельно.
+          </p>
         </form>
       </section>
     </main>
+
+    <div class="mobile-sticky-cta" aria-label="Быстрые действия">
+      <a href="#calculator">Рассчитать</a>
+      <a href="tel:+79216556560">Позвонить</a>
+    </div>
+
+    <button class="back-to-top" type="button" aria-label="Вернуться наверх" data-back-to-top>
+      ↑
+    </button>
+
+    <footer class="site-footer">
+      <a class="brand" href="/" aria-label="RWSCargo / РВС Карго">
+        <strong><span>RWS</span>Cargo</strong>
+        <small>РВС Карго</small>
+      </a>
+      <p>RWSCargo / РВС Карго: надежные логистические решения для вашего бизнеса с Китаем.</p>
+      <nav aria-label="Навигация в подвале">
+        <a href="#services">Услуги</a>
+        <a href="#delivery">Доставка</a>
+        <a href="#process">Как работаем</a>
+        <a href="#contacts">Контакты</a>
+        <a href="/privacy/">Политика ПДн</a>
+        <a href="/personal-data-consent/">Согласие ПДн</a>
+      </nav>
+      <span>© 2026 RWSCargo / РВС Карго. Не является публичной офертой.</span>
+    </footer>
+    <script is:inline>
+      const leadForm = document.querySelector("[data-lead-form]");
+      const calculator = document.querySelector("[data-calculator]");
+      const backToTop = document.querySelector("[data-back-to-top]");
+      const revealItems = document.querySelectorAll(
+        "main > section:not(.hero):not(.metric-strip), .service-card, .delivery-card, .fit-card, .enterprise-card, .route-lane, .scenario-card, .promise-list article, .faq-group, .calculator-form, .calculator-result, .lead-form",
+      );
+
+      revealItems.forEach((item) => item.classList.add("reveal-item"));
+
+      if ("IntersectionObserver" in window) {
+        const revealObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("is-visible");
+                revealObserver.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.12, rootMargin: "0px 0px -8% 0px" },
+        );
+
+        revealItems.forEach((item) => revealObserver.observe(item));
+      } else {
+        revealItems.forEach((item) => item.classList.add("is-visible"));
+      }
+
+      const updateBackToTop = () => {
+        backToTop?.classList.toggle("is-visible", window.scrollY > 720);
+      };
+
+      updateBackToTop();
+      window.addEventListener("scroll", updateBackToTop, { passive: true });
+
+      backToTop?.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      const formatRub = (value) =>
+        new Intl.NumberFormat("ru-RU", {
+          style: "currency",
+          currency: "RUB",
+          maximumFractionDigits: 0,
+        }).format(value);
+
+      const calculatorConfig = {
+        auto: { rate: 290, min: 28000, term: "10-30 дней" },
+        rail: { rate: 220, min: 45000, term: "18-45 дней" },
+        air: { rate: 920, min: 38000, term: "5-12 дней" },
+      };
+
+      const zoneMultiplier = {
+        central: 1,
+        regional: 1.16,
+        remote: 1.32,
+      };
+
+      const optionPrices = {
+        inspect: 7000,
+        documents: 15000,
+        pickup: 9000,
+      };
+
+      const updateCalculator = () => {
+        if (!calculator) return;
+
+        const formData = new FormData(calculator);
+        const weight = Math.max(Number(formData.get("weight")) || 0, 1);
+        const volume = Math.max(Number(formData.get("volume")) || 0, 0.1);
+        const mode = String(formData.get("mode") || "auto");
+        const zone = String(formData.get("zone") || "central");
+        const config = calculatorConfig[mode] || calculatorConfig.auto;
+        const chargeableWeight = Math.ceil(Math.max(weight, volume * 167));
+        const services = Object.keys(optionPrices).filter((key) => formData.has(key));
+        const servicesTotal = services.reduce((sum, key) => sum + optionPrices[key], 0);
+        const base = Math.max(chargeableWeight * config.rate, config.min);
+        const total = (base + servicesTotal) * (zoneMultiplier[zone] || 1);
+        const low = Math.round((total * 0.86) / 1000) * 1000;
+        const high = Math.round((total * 1.18) / 1000) * 1000;
+        const included = ["логистика", ...services.map((key) => {
+          if (key === "inspect") return "проверка";
+          if (key === "documents") return "документы";
+          return "забор";
+        })].join(", ");
+
+        document.querySelector("[data-calc-total]").textContent =
+          `от ${formatRub(low)} до ${formatRub(high)}`;
+        document.querySelector("[data-calc-chargeable]").textContent = `${chargeableWeight} кг`;
+        document.querySelector("[data-calc-term]").textContent = config.term;
+        document.querySelector("[data-calc-includes]").textContent = included;
+      };
+
+      calculator?.addEventListener("input", updateCalculator);
+      calculator?.addEventListener("change", updateCalculator);
+      updateCalculator();
+
+      leadForm?.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        if (!leadForm.checkValidity()) {
+          leadForm.reportValidity();
+          return;
+        }
+
+        leadForm.classList.add("is-success");
+        const button = leadForm.querySelector("button");
+        if (button) {
+          button.textContent = "Заявка подготовлена";
+          button.setAttribute("disabled", "true");
+        }
+      });
+    </script>
   </body>
 </html>
