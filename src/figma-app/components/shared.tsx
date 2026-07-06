@@ -7,10 +7,12 @@ export const PAGE = "#EEEBE4";
 export const CARD = "#FFFFFF";
 export const NAVY = "#0E1A2E";
 export const LINE = "#E2DED3";
+export const PHONE_HREF = "tel:+79216556560";
+export const MESSENGER_HREF = "https://wa.me/79216556560";
 
 export function Logo({ onDark = false, size = 22 }: { onDark?: boolean; size?: number }) {
   return (
-    <div className="flex items-center gap-2 leading-none">
+    <a href="/" className="flex items-center gap-2 leading-none" aria-label="RWSCargo">
       <div
         className="w-8 h-8 rounded-lg flex items-center justify-center"
         style={{ background: BRAND }}
@@ -33,7 +35,7 @@ export function Logo({ onDark = false, size = 22 }: { onDark?: boolean; size?: n
           РВС КАРГО
         </div>
       </div>
-    </div>
+    </a>
   );
 }
 
@@ -122,11 +124,21 @@ export function PillBtn({
   variant = "primary",
   size = "md",
   onDark = false,
+  href,
+  target,
+  rel,
+  type = "button",
+  onClick,
 }: {
   children: React.ReactNode;
   variant?: "primary" | "ink" | "ghost" | "light";
   size?: "sm" | "md" | "lg";
   onDark?: boolean;
+  href?: string;
+  target?: string;
+  rel?: string;
+  type?: "button" | "submit";
+  onClick?: React.MouseEventHandler<HTMLElement>;
 }) {
   const pad = size === "lg" ? "px-7 py-4" : size === "sm" ? "px-4 py-2.5" : "px-5 py-3.5";
   const fs = size === "lg" ? 15 : size === "sm" ? 13 : 14;
@@ -140,13 +152,38 @@ export function PillBtn({
       border: `1px solid ${onDark ? "rgba(255,255,255,0.18)" : "rgba(10,18,32,0.1)"}`,
     },
   };
-  return (
-    <button
-      className={`inline-flex items-center gap-2 rounded-full transition-transform hover:-translate-y-0.5 ${pad}`}
-      style={{ ...styles[variant], fontSize: fs }}
-    >
+  const className = `inline-flex items-center gap-2 rounded-full transition-transform hover:-translate-y-0.5 ${pad}`;
+  const style = { ...styles[variant], fontSize: fs };
+  const content = (
+    <>
       {children}
       <ArrowUpRight size={size === "lg" ? 18 : 16} />
+    </>
+  );
+
+  if (href) {
+    return (
+      <a
+        href={href}
+        target={target}
+        rel={rel}
+        onClick={onClick as React.MouseEventHandler<HTMLAnchorElement>}
+        className={className}
+        style={style}
+      >
+        {content}
+      </a>
+    );
+  }
+
+  return (
+    <button
+      type={type}
+      onClick={onClick as React.MouseEventHandler<HTMLButtonElement>}
+      className={className}
+      style={style}
+    >
+      {content}
     </button>
   );
 }

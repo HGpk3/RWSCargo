@@ -4,30 +4,35 @@ import { Container, SectionHead, PillBtn, BRAND, INK, LINE, NAVY } from "./share
 
 const services = [
   {
+    id: "service-sourcing",
     n: "02",
     title: "Поиск поставщика или фабрики",
     desc: "Подбираем производителей под товар, запрашиваем реальные фото и видео, проверяем образцы и согласуем условия закупки.",
     bullets: ["фабрики и альтернативные поставщики", "цены, MOQ и сроки производства", "брендирование и упаковка"],
   },
   {
+    id: "service-purchase",
     n: "03",
     title: "Выкуп товаров из Китая",
     desc: "Вы присылаете ссылку или контакт поставщика, мы проверяем условия, выкупаем товар, принимаем его на склад и готовим к отправке.",
     bullets: ["1688, Alibaba и прямые фабрики", "оплата поставщику", "приёмка и консолидация"],
   },
   {
+    id: "service-quality",
     n: "04",
     title: "Контроль качества и образцов",
     desc: "Проверяем количество, комплектацию, упаковку и качество партии до того, как груз уйдёт из Китая.",
     bullets: ["фото- и видеоотчёт", "тестирование по ТЗ", "рекомендация до закупки"],
   },
   {
+    id: "service-customs",
     n: "05",
     title: "Официальное оформление",
     desc: "Для коммерческих партий заранее обсуждаем документы, формат ввоза, инвойсы, контрактную часть и закрывающие документы.",
     bullets: ["документы до отправки", "понятная ответственность", "поставка для бухгалтерии"],
   },
   {
+    id: "service-negotiation",
     n: "06",
     title: "Переговоры с поставщиком",
     desc: "Организуем онлайн-переговоры с китайским поставщиком, переводчиком и фиксацией договорённостей по цене, срокам и доработкам.",
@@ -35,15 +40,17 @@ const services = [
   },
 ];
 
-function ServiceCard({ n, title, desc, bullets }: (typeof services)[0]) {
+function ServiceCard({ id, n, title, desc, bullets }: (typeof services)[0]) {
   return (
-    <div
-      className="rounded-2xl p-7 bg-white flex flex-col"
+    <a
+      id={id}
+      href="#contacts"
+      className="rounded-2xl p-7 bg-white flex flex-col group transition-all hover:-translate-y-1 hover:shadow-lg scroll-mt-24 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
       style={{ border: `1px solid ${LINE}` }}
     >
       <div className="flex items-start justify-between mb-8">
         <div style={{ color: BRAND, fontSize: 12, letterSpacing: "0.14em" }}>{n}</div>
-        <ArrowUpRight size={18} className="opacity-30" />
+        <ArrowUpRight size={18} className="opacity-30 transition-opacity group-hover:opacity-100" />
       </div>
       <div style={{ fontSize: 20, fontWeight: 500, letterSpacing: "-0.01em", color: INK, lineHeight: 1.2 }}>
         {title}
@@ -59,25 +66,29 @@ function ServiceCard({ n, title, desc, bullets }: (typeof services)[0]) {
           </li>
         ))}
       </ul>
-    </div>
+      <div className="mt-6 inline-flex items-center gap-1" style={{ color: BRAND, fontSize: 13, fontWeight: 500 }}>
+        Обсудить услугу <ArrowUpRight size={13} />
+      </div>
+    </a>
   );
 }
 
 export function Services() {
   return (
-    <section className="py-14 md:py-24">
+    <section id="services" className="py-14 md:py-24">
       <Container>
         <SectionHead
           label="УСЛУГИ RWSCARGO"
           title={<>Все этапы импорта из Китая<br />в одном процессе</>}
           text="Можно подключить только доставку или собрать поставку под ключ: от поиска фабрики и выкупа товара до оформления документов и передачи партии в России."
-          action={<PillBtn variant="light">Все услуги</PillBtn>}
+          action={<PillBtn variant="light" href="#services-list">Все услуги</PillBtn>}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div id="services-list" className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Big dark hero service */}
           <div
-            className="relative overflow-hidden rounded-2xl md:col-span-2 md:row-span-2 p-8 md:p-10 min-h-[540px] flex flex-col justify-between"
+            id="service-delivery"
+            className="relative overflow-hidden rounded-2xl md:col-span-2 md:row-span-2 p-8 md:p-10 min-h-[540px] flex flex-col justify-between scroll-mt-24"
             style={{ background: NAVY }}
           >
             <ImageWithFallback
@@ -126,7 +137,7 @@ export function Services() {
                 ))}
               </div>
               <div className="mt-8">
-                <PillBtn variant="primary">Рассчитать поставку</PillBtn>
+                <PillBtn variant="primary" href="#calculator">Рассчитать поставку</PillBtn>
               </div>
             </div>
           </div>

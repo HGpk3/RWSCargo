@@ -5,3 +5,7 @@ node_modules
 .npm-cache
 npm-debug.log
 *.local
+*.pdf
+*.zip
+qa-*.png
+RWSCargo-site-preview-*.png

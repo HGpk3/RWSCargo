@@ -2,14 +2,32 @@ import { useState } from "react";
 import type React from "react";
 import { Phone, ArrowRight, MapPin, Calendar, Search, Menu, Star, TrendingUp } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
-import { Logo, PillBtn, BRAND, INK, Container } from "./shared";
+import { Logo, PillBtn, BRAND, INK, Container, PHONE_HREF } from "./shared";
+import { LanguageSwitcher } from "../i18n";
 
 const HERO_IMG = "/images/hero-logistics-import.png";
+const navItems = [
+  ["Услуги", "#services"],
+  ["Доставка", "#delivery"],
+  ["Калькулятор", "#calculator"],
+  ["Процесс", "#process"],
+  ["FAQ", "#faq"],
+  ["Контакты", "#contacts"],
+] as const;
 
-function NavLink({ children }: { children: React.ReactNode }) {
+function NavLink({
+  children,
+  href,
+  onClick,
+}: {
+  children: React.ReactNode;
+  href: string;
+  onClick?: () => void;
+}) {
   return (
     <a
-      href="#"
+      href={href}
+      onClick={onClick}
       className="text-[color:var(--ink)] hover:opacity-60 transition-opacity"
       style={{ fontSize: 14, color: INK }}
     >
@@ -19,29 +37,68 @@ function NavLink({ children }: { children: React.ReactNode }) {
 }
 
 export function Header() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <header className="sticky top-0 z-50 backdrop-blur-xl" style={{ background: "rgba(238,235,228,0.75)" }}>
       <Container className="py-4 flex items-center justify-between">
         <Logo />
         <nav className="hidden lg:flex items-center gap-8">
-          <NavLink>Услуги</NavLink>
-          <NavLink>Доставка</NavLink>
-          <NavLink>Калькулятор</NavLink>
-          <NavLink>Процесс</NavLink>
-          <NavLink>FAQ</NavLink>
-          <NavLink>Контакты</NavLink>
+          {navItems.map(([label, href]) => (
+            <NavLink key={href} href={href}>{label}</NavLink>
+          ))}
         </nav>
         <div className="flex items-center gap-4">
-          <a href="tel:+79216556560" className="hidden md:flex items-center gap-2" style={{ color: INK, fontSize: 14 }}>
+          <a href={PHONE_HREF} className="hidden md:flex items-center gap-2" style={{ color: INK, fontSize: 14 }}>
             <Phone size={14} />
             +7 (921) 655-65-60
           </a>
-          <PillBtn size="sm" variant="ink">Рассчитать</PillBtn>
-          <button className="lg:hidden p-2 rounded-lg" style={{ background: "rgba(10,18,32,0.05)" }}>
+          <PillBtn size="sm" variant="ink" href="#calculator">Рассчитать</PillBtn>
+          <button
+            type="button"
+            onClick={() => setMenuOpen((open) => !open)}
+            className="lg:hidden p-2 rounded-lg"
+            style={{ background: "rgba(10,18,32,0.05)" }}
+            aria-expanded={menuOpen}
+            aria-label="Открыть меню"
+          >
             <Menu size={18} color={INK} />
           </button>
         </div>
       </Container>
+      <div
+        className="lg:hidden border-t overflow-hidden transition-[max-height,opacity] duration-[250ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
+        style={{
+          maxHeight: menuOpen ? 360 : 0,
+          opacity: menuOpen ? 1 : 0,
+          pointerEvents: menuOpen ? "auto" : "none",
+          borderColor: menuOpen ? "rgba(10,18,32,0.08)" : "transparent",
+          background: "rgba(238,235,228,0.96)",
+        }}
+      >
+        <div>
+          <div
+            className="transition-[transform,opacity] duration-[250ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
+            style={{
+              opacity: menuOpen ? 1 : 0,
+              transform: menuOpen ? "translateY(0)" : "translateY(-4px)",
+            }}
+          >
+            <Container className="py-4 grid gap-3">
+              {navItems.map(([label, href]) => (
+                <NavLink key={href} href={href} onClick={() => setMenuOpen(false)}>{label}</NavLink>
+              ))}
+              <a href={PHONE_HREF} className="inline-flex items-center gap-2 pt-2" style={{ color: INK, fontSize: 14 }}>
+                <Phone size={14} />
+                +7 (921) 655-65-60
+              </a>
+              <div className="pt-2">
+                <LanguageSwitcher />
+              </div>
+            </Container>
+          </div>
+        </div>
+      </div>
     </header>
   );
 }
@@ -93,12 +150,13 @@ function TrackingWidget() {
             <Calendar size={14} className="text-white/50" />
             <span className="text-white/80">06 июля</span>
           </div>
-          <button
+          <a
+            href={tab === "quote" ? "#calculator" : "#contacts"}
             className="flex items-center justify-center gap-2 rounded-xl py-2.5 text-white"
             style={{ background: BRAND, fontSize: 13 }}
           >
             Поиск <Search size={14} />
-          </button>
+          </a>
         </div>
       </div>
     </div>
@@ -107,7 +165,7 @@ function TrackingWidget() {
 
 export function Hero() {
   return (
-    <section className="pt-4 pb-6">
+    <section id="hero" className="pt-4 pb-6">
       <Container>
         <div className="relative overflow-hidden rounded-[28px] md:rounded-[36px] min-h-[860px] md:min-h-[820px]">
           <ImageWithFallback
@@ -124,12 +182,8 @@ export function Hero() {
               <span className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: BRAND }} />
               ИМПОРТ ИЗ КИТАЯ ДЛЯ БИЗНЕСА · С 2018 ГОДА
             </div>
-            <div className="hidden md:flex items-center gap-6 text-white/70" style={{ fontSize: 12 }}>
-              <span>RU</span>
-              <span className="text-white/30">/</span>
-              <span>EN</span>
-              <span className="text-white/30">/</span>
-              <span>中文</span>
+            <div className="hidden md:block">
+              <LanguageSwitcher onDark />
             </div>
           </div>
 
@@ -161,8 +215,8 @@ export function Hero() {
                   Сначала собираем понятную схему поставки — потом везём груз.
                 </p>
                 <div className="mt-6 flex flex-wrap items-center gap-3">
-                  <PillBtn size="lg" variant="primary">Получить расчёт</PillBtn>
-                  <PillBtn size="lg" variant="ghost" onDark>Посмотреть процесс</PillBtn>
+                  <PillBtn size="lg" variant="primary" href="#calculator">Получить расчёт</PillBtn>
+                  <PillBtn size="lg" variant="ghost" onDark href="#process">Посмотреть процесс</PillBtn>
                 </div>
               </div>
               <div className="lg:col-span-3 hidden lg:flex justify-center">
@@ -211,7 +265,7 @@ export function Hero() {
           <div className="flex items-center gap-6 text-white/70" style={{ fontSize: 13 }}>
             <span className="flex items-center gap-2"><Calendar size={13} /> 10—30 дней</span>
             <span className="hidden md:flex items-center gap-2"><TrendingUp size={13} /> авто · авиа · ЖД</span>
-            <a href="#" className="flex items-center gap-1" style={{ color: BRAND }}>
+            <a href="#contacts" className="flex items-center gap-1" style={{ color: BRAND }}>
               трек-поставки <ArrowRight size={13} />
             </a>
           </div>

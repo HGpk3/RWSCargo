@@ -1,4 +1,5 @@
-import { ArrowRight, MapPin } from "lucide-react";
+import { useState } from "react";
+import { ArrowRight, ChevronDown, MapPin } from "lucide-react";
 import { Container, SectionHead, EyebrowLabel, Display, BodyText, BRAND, INK, LINE, NAVY } from "./shared";
 
 const routes = [
@@ -9,7 +10,7 @@ const routes = [
 
 export function Routes() {
   return (
-    <section className="py-14 md:py-24">
+    <section id="routes" className="py-14 md:py-24">
       <Container>
         <SectionHead
           label="КИТАЙ → РОССИЯ"
@@ -57,7 +58,7 @@ const docs = ["инвойс", "упаковочный лист", "контрак
 
 export function Documents() {
   return (
-    <section className="py-14 md:py-24" style={{ background: "#E4E0D3" }}>
+    <section id="documents" className="py-14 md:py-24" style={{ background: "#E4E0D3" }}>
       <Container>
         <SectionHead
           label="ДОКУМЕНТЫ ДО ОТПРАВКИ"
@@ -95,7 +96,7 @@ const tags = [
 
 export function CargoTypes() {
   return (
-    <section className="py-14 md:py-24">
+    <section id="cargo-types" className="py-14 md:py-24">
       <Container>
         <SectionHead
           label="ГРУЗЫ И ТОВАРЫ"
@@ -131,7 +132,7 @@ const steps = [
 
 export function Process() {
   return (
-    <section className="py-6">
+    <section id="process" className="py-6">
       <Container>
         <div
           className="rounded-[28px] p-8 md:p-14"
@@ -172,27 +173,39 @@ const scenarios = [
     title: "Партия для маркетплейса",
     route: "Иу / Гуанчжоу → склад РФ",
     steps: ["поставщик найден", "выкуп и приёмка", "проверка упаковки", "авто или сборный груз", "передача в РФ"],
+    details: {
+      summary: "Поставщики и ссылки уже собраны: проверяем условия, выкупаем товар и заранее выбираем склад/маршрут.",
+      check: ["маркировка и упаковка под маркетплейс", "количество мест, вес и объём", "фотоотчёт до отправки"],
+      result: "Партия приходит в РФ с понятным сроком, документами и точкой передачи.",
+    },
   },
   {
     title: "Оборудование или комплектующие",
     route: "фабрика → контейнер / ЖД",
     steps: ["сверяем документы", "фиксируем габариты", "выбираем маршрут", "готовим оформление", "контролируем передачу"],
+    details: {
+      summary: "Для тяжёлых и габаритных грузов сначала фиксируем технические параметры, затем выбираем маршрут и формат оформления.",
+      check: ["инвойс, упаковочный лист и код ТН ВЭД", "габариты, вес и требования к погрузке", "страхование и ответственные точки передачи"],
+      result: "Груз уходит по согласованной схеме без пересчёта на последнем этапе.",
+    },
   },
 ];
 
 export function Scenarios() {
+  const [open, setOpen] = useState<number | null>(null);
+
   return (
-    <section className="py-14 md:py-24">
+    <section id="operation-scenarios" className="py-14 md:py-24">
       <Container>
         <SectionHead
           label="ОПЕРАЦИОННЫЕ СЦЕНАРИИ"
           title={<>Два типовых маршрута<br />вместо абстрактного процесса</>}
         />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
           {scenarios.map((s, i) => (
             <div
               key={s.title}
-              className="rounded-2xl p-8 bg-white"
+              className="rounded-2xl p-8 bg-white min-h-[820px]"
               style={{ border: `1px solid ${LINE}` }}
             >
               <div style={{ color: BRAND, fontSize: 12, letterSpacing: "0.14em" }}>
@@ -219,6 +232,61 @@ export function Scenarios() {
                   </div>
                 ))}
               </div>
+              <div
+                className="overflow-hidden transition-[max-height,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                style={{
+                  maxHeight: open === i ? 560 : 0,
+                  opacity: open === i ? 1 : 0,
+                }}
+              >
+                <div
+                  className="mt-6 rounded-2xl p-5 transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                  style={{
+                    background: "#F5F2EB",
+                    border: `1px solid ${LINE}`,
+                    opacity: open === i ? 1 : 0,
+                    transform: open === i ? "translateY(0)" : "translateY(-4px)",
+                  }}
+                >
+                  <div style={{ color: "rgba(10,18,32,0.6)", fontSize: 14, lineHeight: 1.6 }}>
+                    {s.details.summary}
+                  </div>
+                  <div className="mt-5 grid gap-2">
+                    <div style={{ color: BRAND, fontSize: 11, letterSpacing: "0.14em" }}>ЧТО УТОЧНЯЕМ</div>
+                    {s.details.check.map((item) => (
+                      <div key={item} className="flex items-start gap-3" style={{ color: INK, fontSize: 13.5, lineHeight: 1.45 }}>
+                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: BRAND }} />
+                        {item}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-5 pt-4" style={{ borderTop: `1px solid ${LINE}` }}>
+                    <div style={{ color: BRAND, fontSize: 11, letterSpacing: "0.14em" }}>РЕЗУЛЬТАТ</div>
+                    <div className="mt-2" style={{ color: INK, fontSize: 14, lineHeight: 1.55 }}>
+                      {s.details.result}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setOpen(open === i ? null : i)}
+                className="mt-6 inline-flex items-center gap-2 rounded-full px-4 py-2.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+                style={{
+                  background: open === i ? INK : "rgba(10,18,32,0.04)",
+                  color: open === i ? "#FFFFFF" : INK,
+                  border: `1px solid ${open === i ? INK : LINE}`,
+                  fontSize: 13,
+                  fontWeight: 500,
+                }}
+              >
+                {open === i ? "Скрыть детали" : "Подробнее"}
+                <ChevronDown
+                  size={15}
+                  className="transition-transform"
+                  style={{ transform: open === i ? "rotate(180deg)" : "rotate(0deg)" }}
+                />
+              </button>
             </div>
           ))}
         </div>
@@ -236,7 +304,7 @@ const limits = [
 
 export function Limits() {
   return (
-    <section className="py-14 md:py-24">
+    <section id="limits" className="py-14 md:py-24">
       <Container>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           <div className="lg:col-span-5">
@@ -276,7 +344,7 @@ export function Limits() {
 
 export function SeoBlock() {
   return (
-    <section className="py-14 md:py-24">
+    <section id="seo" className="py-14 md:py-24">
       <Container>
         <SectionHead
           label="ДЛЯ SEO И ДЛЯ КЛИЕНТА"

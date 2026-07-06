@@ -3,9 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=24 <25",
+    "npm": ">=10"
+  },
   "scripts": {
     "dev": "node scripts/run-astro.mjs dev --host 0.0.0.0",
+    "check": "node scripts/run-astro.mjs check",
     "build": "node scripts/run-astro.mjs check && node scripts/run-astro.mjs build",
+    "ci": "npm run build",
     "preview": "node scripts/run-astro.mjs preview --host 0.0.0.0",
     "astro": "node scripts/run-astro.mjs"
   },

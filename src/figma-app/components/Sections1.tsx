@@ -4,7 +4,7 @@ import { Container, SectionHead, BRAND, INK, LINE, PillBtn, EyebrowLabel, Displa
 export function Partners() {
   const brands = ["OZON", "WILDBERRIES", "1688", "ALIBABA", "SBERBANK", "CDEK"];
   return (
-    <section className="py-10 md:py-14">
+    <section className="py-10 md:py-14" aria-label="Партнёры">
       <Container>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div style={{ color: "rgba(10,18,32,0.5)", fontSize: 12, letterSpacing: "0.16em" }}>
@@ -39,7 +39,7 @@ export function Metrics() {
     { n: "РФ", l: "доставка по всей России" },
   ];
   return (
-    <section className="pb-10">
+    <section className="pb-10" aria-label="Показатели">
       <Container>
         <div
           className="rounded-3xl grid grid-cols-2 md:grid-cols-4 overflow-hidden"
@@ -68,10 +68,11 @@ export function Metrics() {
   );
 }
 
-function TaskCard({ n, title, desc }: { n: string; title: string; desc: string }) {
+function TaskCard({ n, title, desc, href }: { n: string; title: string; desc: string; href: string }) {
   return (
-    <div
-      className="rounded-2xl p-7 bg-white flex flex-col group cursor-pointer transition-all hover:shadow-lg"
+    <a
+      href={href}
+      className="rounded-2xl p-7 bg-white flex flex-col group cursor-pointer transition-all hover:-translate-y-1 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
       style={{ border: `1px solid ${LINE}` }}
     >
       <div className="flex items-start justify-between">
@@ -89,13 +90,13 @@ function TaskCard({ n, title, desc }: { n: string; title: string; desc: string }
       <div className="mt-3" style={{ color: "rgba(10,18,32,0.55)", fontSize: 13.5, lineHeight: 1.55 }}>
         {desc}
       </div>
-    </div>
+    </a>
   );
 }
 
 export function Tasks() {
   return (
-    <section className="py-14 md:py-24">
+    <section id="scenarios" className="py-14 md:py-24">
       <Container>
         <SectionHead
           label="С ЧЕГО НАЧАТЬ"
@@ -106,13 +107,13 @@ export function Tasks() {
             </>
           }
           text="Мы говорим на языке результата. Расскажите, что нужно бизнесу — а остальное соберём в понятную поставку."
-          action={<PillBtn variant="light">Все сценарии</PillBtn>}
+          action={<PillBtn variant="light" href="#formats">Все сценарии</PillBtn>}
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <TaskCard n="01" title="Найти поставщика" desc="Нужна фабрика, цена, образцы или проверка производителя до закупки." />
-          <TaskCard n="02" title="Выкупить товар" desc="Есть ссылка или контакт в Китае, нужно безопасно оплатить и принять товар." />
-          <TaskCard n="03" title="Доставить партию" desc="Груз уже готов, нужен маршрут, склад, консолидация и понятный срок." />
-          <TaskCard n="04" title="Оформить импорт" desc="Нужны документы, ответственность и схема, которую можно показать бухгалтерии." />
+          <TaskCard n="01" href="#service-sourcing" title="Найти поставщика" desc="Нужна фабрика, цена, образцы или проверка производителя до закупки." />
+          <TaskCard n="02" href="#service-purchase" title="Выкупить товар" desc="Есть ссылка или контакт в Китае, нужно безопасно оплатить и принять товар." />
+          <TaskCard n="03" href="#service-delivery" title="Доставить партию" desc="Груз уже готов, нужен маршрут, склад, консолидация и понятный срок." />
+          <TaskCard n="04" href="#service-customs" title="Оформить импорт" desc="Нужны документы, ответственность и схема, которую можно показать бухгалтерии." />
         </div>
       </Container>
     </section>
@@ -121,7 +122,7 @@ export function Tasks() {
 
 export function Approach() {
   return (
-    <section className="py-14 md:py-24">
+    <section className="py-14 md:py-24" aria-label="Подход">
       <Container>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           <div className="lg:col-span-6">
@@ -142,13 +143,14 @@ export function Approach() {
             </BodyText>
             <div className="mt-8 space-y-3">
               {[
-                ["Понятная схема до оплаты", "видите план поставки заранее"],
-                ["Ответственная передача", "менеджер сопровождает до склада в РФ"],
-                ["Документы до отправки", "инвойс, упаковочный, контракт"],
-              ].map(([t, d]) => (
-                <div
+                { t: "Понятная схема до оплаты", d: "видите план поставки заранее", href: "#process" },
+                { t: "Ответственная передача", d: "менеджер сопровождает до склада в РФ", href: "#delivery" },
+                { t: "Документы до отправки", d: "инвойс, упаковочный, контракт", href: "#documents" },
+              ].map(({ t, d, href }) => (
+                <a
                   key={t}
-                  className="flex items-start justify-between gap-6 py-4"
+                  href={href}
+                  className="flex items-start justify-between gap-6 py-4 px-3 -mx-3 rounded-2xl transition-colors hover:bg-white/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
                   style={{ borderTop: `1px solid ${LINE}` }}
                 >
                   <div>
@@ -156,7 +158,7 @@ export function Approach() {
                     <div className="mt-1" style={{ color: "rgba(10,18,32,0.55)", fontSize: 13 }}>{d}</div>
                   </div>
                   <ArrowRight size={18} className="mt-1" style={{ color: BRAND }} />
-                </div>
+                </a>
               ))}
             </div>
           </div>

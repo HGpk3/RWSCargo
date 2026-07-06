@@ -1,5 +1,4 @@
 import { Check, ArrowUpRight, Truck, Plane, Train, Package, ArrowRight } from "lucide-react";
-import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Container, SectionHead, PillBtn, EyebrowLabel, Display, BodyText, BRAND, INK, LINE, NAVY } from "./shared";
 
 export function WhiteImport() {
@@ -10,7 +9,7 @@ export function WhiteImport() {
     "поставка в белую",
   ];
   return (
-    <section className="py-14 md:py-24">
+    <section id="white-import" className="py-14 md:py-24">
       <Container>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           <div className="lg:col-span-5">
@@ -71,7 +70,7 @@ const fixItems = [
 
 export function FixBefore() {
   return (
-    <section className="py-14 md:py-24" style={{ background: "#E4E0D3" }}>
+    <section id="fix-before" className="py-14 md:py-24" style={{ background: "#E4E0D3" }}>
       <Container>
         <SectionHead
           label="ЧТО ФИКСИРУЕМ ДО ОТПРАВКИ"
@@ -105,60 +104,94 @@ const methods = [
     title: "Автодоставка",
     tag: "10—30 дней",
     desc: "Универсальный маршрут для регулярных партий, маркетплейсов, электроники, текстиля и товаров для дома.",
-    img: "/images/cargo-bridge-realistic.png",
+    calcMethod: "Авто",
+    route: "склад → РФ",
+    cargo: "регулярные партии",
+    action: "Рассчитать авто",
   },
   {
     icon: <Plane size={22} />,
     title: "Авиадоставка",
     tag: "быстрее всего",
     desc: "Для образцов, срочных партий и ситуаций, когда остатки на складе нужно пополнить быстро.",
-    img: "/images/hero-logistics-import.png",
+    calcMethod: "Авиа",
+    route: "аэропорт → склад",
+    cargo: "срочные поставки",
+    action: "Рассчитать авиа",
   },
   {
     icon: <Train size={22} />,
     title: "ЖД доставка",
     tag: "стабильно для объёма",
     desc: "Рациональный вариант для крупных партий, оборудования и грузов, где важен баланс сроков и стоимости.",
-    img: "/images/cargo-bridge-realistic.png",
+    calcMethod: "ЖД",
+    route: "терминал → город",
+    cargo: "объёмные грузы",
+    action: "Рассчитать ЖД",
   },
   {
     icon: <Package size={22} />,
     title: "Контейнер / сборный",
     tag: "под ключ",
     desc: "Для коммерческого импорта, крупногабаритных грузов и поставок с официальным оформлением.",
-    img: "/images/hero-logistics-import.png",
+    calcMethod: "Контейнер",
+    route: "фабрика → склад",
+    cargo: "сборные партии",
+    action: "Рассчитать контейнер",
   },
 ];
 
 export function DeliveryMethods() {
+  const selectMethod = (method: string) => {
+    window.dispatchEvent(new CustomEvent("rwscargo:set-delivery-method", { detail: { method } }));
+    document.querySelector("#calculator")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
-    <section className="py-14 md:py-24">
+    <section id="delivery" className="py-14 md:py-24">
       <Container>
         <SectionHead
           label="СПОСОБЫ ДОСТАВКИ"
           title={<>Подбираем маршрут<br />под экономику партии</>}
           text="Не каждый груз нужно везти самым быстрым способом. Мы сравниваем стоимость, сроки, риски и требования к документам, чтобы маршрут не съел маржинальность товара."
-          action={<PillBtn variant="light">Сравнить маршруты</PillBtn>}
+          action={<PillBtn variant="light" href="#routes">Сравнить маршруты</PillBtn>}
         />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {methods.map((m) => (
-            <div
+            <button
+              type="button"
               key={m.title}
-              className="rounded-2xl overflow-hidden bg-white flex flex-col group cursor-pointer transition-all hover:-translate-y-1"
+              onClick={() => selectMethod(m.calcMethod)}
+              className="text-left rounded-2xl overflow-hidden bg-white flex flex-col group cursor-pointer transition-all hover:-translate-y-1 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
               style={{ border: `1px solid ${LINE}` }}
             >
-              <div className="relative h-40 overflow-hidden">
-                <ImageWithFallback
-                  src={m.img}
-                  alt={m.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+              <div
+                className="relative h-40 overflow-hidden p-5 flex flex-col justify-between"
+                style={{
+                  background:
+                    "linear-gradient(135deg, rgba(14,26,46,0.95), rgba(14,26,46,0.78)), radial-gradient(circle at 78% 18%, rgba(240,68,31,0.38), transparent 34%)",
+                }}
+              >
                 <div
-                  className="absolute top-4 left-4 rounded-xl p-2.5 backdrop-blur-md"
-                  style={{ background: "rgba(255,255,255,0.9)", color: BRAND }}
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center"
+                  style={{ background: "rgba(255,255,255,0.1)", color: "#FFFFFF", border: "1px solid rgba(255,255,255,0.16)" }}
                 >
                   {m.icon}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full" style={{ background: BRAND }} />
+                  <span className="h-px flex-1 bg-white/20" />
+                  <ArrowRight size={16} className="text-white/65" />
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="rounded-xl px-3 py-2" style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)" }}>
+                    <div className="text-white/45" style={{ fontSize: 10, letterSpacing: "0.12em" }}>Маршрут</div>
+                    <div className="mt-1 text-white" style={{ fontSize: 12, fontWeight: 500 }}>{m.route}</div>
+                  </div>
+                  <div className="rounded-xl px-3 py-2" style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)" }}>
+                    <div className="text-white/45" style={{ fontSize: 10, letterSpacing: "0.12em" }}>Тип груза</div>
+                    <div className="mt-1 text-white" style={{ fontSize: 12, fontWeight: 500 }}>{m.cargo}</div>
+                  </div>
                 </div>
               </div>
               <div className="p-6 flex-1 flex flex-col">
@@ -171,11 +204,11 @@ export function DeliveryMethods() {
                 <div className="mt-3 flex-1" style={{ color: "rgba(10,18,32,0.55)", fontSize: 13, lineHeight: 1.55 }}>
                   {m.desc}
                 </div>
-                <div className="mt-4 flex items-center gap-1" style={{ color: INK, fontSize: 13 }}>
-                  Обсудить <ArrowUpRight size={13} />
+                <div className="mt-5 inline-flex items-center gap-1" style={{ color: BRAND, fontSize: 13, fontWeight: 500 }}>
+                  {m.action} <ArrowUpRight size={13} />
                 </div>
               </div>
-            </div>
+            </button>
           ))}
         </div>
       </Container>
@@ -192,7 +225,7 @@ const formats = [
 
 export function Formats() {
   return (
-    <section className="py-14 md:py-24">
+    <section id="formats" className="py-14 md:py-24">
       <Container>
         <SectionHead
           label="КАКОЙ ФОРМАТ ПОДХОДИТ"
@@ -227,7 +260,7 @@ export function Formats() {
                 <div className="mt-3" style={{ color: "rgba(10,18,32,0.55)", fontSize: 14, lineHeight: 1.55 }}>
                   {f.desc}
                 </div>
-                <a href="#" className="mt-5 inline-flex items-center gap-1" style={{ color: BRAND, fontSize: 13 }}>
+                <a href="#contacts" className="mt-5 inline-flex items-center gap-1" style={{ color: BRAND, fontSize: 13 }}>
                   Обсудить сценарий <ArrowUpRight size={13} />
                 </a>
               </div>
@@ -247,7 +280,7 @@ export function Enterprise() {
     "Единая точка управления",
   ];
   return (
-    <section className="py-6">
+    <section id="enterprise" className="py-6">
       <Container>
         <div
           className="relative overflow-hidden rounded-[28px] p-8 md:p-14"
@@ -275,7 +308,7 @@ export function Enterprise() {
                 </BodyText>
               </div>
               <div className="mt-8">
-                <PillBtn size="lg" variant="primary">Обсудить регулярные поставки</PillBtn>
+                <PillBtn size="lg" variant="primary" href="#contacts">Обсудить регулярные поставки</PillBtn>
               </div>
             </div>
             <div className="lg:col-span-5 self-center space-y-3">

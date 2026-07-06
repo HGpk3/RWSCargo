@@ -3,9 +3,7 @@ services:
     build:
       context: .
     ports:
-      - "4321:4321"
-    environment:
-      NODE_ENV: production
+      - "4321:80"
 
   postgres:
     image: postgres:17-alpine

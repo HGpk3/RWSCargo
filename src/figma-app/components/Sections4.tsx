@@ -1,7 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type React from "react";
 import { Plus, Minus, Phone, ArrowUpRight } from "lucide-react";
-import { Container, PillBtn, EyebrowLabel, Display, Logo, BRAND, INK, LINE, NAVY } from "./shared";
+import { Container, PillBtn, EyebrowLabel, Display, Logo, BRAND, INK, LINE, NAVY, PHONE_HREF, MESSENGER_HREF } from "./shared";
+import { translateValue, useLanguage } from "../i18n";
+
+const footerLinks = [
+  ["Услуги", "#services"],
+  ["Доставка", "#delivery"],
+  ["Калькулятор", "#calculator"],
+  ["Процесс", "#process"],
+  ["FAQ", "#faq"],
+  ["Контакты", "#contacts"],
+] as const;
 
 const faqs = [
   { q: "Какой срок доставки из Китая в Россию?", a: "Зависит от маршрута: авто 10—30 дней, авиа для срочных партий, ЖД и контейнер для объёмов. Точный срок рассчитаем после веса, объёма и города получения." },
@@ -15,7 +25,7 @@ const faqs = [
 export function Faq() {
   const [open, setOpen] = useState(0);
   return (
-    <section className="py-14 md:py-24" style={{ background: "#E4E0D3" }}>
+    <section id="faq" className="py-14 md:py-24" style={{ background: "#E4E0D3" }}>
       <Container>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           <div className="lg:col-span-4">
@@ -30,13 +40,13 @@ export function Faq() {
               <div style={{ color: "rgba(10,18,32,0.5)", fontSize: 12, letterSpacing: "0.14em" }}>
                 НЕ НАШЛИ ОТВЕТ?
               </div>
-              <a href="tel:+79216556560" className="mt-3 inline-flex items-center gap-2" style={{ color: INK, fontSize: 20, fontWeight: 500 }}>
+              <a href={PHONE_HREF} className="mt-3 inline-flex items-center gap-2" style={{ color: INK, fontSize: 20, fontWeight: 500 }}>
                 <Phone size={16} /> +7 (921) 655-65-60
               </a>
             </div>
           </div>
           <div className="lg:col-span-8">
-            <div className="rounded-2xl bg-white overflow-hidden" style={{ border: `1px solid ${LINE}` }}>
+            <div className="rounded-2xl bg-white overflow-hidden min-h-[640px]" style={{ border: `1px solid ${LINE}` }}>
               {faqs.map((f, i) => (
                 <div key={f.q} style={{ borderTop: i > 0 ? `1px solid ${LINE}` : "none" }}>
                   <button
@@ -56,11 +66,26 @@ export function Faq() {
                       {open === i ? <Minus size={16} /> : <Plus size={16} />}
                     </div>
                   </button>
-                  {open === i && (
-                    <div className="px-7 pb-6" style={{ color: "rgba(10,18,32,0.6)", fontSize: 14.5, lineHeight: 1.65 }}>
+                  <div
+                    className="overflow-hidden transition-[max-height,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                    style={{
+                      maxHeight: open === i ? 260 : 0,
+                      opacity: open === i ? 1 : 0,
+                    }}
+                  >
+                    <div
+                      className="px-7 pb-6 transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                      style={{
+                        color: "rgba(10,18,32,0.6)",
+                        fontSize: 14.5,
+                        lineHeight: 1.65,
+                        opacity: open === i ? 1 : 0,
+                        transform: open === i ? "translateY(0)" : "translateY(-4px)",
+                      }}
+                    >
                       {f.a}
                     </div>
-                  )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -72,14 +97,41 @@ export function Faq() {
 }
 
 export function Calculator() {
+  const { lang } = useLanguage();
   const [weight, setWeight] = useState("120");
   const [volume, setVolume] = useState("0.8");
   const [method, setMethod] = useState("Авто");
   const [city, setCity] = useState("Москва");
   const [extras, setExtras] = useState<string[]>(["Документы"]);
+  const t = (value: string) => translateValue(value, lang);
+  const locale = lang === "ru" ? "ru-RU" : "en-US";
+
+  useEffect(() => {
+    const onDeliveryMethod = (event: Event) => {
+      const method = (event as CustomEvent<{ method?: string }>).detail?.method;
+
+      if (method === "Авто" || method === "Авиа" || method === "ЖД" || method === "Контейнер") {
+        setMethod(method);
+      }
+    };
+
+    window.addEventListener("rwscargo:set-delivery-method", onDeliveryMethod);
+
+    return () => window.removeEventListener("rwscargo:set-delivery-method", onDeliveryMethod);
+  }, []);
 
   const price = Math.round((Number(weight) || 0) * 6.5 + (Number(volume) || 0) * 12000 + extras.length * 4500);
   const days = method === "Авиа" ? "5—10" : method === "ЖД" ? "20—35" : "10—30";
+  const calcMessage = [
+    t("Здравствуйте! Хочу обсудить расчёт доставки из Китая."),
+    `${t("Вес")}: ${weight || t("не указан")} kg`,
+    `${t("Объём")}: ${volume || t("не указан")} m³`,
+    `${t("Способ")}: ${t(method)}`,
+    `${t("Город")}: ${city ? t(city) : t("не указан")}`,
+    `${t("Дополнительно")}: ${extras.length ? extras.map(t).join(", ") : t("не выбрано")}`,
+    `${t("Ориентир на сайте")}: ${price.toLocaleString(locale)} ₽, ${days} ${t("дней")}`,
+  ].join("\n");
+  const calcHref = `${MESSENGER_HREF}?text=${encodeURIComponent(calcMessage)}`;
 
   const toggleExtra = (e: string) =>
     setExtras((prev) => (prev.includes(e) ? prev.filter((x) => x !== e) : [...prev, e]));
@@ -92,7 +144,7 @@ export function Calculator() {
   };
 
   return (
-    <section className="py-14 md:py-24">
+    <section id="calculator" className="py-14 md:py-24">
       <Container>
         <div
           className="rounded-[28px] overflow-hidden grid grid-cols-1 lg:grid-cols-12 bg-white"
@@ -190,7 +242,7 @@ export function Calculator() {
               </div>
             </div>
             <div className="mt-6">
-              <PillBtn size="lg" variant="primary">Обсудить расчёт</PillBtn>
+              <PillBtn size="lg" variant="primary" href={calcHref} target="_blank" rel="noreferrer">Обсудить расчёт</PillBtn>
             </div>
           </div>
         </div>
@@ -200,7 +252,12 @@ export function Calculator() {
 }
 
 export function CTA() {
+  const { lang } = useLanguage();
   const [checks, setChecks] = useState<string[]>([]);
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [details, setDetails] = useState("");
+  const t = (value: string) => translateValue(value, lang);
   const items = [
     "поставщик уже найден",
     "нужен поиск фабрики",
@@ -211,6 +268,14 @@ export function CTA() {
   ];
   const toggle = (v: string) =>
     setChecks((p) => (p.includes(v) ? p.filter((x) => x !== v) : [...p, v]));
+  const requestMessage = [
+    t("Здравствуйте! Хочу рассчитать поставку из Китая."),
+    `${t("Имя")}: ${name || t("не указано")}`,
+    `${t("Телефон")}: ${phone || t("не указан")}`,
+    `${t("Задачи")}: ${checks.length ? checks.map(t).join(", ") : t("не выбраны")}`,
+    `${t("Описание")}: ${details || t("не указано")}`,
+  ].join("\n");
+  const requestHref = `${MESSENGER_HREF}?text=${encodeURIComponent(requestMessage)}`;
 
   const fieldStyle: React.CSSProperties = {
     background: "rgba(255,255,255,0.06)",
@@ -220,7 +285,7 @@ export function CTA() {
   };
 
   return (
-    <section className="py-6">
+    <section id="contacts" className="py-6">
       <Container>
         <div
           className="rounded-[28px] p-8 md:p-14 grid grid-cols-1 lg:grid-cols-12 gap-10"
@@ -239,7 +304,7 @@ export function CTA() {
               Опишите товар, объём, ссылку на поставщика, город получения и желаемые сроки.
               Менеджер предложит формат поставки и следующий шаг.
             </p>
-            <a href="tel:+79216556560" className="inline-flex items-center gap-3 text-white mt-8" style={{ fontSize: 20, fontWeight: 500 }}>
+            <a href={PHONE_HREF} className="inline-flex items-center gap-3 text-white mt-8" style={{ fontSize: 20, fontWeight: 500 }}>
               <div
                 className="w-12 h-12 rounded-full flex items-center justify-center"
                 style={{ background: BRAND }}
@@ -251,14 +316,16 @@ export function CTA() {
           </div>
           <div className="lg:col-span-7 space-y-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <input placeholder="Ваше имя" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} />
-              <input placeholder="Телефон" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} />
+              <input placeholder="Ваше имя" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={name} onChange={(e) => setName(e.target.value)} />
+              <input placeholder="Телефон" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={phone} onChange={(e) => setPhone(e.target.value)} />
             </div>
             <textarea
               placeholder="Опишите груз, ссылку на поставщика, город получения"
               rows={4}
               className="w-full rounded-xl px-4 py-3.5 outline-none resize-none placeholder:text-white/40"
               style={fieldStyle}
+              value={details}
+              onChange={(e) => setDetails(e.target.value)}
             />
             <div className="flex flex-wrap gap-2 pt-3">
               {items.map((i) => (
@@ -278,7 +345,7 @@ export function CTA() {
               ))}
             </div>
             <div className="pt-4 flex flex-wrap items-center gap-4">
-              <PillBtn size="lg" variant="primary">Отправить заявку</PillBtn>
+              <PillBtn size="lg" variant="primary" href={requestHref} target="_blank" rel="noreferrer">Отправить заявку</PillBtn>
               <div className="text-white/40" style={{ fontSize: 12 }}>
                 Нажимая, вы соглашаетесь с политикой ПДн
               </div>
@@ -304,19 +371,19 @@ export function Footer() {
           <div className="md:col-span-4">
             <div style={{ color: "rgba(10,18,32,0.4)", fontSize: 11, letterSpacing: "0.14em" }}>НАВИГАЦИЯ</div>
             <div className="mt-5 grid grid-cols-2 gap-x-6 gap-y-3">
-              {["Услуги", "Доставка", "Калькулятор", "Процесс", "FAQ", "Контакты"].map((l) => (
-                <a key={l} href="#" style={{ color: INK, fontSize: 14 }} className="hover:opacity-60">
-                  {l}
+              {footerLinks.map(([label, href]) => (
+                <a key={href} href={href} style={{ color: INK, fontSize: 14 }} className="hover:opacity-60">
+                  {label}
                 </a>
               ))}
             </div>
           </div>
           <div className="md:col-span-3">
             <div style={{ color: "rgba(10,18,32,0.4)", fontSize: 11, letterSpacing: "0.14em" }}>КОНТАКТЫ</div>
-            <a href="tel:+79216556560" className="mt-5 block" style={{ color: INK, fontSize: 20, fontWeight: 500 }}>
+            <a href={PHONE_HREF} className="mt-5 block" style={{ color: INK, fontSize: 20, fontWeight: 500 }}>
               +7 (921) 655-65-60
             </a>
-            <a href="#" className="mt-2 inline-flex items-center gap-1" style={{ color: BRAND, fontSize: 13 }}>
+            <a href={MESSENGER_HREF} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1" style={{ color: BRAND, fontSize: 13 }}>
               Написать в мессенджер <ArrowUpRight size={13} />
             </a>
           </div>
@@ -329,8 +396,8 @@ export function Footer() {
             © 2026 RWSCargo / РВС Карго. Не является публичной офертой.
           </div>
           <div className="flex gap-6" style={{ fontSize: 12 }}>
-            <a href="#" style={{ color: "rgba(10,18,32,0.55)" }} className="hover:opacity-60">Политика ПДн</a>
-            <a href="#" style={{ color: "rgba(10,18,32,0.55)" }} className="hover:opacity-60">Согласие ПДн</a>
+            <a href="/privacy/" style={{ color: "rgba(10,18,32,0.55)" }} className="hover:opacity-60">Политика ПДн</a>
+            <a href="/personal-data-consent/" style={{ color: "rgba(10,18,32,0.55)" }} className="hover:opacity-60">Согласие ПДн</a>
           </div>
         </div>
       </Container>

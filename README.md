@@ -59,3 +59,25 @@ docker compose --profile infra up -d --build
 - `docs/STACK.md` - стек, инфраструктура и решение по базе/заявкам.
 - `docs/SEO_STRATEGY.md` - SEO-кластеры, текущая база и будущие посадочные.
 - `docs/ROADMAP.md` - дорожная карта и статусы этапов.
+
+## CI/CD
+
+Проект закреплен на Node.js 24 через `.node-version` и `package.json`.
+
+Основная проверка:
+
+```bash
+npm ci
+npm run ci
+```
+
+GitHub Actions:
+
+- `.github/workflows/ci.yml` - запускается на pull request и push в `main`, `master`, `develop`; ставит зависимости, проверяет Astro/TypeScript, собирает `dist` и проверяет Docker image.
+- `.github/workflows/deploy-pages.yml` - собирает статический сайт и деплоит `dist` в GitHub Pages при push в `main` или ручном запуске workflow.
+
+Docker production image собирает Astro и раздает готовую статику через nginx:
+
+```bash
+docker compose up -d --build
+```
