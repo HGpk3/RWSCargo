@@ -4,7 +4,7 @@ import { Header, Hero } from "./components/Hero";
 import { Metrics, Tasks, Approach } from "./components/Sections1";
 import { Services } from "./components/Services";
 import { WhiteImport, FixBefore, DeliveryMethods, Formats, Enterprise } from "./components/Sections2";
-import { Routes, Documents, CargoTypes, Process, Scenarios, Limits, SeoBlock } from "./components/Sections3";
+import { Routes, Documents, ProofPoints, CargoTypes, Process, Scenarios, Limits, SeoBlock } from "./components/Sections3";
 import { Faq, Calculator, CTA, Footer } from "./components/Sections4";
 import { BRAND } from "./components/shared";
 import { LanguageProvider, useLanguage } from "./i18n";
@@ -13,7 +13,7 @@ function BackToTopButton() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setVisible(window.scrollY > 720);
+    const onScroll = () => setVisible(window.scrollY > 1800);
 
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -26,7 +26,7 @@ function BackToTopButton() {
       type="button"
       aria-label="Наверх"
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      className="fixed right-5 bottom-5 md:right-8 md:bottom-8 z-50 h-12 w-12 md:h-14 md:w-14 rounded-full flex items-center justify-center transition-all duration-300"
+      className="fixed right-8 bottom-8 z-50 h-14 w-14 rounded-full hidden md:flex items-center justify-center transition-all duration-300"
       style={{
         background: BRAND,
         color: "#FFFFFF",
@@ -69,6 +69,7 @@ function AppContent() {
       <Enterprise />
       <Routes />
       <Documents />
+      <ProofPoints />
       <CargoTypes />
       <Process />
       <Scenarios />

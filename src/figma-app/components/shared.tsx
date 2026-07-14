@@ -75,10 +75,10 @@ export function Display({
   className?: string;
 }) {
   const sizes = {
-    sm: "clamp(28px, 3.4vw, 42px)",
-    md: "clamp(34px, 4.2vw, 56px)",
-    lg: "clamp(44px, 5.4vw, 76px)",
-    xl: "clamp(56px, 8vw, 128px)",
+    sm: "clamp(26px, 3.2vw, 42px)",
+    md: "clamp(31px, 4vw, 56px)",
+    lg: "clamp(36px, 5vw, 76px)",
+    xl: "clamp(48px, 7.4vw, 128px)",
   };
   return (
     <h2
@@ -86,7 +86,7 @@ export function Display({
       style={{
         fontSize: sizes[size],
         lineHeight: 0.96,
-        letterSpacing: "-0.035em",
+        letterSpacing: 0,
         fontWeight: 500,
         color: onDark ? "#FFFFFF" : INK,
       }}

@@ -1,11 +1,13 @@
 import { useState } from "react";
 import type React from "react";
-import { Phone, ArrowRight, MapPin, Calendar, Search, Menu, Star, TrendingUp } from "lucide-react";
-import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { Phone, ArrowRight, MapPin, Calendar, Search, Menu, ClipboardCheck, TrendingUp } from "lucide-react";
 import { Logo, PillBtn, BRAND, INK, Container, PHONE_HREF } from "./shared";
 import { LanguageSwitcher } from "../i18n";
 
 const HERO_IMG = "/images/hero-logistics-import.png";
+const HERO_WEBP = "/images/hero-logistics-import-1600.webp";
+const HERO_WEBP_MOBILE = "/images/hero-logistics-import-768.webp";
+const HERO_AVIF = "/images/hero-logistics-import-1200.avif";
 const navItems = [
   ["Услуги", "#services"],
   ["Доставка", "#delivery"],
@@ -167,12 +169,23 @@ export function Hero() {
   return (
     <section id="hero" className="pt-4 pb-6">
       <Container>
-        <div className="relative overflow-hidden rounded-[28px] md:rounded-[36px] min-h-[860px] md:min-h-[820px]">
-          <ImageWithFallback
-            src={HERO_IMG}
-            alt="Aerial view of orange container ship"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
+        <div className="relative overflow-hidden rounded-[28px] md:rounded-[36px] min-h-[720px] sm:min-h-[780px] md:min-h-[820px]">
+          <picture>
+            <source type="image/avif" srcSet={HERO_AVIF} />
+            <source
+              type="image/webp"
+              srcSet={`${HERO_WEBP_MOBILE} 768w, ${HERO_WEBP} 1600w`}
+              sizes="(max-width: 640px) 100vw, 1400px"
+            />
+            <img
+              src={HERO_IMG}
+              alt="Aerial view of orange container ship"
+              width={1600}
+              height={1067}
+              fetchPriority="high"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          </picture>
           <div className="absolute inset-0" style={{ background: "linear-gradient(120deg, rgba(10,18,32,0.85) 0%, rgba(10,18,32,0.55) 45%, rgba(10,18,32,0.15) 100%)" }} />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0A1220]/60 via-transparent to-[#0A1220]/40" />
 
@@ -188,11 +201,11 @@ export function Hero() {
           </div>
 
           {/* Main */}
-          <div className="relative z-10 px-6 md:px-10 pt-16 md:pt-24">
+          <div className="relative z-10 px-6 md:px-10 pt-12 sm:pt-16 md:pt-24">
             <div
               className="text-white"
               style={{
-                fontSize: "clamp(40px, 11vw, 168px)",
+                fontSize: "clamp(42px, 12vw, 168px)",
                 lineHeight: 0.9,
                 letterSpacing: "-0.05em",
                 fontWeight: 500,
@@ -226,12 +239,7 @@ export function Hero() {
                 >
                   <div className="flex items-center justify-between">
                     <div style={{ fontSize: 34, fontWeight: 600, letterSpacing: "-0.02em", lineHeight: 1, color: INK }}>
-                      4.8
-                    </div>
-                    <div className="flex gap-0.5">
-                      {[0, 1, 2, 3, 4].map((i) => (
-                        <Star key={i} size={11} fill={BRAND} stroke={BRAND} />
-                      ))}
+                      <ClipboardCheck size={28} color={BRAND} />
                     </div>
                   </div>
                   <div className="mt-3 text-neutral-500" style={{ fontSize: 10, letterSpacing: "0.14em" }}>
@@ -242,7 +250,7 @@ export function Hero() {
                   </div>
                 </div>
               </div>
-              <div className="lg:col-span-4 flex justify-end">
+              <div className="lg:col-span-4 hidden sm:flex justify-end">
                 <TrackingWidget />
               </div>
             </div>

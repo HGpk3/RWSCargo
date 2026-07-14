@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowRight, ChevronDown, MapPin } from "lucide-react";
+import { ArrowRight, Camera, ChevronDown, FileCheck, Handshake, MapPin, Route } from "lucide-react";
 import { Container, SectionHead, EyebrowLabel, Display, BodyText, BRAND, INK, LINE, NAVY } from "./shared";
 
 const routes = [
@@ -75,6 +75,72 @@ export function Documents() {
                 {String(i + 1).padStart(2, "0")}
               </div>
               <div style={{ color: INK, fontSize: 17, fontWeight: 500 }}>{d}</div>
+            </div>
+          ))}
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+const proofPoints = [
+  {
+    icon: <Camera size={20} />,
+    title: "Фото- и видеоотчёт",
+    text: "Фиксируем упаковку, количество мест и состояние партии до отправки из Китая.",
+  },
+  {
+    icon: <FileCheck size={20} />,
+    title: "Документы до движения груза",
+    text: "Сверяем инвойс, упаковочный лист и данные для оформления до запуска маршрута.",
+  },
+  {
+    icon: <Route size={20} />,
+    title: "Понятный маршрут",
+    text: "Показываем, где принимаем груз, как консолидируем и где передаём партию в России.",
+  },
+  {
+    icon: <Handshake size={20} />,
+    title: "Ответственная передача",
+    text: "Согласуем контакт, город получения и следующий шаг до оплаты и отправки.",
+  },
+];
+
+export function ProofPoints() {
+  return (
+    <section id="proof-points" className="py-14 md:py-24">
+      <Container>
+        <SectionHead
+          label="ЧЕМ ПОДТВЕРЖДАЕМ РАБОТУ"
+          title={<>Не просим верить на слово:<br />показываем следы поставки</>}
+          text="Вместо абстрактных обещаний клиент получает проверяемые материалы по партии, маршруту и документам."
+        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {proofPoints.map((item, i) => (
+            <div
+              key={item.title}
+              className="rounded-2xl p-6 bg-white flex flex-col gap-8"
+              style={{ border: `1px solid ${LINE}` }}
+            >
+              <div className="flex items-center justify-between">
+                <div
+                  className="w-11 h-11 rounded-xl flex items-center justify-center"
+                  style={{ background: "rgba(240,68,31,0.1)", color: BRAND }}
+                >
+                  {item.icon}
+                </div>
+                <span style={{ color: "rgba(10,18,32,0.35)", fontSize: 12 }}>
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+              </div>
+              <div>
+                <div style={{ color: INK, fontSize: 18, fontWeight: 500, lineHeight: 1.2 }}>
+                  {item.title}
+                </div>
+                <div className="mt-3" style={{ color: "rgba(10,18,32,0.58)", fontSize: 13.5, lineHeight: 1.55 }}>
+                  {item.text}
+                </div>
+              </div>
             </div>
           ))}
         </div>
@@ -205,7 +271,7 @@ export function Scenarios() {
           {scenarios.map((s, i) => (
             <div
               key={s.title}
-              className="rounded-2xl p-8 bg-white min-h-[820px]"
+              className="rounded-2xl p-6 md:p-8 bg-white md:min-h-[820px]"
               style={{ border: `1px solid ${LINE}` }}
             >
               <div style={{ color: BRAND, fontSize: 12, letterSpacing: "0.14em" }}>
@@ -347,7 +413,7 @@ export function SeoBlock() {
     <section id="seo" className="py-14 md:py-24">
       <Container>
         <SectionHead
-          label="ДЛЯ SEO И ДЛЯ КЛИЕНТА"
+          label="ОТВЕТСТВЕННОСТЬ И МАРШРУТ"
           title={<>Доставка товаров из Китая в Россию<br />с понятной ответственностью</>}
         />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">

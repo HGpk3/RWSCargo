@@ -24,7 +24,7 @@ export function Metrics() {
                 borderTop: i >= 2 ? `1px solid ${LINE}` : "none",
               }}
             >
-              <div style={{ fontSize: 44, letterSpacing: "-0.03em", fontWeight: 500, color: INK, lineHeight: 1 }}>
+              <div style={{ fontSize: "clamp(34px, 10vw, 44px)", letterSpacing: 0, fontWeight: 500, color: INK, lineHeight: 1 }}>
                 {it.n}
               </div>
               <div className="mt-3" style={{ color: "rgba(10,18,32,0.55)", fontSize: 13 }}>
@@ -106,10 +106,8 @@ export function Approach() {
           </div>
           <div className="lg:col-span-6 lg:pt-4">
             <BodyText>
-              Старый сайт RWSCargo делал акцент на снижении себестоимости, маркетплейс-бизнесе
-              и полном цикле работы с Китаем. В новой версии этот смысл вынесен вперёд:
-              поставщик, закупка, проверка, склад, маршрут, документы и передача груза
-              должны быть понятны до оплаты и отправки.
+              Работа строится вокруг понятной схемы поставки: кто поставщик, как проходит закупка, где принимаем груз, какие документы нужны и где происходит передача.
+              Клиент видит маршрут, ответственность и следующий шаг до оплаты и отправки партии.
             </BodyText>
             <div className="mt-8 space-y-3">
               {[

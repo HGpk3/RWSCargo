@@ -7,10 +7,10 @@ type Translation = Partial<Record<Exclude<Lang, "ru">, string>>;
 
 const STORAGE_KEY = "rwscargo-language";
 
-const languages: Array<{ code: Lang; label: string; htmlLang: string }> = [
-  { code: "ru", label: "RU", htmlLang: "ru" },
-  { code: "en", label: "EN", htmlLang: "en" },
-  { code: "zh", label: "中文", htmlLang: "zh-CN" },
+const languages: Array<{ code: Lang; label: string; htmlLang: string; ariaLabel: string }> = [
+  { code: "ru", label: "RU", htmlLang: "ru", ariaLabel: "Русский язык" },
+  { code: "en", label: "EN", htmlLang: "en", ariaLabel: "English language" },
+  { code: "zh", label: "中文", htmlLang: "zh-CN", ariaLabel: "中文" },
 ];
 
 const metaByLang: Record<Lang, { title: string; description: string; locale: string }> = {
@@ -143,7 +143,6 @@ const dictionary: Record<string, Translation> = {
   "Честные ограничения": { en: "Honest limitations", zh: "明确限制" },
   "делают расчёт": { en: "make the quote", zh: "让报价" },
   "точнее": { en: "more accurate", zh: "更准确" },
-  "ДЛЯ SEO И ДЛЯ КЛИЕНТА": { en: "FOR SEO AND CLIENTS", zh: "面向客户与搜索" },
   "Доставка товаров из Китая в Россию": { en: "Goods delivery from China to Russia", zh: "中国到俄罗斯商品运输" },
   "с понятной ответственностью": { en: "with clear responsibility", zh: "责任清晰" },
   "Частые вопросы": { en: "Frequently asked questions", zh: "常见问题" },
@@ -218,10 +217,6 @@ Object.assign(dictionary, {
   "ЧТО ИЗМЕНИЛИ В ПОДХОДЕ": { en: "WHAT CHANGED IN OUR APPROACH", zh: "方法上的改变" },
   "Не просто перевозим коробки.": { en: "We do more than move boxes.", zh: "我们不只是搬运箱子。" },
   "Собираем управляемую поставку.": { en: "We build a controlled shipment.", zh: "我们打造可控供应链。" },
-  "Старый сайт RWSCargo делал акцент на снижении себестоимости, маркетплейс-бизнесе и полном цикле работы с Китаем. В новой версии этот смысл вынесен вперёд: поставщик, закупка, проверка, склад, маршрут, документы и передача груза должны быть понятны до оплаты и отправки.": {
-    en: "The old RWSCargo site focused on lowering costs, marketplace businesses and the full China workflow. In this version we bring that meaning forward: supplier, purchase, inspection, warehouse, route, documents and handover must be clear before payment and shipment.",
-    zh: "旧版 RWSCargo 网站强调降本、电商业务和中国全流程。新版将重点前置：供应商、采购、验货、仓库、路线、文件和交付都应在付款和发货前清楚。",
-  },
   "Понятная схема до оплаты": { en: "Clear plan before payment", zh: "付款前方案清晰" },
   "видите план поставки заранее": { en: "you see the supply plan in advance", zh: "提前看到供货计划" },
   "Ответственная передача": { en: "Responsible handover", zh: "责任明确的交付" },
@@ -690,6 +685,43 @@ function translateText(raw: string, lang: Lang) {
   return replaced !== core ? `${leading}${replaced}${trailing}` : raw;
 }
 
+Object.assign(dictionary, {
+  "Работа строится вокруг понятной схемы поставки: кто поставщик, как проходит закупка, где принимаем груз, какие документы нужны и где происходит передача. Клиент видит маршрут, ответственность и следующий шаг до оплаты и отправки партии.": {
+    en: "The work is built around a clear shipment plan: who the supplier is, how purchasing works, where we receive cargo, which documents are needed and where handover happens. The client sees the route, responsibility and next step before payment and shipment.",
+    zh: "流程围绕清晰的供货方案展开：供应商是谁、如何采购、在哪里收货、需要哪些文件以及在哪里交付。客户在付款和发货前就能看到路线、责任和下一步。",
+  },
+  "Отправить в WhatsApp": { en: "Send via WhatsApp", zh: "通过 WhatsApp 发送" },
+  "Ориентир, не оферта": { en: "Estimate, not an offer", zh: "预估价格，非正式报价" },
+  "политикой ПДн": { en: "privacy policy", zh: "隐私政策" },
+  "ЧЕМ ПОДТВЕРЖДАЕМ РАБОТУ": { en: "HOW WE CONFIRM THE WORK", zh: "如何确认工作" },
+  "Не просим верить на слово:": { en: "We do not ask you to trust words alone:", zh: "不只靠口头承诺：" },
+  "показываем следы поставки": { en: "we show shipment evidence", zh: "展示货运记录" },
+  "Вместо абстрактных обещаний клиент получает проверяемые материалы по партии, маршруту и документам.": {
+    en: "Instead of abstract promises, the client receives verifiable materials for the shipment, route and documents.",
+    zh: "客户获得关于货物、路线和文件的可核查材料，而不是抽象承诺。",
+  },
+  "Фото- и видеоотчёт": { en: "Photo and video report", zh: "照片和视频报告" },
+  "Фиксируем упаковку, количество мест и состояние партии до отправки из Китая.": {
+    en: "We record packaging, number of packages and shipment condition before it leaves China.",
+    zh: "货物离开中国前，我们记录包装、件数和货物状态。",
+  },
+  "Документы до движения груза": { en: "Documents before cargo moves", zh: "货物移动前的文件" },
+  "Сверяем инвойс, упаковочный лист и данные для оформления до запуска маршрута.": {
+    en: "We check the invoice, packing list and paperwork data before the route starts.",
+    zh: "路线开始前，我们核对发票、装箱单和申报资料。",
+  },
+  "Понятный маршрут": { en: "Clear route", zh: "清晰路线" },
+  "Показываем, где принимаем груз, как консолидируем и где передаём партию в России.": {
+    en: "We show where cargo is received, how it is consolidated and where it is handed over in Russia.",
+    zh: "展示收货地点、合并方式以及在俄罗斯的交付地点。",
+  },
+  "Ответственная передача": { en: "Responsible handover", zh: "明确责任的交付" },
+  "Согласуем контакт, город получения и следующий шаг до оплаты и отправки.": {
+    en: "We agree the contact, destination city and next step before payment and shipment.",
+    zh: "付款和发货前确认联系人、收货城市和下一步。",
+  },
+});
+
 export function translateValue(raw: string, lang: Lang) {
   return translateText(raw, lang);
 }
@@ -839,6 +871,7 @@ export function LanguageSwitcher({ onDark = false }: { onDark?: boolean }) {
             type="button"
             onClick={() => setLang(item.code)}
             aria-pressed={active}
+            aria-label={item.ariaLabel}
             className="rounded-full px-2.5 py-1 transition-colors"
             style={{
               color: active ? "#FFFFFF" : onDark ? "rgba(255,255,255,0.68)" : "rgba(10,18,32,0.62)",

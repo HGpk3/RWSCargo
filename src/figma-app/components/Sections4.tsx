@@ -46,10 +46,12 @@ export function Faq() {
             </div>
           </div>
           <div className="lg:col-span-8">
-            <div className="rounded-2xl bg-white overflow-hidden min-h-[640px]" style={{ border: `1px solid ${LINE}` }}>
+            <div className="rounded-2xl bg-white overflow-hidden lg:min-h-[640px]" style={{ border: `1px solid ${LINE}` }}>
               {faqs.map((f, i) => (
                 <div key={f.q} style={{ borderTop: i > 0 ? `1px solid ${LINE}` : "none" }}>
                   <button
+                    type="button"
+                    aria-expanded={open === i}
                     className="w-full flex items-center justify-between px-7 py-6 text-left"
                     onClick={() => setOpen(open === i ? -1 : i)}
                   >
@@ -121,6 +123,8 @@ export function Calculator() {
   }, []);
 
   const price = Math.round((Number(weight) || 0) * 6.5 + (Number(volume) || 0) * 12000 + extras.length * 4500);
+  const priceMin = Math.round(price * 0.86);
+  const priceMax = Math.round(price * 1.18);
   const days = method === "Авиа" ? "5—10" : method === "ЖД" ? "20—35" : "10—30";
   const calcMessage = [
     t("Здравствуйте! Хочу обсудить расчёт доставки из Китая."),
@@ -129,7 +133,7 @@ export function Calculator() {
     `${t("Способ")}: ${t(method)}`,
     `${t("Город")}: ${city ? t(city) : t("не указан")}`,
     `${t("Дополнительно")}: ${extras.length ? extras.map(t).join(", ") : t("не выбрано")}`,
-    `${t("Ориентир на сайте")}: ${price.toLocaleString(locale)} ₽, ${days} ${t("дней")}`,
+    `${t("Ориентир на сайте")}: ${priceMin.toLocaleString(locale)}—${priceMax.toLocaleString(locale)} ₽, ${days} ${t("дней")}`,
   ].join("\n");
   const calcHref = `${MESSENGER_HREF}?text=${encodeURIComponent(calcMessage)}`;
 
@@ -170,11 +174,11 @@ export function Calculator() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <div className="mb-2" style={{ color: "rgba(10,18,32,0.5)", fontSize: 11, letterSpacing: "0.12em" }}>ВЕС, КГ</div>
-                <input className="w-full rounded-xl px-4 py-3 outline-none" style={fieldStyle} value={weight} onChange={(e) => setWeight(e.target.value)} />
+                <input aria-label={t("ВЕС, КГ")} name="cargo_weight" type="number" inputMode="decimal" min="0" className="w-full rounded-xl px-4 py-3 outline-none" style={fieldStyle} value={weight} onChange={(e) => setWeight(e.target.value)} />
               </div>
               <div>
                 <div className="mb-2" style={{ color: "rgba(10,18,32,0.5)", fontSize: 11, letterSpacing: "0.12em" }}>ОБЪЁМ, М³</div>
-                <input className="w-full rounded-xl px-4 py-3 outline-none" style={fieldStyle} value={volume} onChange={(e) => setVolume(e.target.value)} />
+                <input aria-label={t("ОБЪЁМ, М³")} name="cargo_volume" type="number" inputMode="decimal" min="0" step="0.1" className="w-full rounded-xl px-4 py-3 outline-none" style={fieldStyle} value={volume} onChange={(e) => setVolume(e.target.value)} />
               </div>
               <div className="col-span-2">
                 <div className="mb-2" style={{ color: "rgba(10,18,32,0.5)", fontSize: 11, letterSpacing: "0.12em" }}>СПОСОБ ДОСТАВКИ</div>
@@ -182,7 +186,9 @@ export function Calculator() {
                   {["Авто", "Авиа", "ЖД", "Контейнер"].map((m) => (
                     <button
                       key={m}
+                      type="button"
                       onClick={() => setMethod(m)}
+                      aria-pressed={method === m}
                       className="rounded-full px-4 py-2.5 transition-colors"
                       style={{
                         background: method === m ? INK : "#fff",
@@ -198,7 +204,7 @@ export function Calculator() {
               </div>
               <div className="col-span-2">
                 <div className="mb-2" style={{ color: "rgba(10,18,32,0.5)", fontSize: 11, letterSpacing: "0.12em" }}>ГОРОД</div>
-                <input className="w-full rounded-xl px-4 py-3 outline-none" style={fieldStyle} value={city} onChange={(e) => setCity(e.target.value)} />
+                <input aria-label={t("ГОРОД")} name="destination_city" className="w-full rounded-xl px-4 py-3 outline-none" style={fieldStyle} value={city} onChange={(e) => setCity(e.target.value)} />
               </div>
               <div className="col-span-2">
                 <div className="mb-2" style={{ color: "rgba(10,18,32,0.5)", fontSize: 11, letterSpacing: "0.12em" }}>ДОПОЛНИТЕЛЬНО</div>
@@ -206,7 +212,9 @@ export function Calculator() {
                   {["Проверка качества", "Документы", "Забор у поставщика"].map((e) => (
                     <button
                       key={e}
+                      type="button"
                       onClick={() => toggleExtra(e)}
+                      aria-pressed={extras.includes(e)}
                       className="rounded-full px-4 py-2.5 transition-colors"
                       style={{
                         background: extras.includes(e) ? "rgba(240,68,31,0.1)" : "#fff",
@@ -222,11 +230,14 @@ export function Calculator() {
               </div>
             </div>
 
-            <div className="mt-8 rounded-2xl p-6 grid grid-cols-3 gap-4" style={{ background: INK, color: "#fff" }}>
+            <div className="mt-8 rounded-2xl p-6 grid grid-cols-1 sm:grid-cols-3 gap-4" style={{ background: INK, color: "#fff" }}>
               <div>
                 <div className="text-white/50" style={{ fontSize: 10, letterSpacing: "0.14em" }}>ПРЕДВАРИТЕЛЬНО</div>
                 <div className="mt-1" style={{ fontSize: 26, fontWeight: 500, letterSpacing: "-0.02em" }}>
-                  {price.toLocaleString("ru-RU")} ₽
+                  {priceMin.toLocaleString("ru-RU")}—{priceMax.toLocaleString("ru-RU")} ₽
+                </div>
+                <div className="mt-2 text-white/45" style={{ fontSize: 11, lineHeight: 1.4 }}>
+                  Ориентир, не оферта
                 </div>
               </div>
               <div>
@@ -316,11 +327,19 @@ export function CTA() {
           </div>
           <div className="lg:col-span-7 space-y-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <input placeholder="Ваше имя" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={name} onChange={(e) => setName(e.target.value)} />
-              <input placeholder="Телефон" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={phone} onChange={(e) => setPhone(e.target.value)} />
+              <label className="grid gap-2">
+                <span className="sr-only">Ваше имя</span>
+                <input aria-label={t("Ваше имя")} name="name" autoComplete="name" placeholder="Ваше имя" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={name} onChange={(e) => setName(e.target.value)} />
+              </label>
+              <label className="grid gap-2">
+                <span className="sr-only">Телефон</span>
+                <input aria-label={t("Телефон")} name="phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="Телефон" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={phone} onChange={(e) => setPhone(e.target.value)} />
+              </label>
             </div>
             <textarea
               placeholder="Опишите груз, ссылку на поставщика, город получения"
+              aria-label={t("Опишите груз, ссылку на поставщика, город получения")}
+              name="details"
               rows={4}
               className="w-full rounded-xl px-4 py-3.5 outline-none resize-none placeholder:text-white/40"
               style={fieldStyle}
@@ -331,7 +350,9 @@ export function CTA() {
               {items.map((i) => (
                 <button
                   key={i}
+                  type="button"
                   onClick={() => toggle(i)}
+                  aria-pressed={checks.includes(i)}
                   className="rounded-full px-4 py-2.5 transition-colors"
                   style={{
                     background: checks.includes(i) ? "rgba(240,68,31,0.18)" : "rgba(255,255,255,0.05)",
@@ -345,9 +366,9 @@ export function CTA() {
               ))}
             </div>
             <div className="pt-4 flex flex-wrap items-center gap-4">
-              <PillBtn size="lg" variant="primary" href={requestHref} target="_blank" rel="noreferrer">Отправить заявку</PillBtn>
+              <PillBtn size="lg" variant="primary" href={requestHref} target="_blank" rel="noreferrer">Отправить в WhatsApp</PillBtn>
               <div className="text-white/40" style={{ fontSize: 12 }}>
-                Нажимая, вы соглашаетесь с политикой ПДн
+                Нажимая, вы соглашаетесь с <a href="/privacy/" className="underline underline-offset-2">политикой ПДн</a>
               </div>
             </div>
           </div>

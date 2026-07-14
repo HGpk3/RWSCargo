@@ -1,5 +1,4 @@
 import { ArrowUpRight, Ship, Plane, Train, Truck, Check } from "lucide-react";
-import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Container, SectionHead, PillBtn, BRAND, INK, LINE, NAVY } from "./shared";
 
 const services = [
@@ -91,11 +90,22 @@ export function Services() {
             className="relative overflow-hidden rounded-2xl md:col-span-2 md:row-span-2 p-8 md:p-10 min-h-[540px] flex flex-col justify-between scroll-mt-24"
             style={{ background: NAVY }}
           >
-            <ImageWithFallback
-              src="/images/cargo-bridge-realistic.png"
-              alt="Container yard"
-              className="absolute inset-0 w-full h-full object-cover opacity-30"
-            />
+            <picture>
+              <source type="image/avif" srcSet="/images/cargo-bridge-realistic-1200.avif" />
+              <source
+                type="image/webp"
+                srcSet="/images/cargo-bridge-realistic-768.webp 768w, /images/cargo-bridge-realistic-1200.webp 1200w"
+                sizes="(max-width: 768px) 100vw, 900px"
+              />
+              <img
+                src="/images/cargo-bridge-realistic.png"
+                alt="Container yard"
+                width={1200}
+                height={800}
+                loading="lazy"
+                className="absolute inset-0 w-full h-full object-cover opacity-30"
+              />
+            </picture>
             <div className="absolute inset-0" style={{ background: "linear-gradient(140deg, rgba(14,26,46,0.9) 0%, rgba(14,26,46,0.55) 100%)" }} />
             <div className="relative z-10 flex items-center justify-between">
               <div style={{ color: BRAND, fontSize: 12, letterSpacing: "0.14em" }}>01 · ФЛАГМАН</div>
