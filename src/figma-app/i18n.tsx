@@ -79,10 +79,6 @@ const dictionary: Record<string, Translation> = {
   "10—30 дней": { en: "10—30 days", zh: "10—30 天" },
   "авто · авиа · ЖД": { en: "truck · air · rail", zh: "汽运 · 空运 · 铁路" },
   "трек-поставки": { en: "track shipment", zh: "追踪货运" },
-  "С НАМИ ВОЗЯТ БИЗНЕСЫ И МАРКЕТПЛЕЙСЫ": {
-    en: "TRUSTED BY BUSINESSES AND MARKETPLACES",
-    zh: "企业和电商平台选择我们",
-  },
   "работаем с Китаем": { en: "working with China", zh: "深耕中国业务" },
   "склада в Китае": { en: "warehouses in China", zh: "中国仓库" },
   "дней в пути": { en: "days in transit", zh: "运输天数" },
@@ -349,7 +345,7 @@ Object.assign(dictionary, {
   "Рассчитать контейнер": { en: "Calculate container", zh: "计算集装箱" },
   "Обсудить": { en: "Discuss", zh: "讨论" },
   "МАРКЕТПЛЕЙСЫ": { en: "MARKETPLACES", zh: "电商平台" },
-  "Товары для Ozon / Wildberries": { en: "Goods for Ozon / Wildberries", zh: "Ozon / Wildberries 商品" },
+  "Товары для маркетплейсов": { en: "Goods for marketplaces", zh: "Marketplace goods" },
   "Регулярные партии, упаковка, маркировка, консолидация и понятный срок пополнения склада.": {
     en: "Regular batches, packaging, labeling, consolidation and clear warehouse replenishment time.",
     zh: "长期批量、包装、贴标、合并和明确补仓时效。",
@@ -414,7 +410,7 @@ Object.assign(dictionary, {
   "контрактная часть": { en: "contract details", zh: "合同部分" },
   "описание товара": { en: "product description", zh: "商品描述" },
   "закрывающие документы": { en: "closing documents", zh: "结算文件" },
-  "товары для Ozon и Wildberries": { en: "goods for Ozon and Wildberries", zh: "Ozon 和 Wildberries 商品" },
+  "товары для маркетплейсов": { en: "goods for marketplaces", zh: "Marketplace goods" },
   "электроника и техника": { en: "electronics and appliances", zh: "电子和设备" },
   "одежда, обувь и текстиль": { en: "clothing, footwear and textiles", zh: "服装、鞋类和纺织品" },
   "мебель и товары для дома": { en: "furniture and home goods", zh: "家具和家居用品" },

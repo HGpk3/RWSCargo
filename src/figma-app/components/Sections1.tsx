@@ -1,36 +1,6 @@
 import { ArrowUpRight, ArrowRight } from "lucide-react";
 import { Container, SectionHead, BRAND, INK, LINE, PillBtn, EyebrowLabel, Display, BodyText } from "./shared";
 
-export function Partners() {
-  const brands = ["OZON", "WILDBERRIES", "1688", "ALIBABA", "SBERBANK", "CDEK"];
-  return (
-    <section className="py-10 md:py-14" aria-label="Партнёры">
-      <Container>
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          <div style={{ color: "rgba(10,18,32,0.5)", fontSize: 12, letterSpacing: "0.16em" }}>
-            С НАМИ ВОЗЯТ БИЗНЕСЫ И МАРКЕТПЛЕЙСЫ
-          </div>
-          <div className="flex flex-wrap gap-x-10 gap-y-4 items-center">
-            {brands.map((b) => (
-              <div
-                key={b}
-                style={{
-                  fontSize: 15,
-                  letterSpacing: "0.06em",
-                  fontWeight: 600,
-                  color: "rgba(10,18,32,0.35)",
-                }}
-              >
-                {b}
-              </div>
-            ))}
-          </div>
-        </div>
-      </Container>
-    </section>
-  );
-}
-
 export function Metrics() {
   const items = [
     { n: "2018", l: "работаем с Китаем" },

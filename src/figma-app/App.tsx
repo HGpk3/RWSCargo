@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ArrowUp } from "lucide-react";
 import { Header, Hero } from "./components/Hero";
-import { Partners, Metrics, Tasks, Approach } from "./components/Sections1";
+import { Metrics, Tasks, Approach } from "./components/Sections1";
 import { Services } from "./components/Services";
 import { WhiteImport, FixBefore, DeliveryMethods, Formats, Enterprise } from "./components/Sections2";
 import { Routes, Documents, CargoTypes, Process, Scenarios, Limits, SeoBlock } from "./components/Sections3";
@@ -58,7 +58,6 @@ function AppContent() {
     >
       <Header />
       <Hero />
-      <Partners />
       <Metrics />
       <Tasks />
       <Approach />
