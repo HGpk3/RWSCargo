@@ -1,0 +1,62 @@
+name: Deploy Beget
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: beget-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Build and deploy to Beget
+    runs-on: ubuntu-latest
+    environment:
+      name: beget-production
+      url: https://rwscargo.ru
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run ci
+
+      - name: Prepare SSH
+        env:
+          BEGET_HOST: ${{ secrets.BEGET_HOST }}
+          BEGET_PORT: ${{ secrets.BEGET_PORT }}
+          BEGET_SSH_KEY: ${{ secrets.BEGET_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$BEGET_SSH_KEY" > ~/.ssh/beget_deploy_key
+          chmod 600 ~/.ssh/beget_deploy_key
+          ssh-keyscan -p "$BEGET_PORT" "$BEGET_HOST" >> ~/.ssh/known_hosts
+
+      - name: Deploy static files
+        env:
+          BEGET_HOST: ${{ secrets.BEGET_HOST }}
+          BEGET_USER: ${{ secrets.BEGET_USER }}
+          BEGET_PORT: ${{ secrets.BEGET_PORT }}
+          BEGET_PATH: ${{ secrets.BEGET_PATH }}
+        run: |
+          rsync -az --delete \
+            --exclude='.htaccess' \
+            --exclude='cgi-bin/' \
+            -e "ssh -i ~/.ssh/beget_deploy_key -p $BEGET_PORT" \
+            dist/ "$BEGET_USER@$BEGET_HOST:$BEGET_PATH/"
