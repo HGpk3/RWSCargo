@@ -4,7 +4,7 @@ import { Phone, ArrowRight, MapPin, Calendar, Search, Menu, ClipboardCheck, Tren
 import { Logo, PillBtn, BRAND, INK, Container, PHONE_HREF } from "./shared";
 import { LanguageSwitcher } from "../i18n";
 
-const HERO_IMG = "/images/hero-logistics-import.png";
+const HERO_IMG = "/images/hero-logistics-import-1600.webp";
 const HERO_WEBP = "/images/hero-logistics-import-1600.webp";
 const HERO_WEBP_MOBILE = "/images/hero-logistics-import-768.webp";
 const HERO_AVIF = "/images/hero-logistics-import-1200.avif";

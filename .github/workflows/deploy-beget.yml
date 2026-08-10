@@ -56,7 +56,6 @@ jobs:
           BEGET_PATH: ${{ secrets.BEGET_PATH }}
         run: |
           rsync -az --delete \
-            --exclude='.htaccess' \
             --exclude='cgi-bin/' \
             -e "ssh -i ~/.ssh/beget_deploy_key -p $BEGET_PORT" \
             dist/ "$BEGET_USER@$BEGET_HOST:$BEGET_PATH/"

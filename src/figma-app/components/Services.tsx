@@ -98,7 +98,7 @@ export function Services() {
                 sizes="(max-width: 768px) 100vw, 900px"
               />
               <img
-                src="/images/cargo-bridge-realistic.png"
+                src="/images/cargo-bridge-realistic-1200.webp"
                 alt="Container yard"
                 width={1200}
                 height={800}

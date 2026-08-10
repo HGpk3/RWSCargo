@@ -813,22 +813,74 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const language = languages.find((item) => item.code === lang) ?? languages[0];
     let applying = false;
+    let frame = 0;
 
-    const apply = () => {
+    const root = () => document.querySelector("[data-i18n-root]") ?? document.body;
+
+    const applyRoot = () => {
       applying = true;
       document.documentElement.lang = language.htmlLang;
       window.localStorage.setItem(STORAGE_KEY, lang);
       updateMeta(lang);
-      translateTree(document.querySelector("[data-i18n-root]") ?? document.body, lang);
+      translateTree(root(), lang);
       applying = false;
     };
 
-    apply();
+    document.documentElement.lang = language.htmlLang;
+    window.localStorage.setItem(STORAGE_KEY, lang);
+    updateMeta(lang);
 
-    const observer = new MutationObserver(() => {
-      if (!applying) {
-        window.requestAnimationFrame(apply);
+    if (lang === "ru") {
+      return undefined;
+    }
+
+    applyRoot();
+
+    const observer = new MutationObserver((mutations) => {
+      if (applying) return;
+
+      const targets = new Set<ParentNode>();
+
+      for (const mutation of mutations) {
+        if (mutation.type === "characterData") {
+          const parent = mutation.target.parentElement;
+
+          if (parent && !parent.closest("[data-i18n-ignore]")) {
+            targets.add(parent);
+          }
+
+          continue;
+        }
+
+        if (mutation.type === "attributes" && mutation.target instanceof Element) {
+          targets.add(mutation.target);
+        }
+
+        for (const node of mutation.addedNodes) {
+          if (node instanceof Element || node instanceof DocumentFragment) {
+            targets.add(node);
+          } else if (node.parentElement) {
+            targets.add(node.parentElement);
+          }
+        }
       }
+
+      if (!targets.size) return;
+
+      if (frame) {
+        window.cancelAnimationFrame(frame);
+      }
+
+      frame = window.requestAnimationFrame(() => {
+        applying = true;
+
+        for (const target of targets) {
+          translateTree(target, lang);
+        }
+
+        applying = false;
+        frame = 0;
+      });
     });
 
     observer.observe(document.body, {
@@ -839,7 +891,13 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       attributeFilter: ["placeholder", "aria-label", "title"],
     });
 
-    return () => observer.disconnect();
+    return () => {
+      if (frame) {
+        window.cancelAnimationFrame(frame);
+      }
+
+      observer.disconnect();
+    };
   }, [lang]);
 
   const value = useMemo(
