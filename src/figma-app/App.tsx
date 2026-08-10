@@ -26,7 +26,7 @@ function BackToTopButton() {
       type="button"
       aria-label="Наверх"
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      className="fixed right-8 bottom-8 z-50 h-14 w-14 rounded-full hidden md:flex items-center justify-center transition-all duration-300"
+      className="fixed right-8 bottom-8 z-50 h-14 w-14 rounded-full hidden md:flex items-center justify-center transition-[opacity,transform] duration-200 ease-out"
       style={{
         background: BRAND,
         color: "#FFFFFF",

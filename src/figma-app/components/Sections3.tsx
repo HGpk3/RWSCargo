@@ -299,19 +299,23 @@ export function Scenarios() {
                 ))}
               </div>
               <div
-                className="overflow-hidden transition-[max-height,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                aria-hidden={open !== i}
+                className="grid transition-[grid-template-rows,opacity] duration-200 ease-out"
                 style={{
-                  maxHeight: open === i ? 560 : 0,
+                  gridTemplateRows: open === i ? "1fr" : "0fr",
                   opacity: open === i ? 1 : 0,
+                  contain: "layout paint",
                 }}
               >
+                <div className="overflow-hidden">
                 <div
-                  className="mt-6 rounded-2xl p-5 transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                  className="mt-6 rounded-2xl p-5 transition-[transform,opacity] duration-200 ease-out"
                   style={{
                     background: "#F5F2EB",
                     border: `1px solid ${LINE}`,
                     opacity: open === i ? 1 : 0,
                     transform: open === i ? "translateY(0)" : "translateY(-4px)",
+                    willChange: "transform, opacity",
                   }}
                 >
                   <div style={{ color: "rgba(10,18,32,0.6)", fontSize: 14, lineHeight: 1.6 }}>
@@ -332,6 +336,7 @@ export function Scenarios() {
                       {s.details.result}
                     </div>
                   </div>
+                </div>
                 </div>
               </div>
               <button

@@ -162,7 +162,7 @@ export function DeliveryMethods() {
               type="button"
               key={m.title}
               onClick={() => selectMethod(m.calcMethod)}
-              className="text-left rounded-2xl overflow-hidden bg-white flex flex-col group cursor-pointer transition-all hover:-translate-y-1 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+              className="text-left rounded-2xl overflow-hidden bg-white flex flex-col group cursor-pointer transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-1 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
               style={{ border: `1px solid ${LINE}` }}
             >
               <div

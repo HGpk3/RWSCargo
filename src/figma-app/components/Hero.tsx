@@ -69,21 +69,23 @@ export function Header() {
         </div>
       </Container>
       <div
-        className="lg:hidden border-t overflow-hidden transition-[max-height,opacity] duration-[250ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
+        className="lg:hidden grid border-t transition-[grid-template-rows,opacity] duration-200 ease-out"
         style={{
-          maxHeight: menuOpen ? 360 : 0,
+          gridTemplateRows: menuOpen ? "1fr" : "0fr",
           opacity: menuOpen ? 1 : 0,
           pointerEvents: menuOpen ? "auto" : "none",
           borderColor: menuOpen ? "rgba(10,18,32,0.08)" : "transparent",
           background: "rgba(238,235,228,0.96)",
+          contain: "layout paint",
         }}
       >
-        <div>
+        <div className="overflow-hidden">
           <div
-            className="transition-[transform,opacity] duration-[250ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
+            className="transition-[transform,opacity] duration-200 ease-out"
             style={{
               opacity: menuOpen ? 1 : 0,
               transform: menuOpen ? "translateY(0)" : "translateY(-4px)",
+              willChange: "transform, opacity",
             }}
           >
             <Container className="py-4 grid gap-3">

@@ -42,7 +42,7 @@ function TaskCard({ n, title, desc, href }: { n: string; title: string; desc: st
   return (
     <a
       href={href}
-      className="rounded-2xl p-7 bg-white flex flex-col group cursor-pointer transition-all hover:-translate-y-1 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+      className="rounded-2xl p-7 bg-white flex flex-col group cursor-pointer transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-1 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
       style={{ border: `1px solid ${LINE}` }}
     >
       <div className="flex items-start justify-between">

@@ -44,7 +44,7 @@ function ServiceCard({ id, n, title, desc, bullets }: (typeof services)[0]) {
     <a
       id={id}
       href="#contacts"
-      className="rounded-2xl p-7 bg-white flex flex-col group transition-all hover:-translate-y-1 hover:shadow-lg scroll-mt-24 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+      className="rounded-2xl p-7 bg-white flex flex-col group transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-1 hover:shadow-lg scroll-mt-24 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
       style={{ border: `1px solid ${LINE}` }}
     >
       <div className="flex items-start justify-between mb-8">
