@@ -76,9 +76,10 @@ jobs:
           ssh -i ~/.ssh/beget_deploy_key -p "$BEGET_PORT" "$BEGET_USER@$BEGET_HOST" "BEGET_NODE_PATH='$NODE_PATH_REMOTE' bash -s" <<'REMOTE'
           set -euo pipefail
 
-          NODE_VERSION="20.20.2"
-          NODE_ARCHIVE="/tmp/node-v${NODE_VERSION}-bionic.tar.xz"
-          NODE_URL="https://cp.beget.com/shared/bmcys1znnpqt7-csnFitRYB00n0Lnhrm/node-v20.20.2-bionic.tar.xz"
+          NODE_VERSION="24.15.0"
+          NODE_PLATFORM="linux-x64"
+          NODE_ARCHIVE="/tmp/node-v${NODE_VERSION}-${NODE_PLATFORM}.tar.xz"
+          NODE_URL="https://nodejs.org/download/release/v${NODE_VERSION}/node-v${NODE_VERSION}-${NODE_PLATFORM}.tar.xz"
           NODE_MARKER="$HOME/.local/.rwscargo-node-${NODE_VERSION}"
 
           mkdir -p "$HOME/.local/bin"
@@ -95,6 +96,7 @@ jobs:
             touch "$NODE_MARKER"
           fi
 
+          chmod -R a+rX "$HOME/.local"
           "$BEGET_NODE_PATH" -v
           REMOTE
 
@@ -154,10 +156,7 @@ jobs:
             cd '$BEGET_PATH/api' && '$NODE_PATH_REMOTE' --check server.js || true
             echo '--- direct start ---'
             cd '$BEGET_PATH/api' && rm -f /tmp/rwscargo-api-check.log /tmp/rwscargo-api-check.pid
-            cd '$BEGET_PATH/api' && (PORT=3999 '$NODE_PATH_REMOTE' server.js > /tmp/rwscargo-api-check.log 2>&1 & echo \$! > /tmp/rwscargo-api-check.pid)
-            sleep 3
-            curl -sS -i http://127.0.0.1:3999/health || true
-            if [ -f /tmp/rwscargo-api-check.pid ]; then kill \$(cat /tmp/rwscargo-api-check.pid) 2>/dev/null || true; fi
+            cd '$BEGET_PATH/api' && timeout 5 env PORT=3999 '$NODE_PATH_REMOTE' server.js > /tmp/rwscargo-api-check.log 2>&1 || echo \"direct exit: \$?\"
             cat /tmp/rwscargo-api-check.log || true
           "
 
