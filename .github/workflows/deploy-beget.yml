@@ -76,38 +76,25 @@ jobs:
           ssh -i ~/.ssh/beget_deploy_key -p "$BEGET_PORT" "$BEGET_USER@$BEGET_HOST" "BEGET_NODE_PATH='$NODE_PATH_REMOTE' bash -s" <<'REMOTE'
           set -euo pipefail
 
-          if [ -x "$BEGET_NODE_PATH" ]; then
-            "$BEGET_NODE_PATH" -v
-            exit 0
-          fi
-
-          NODE_VERSION="24.18.0"
-          case "$(uname -m)" in
-            x86_64) NODE_PLATFORM="linux-x64" ;;
-            aarch64|arm64) NODE_PLATFORM="linux-arm64" ;;
-            *) echo "Unsupported server architecture: $(uname -m)" >&2; exit 1 ;;
-          esac
-
-          NODE_NAME="node-v${NODE_VERSION}-${NODE_PLATFORM}"
-          NODE_DIR="$HOME/.local/${NODE_NAME}"
-          NODE_ARCHIVE="/tmp/${NODE_NAME}.tar.gz"
-          NODE_URL="https://nodejs.org/dist/v${NODE_VERSION}/${NODE_NAME}.tar.gz"
+          NODE_VERSION="20.20.2"
+          NODE_ARCHIVE="/tmp/node-v${NODE_VERSION}-bionic.tar.xz"
+          NODE_URL="https://cp.beget.com/shared/bmcys1znnpqt7-csnFitRYB00n0Lnhrm/node-v20.20.2-bionic.tar.xz"
+          NODE_MARKER="$HOME/.local/.rwscargo-node-${NODE_VERSION}"
 
           mkdir -p "$HOME/.local/bin"
 
-          if [ ! -x "$NODE_DIR/bin/node" ]; then
-            rm -rf "$NODE_DIR" "$NODE_ARCHIVE"
+          if [ ! -x "$BEGET_NODE_PATH" ] || ! "$BEGET_NODE_PATH" -v | grep -q "v${NODE_VERSION}" || [ ! -f "$NODE_MARKER" ]; then
+            rm -f "$NODE_ARCHIVE" "$HOME/.local/bin/node" "$HOME/.local/bin/npm" "$HOME/.local/bin/npx"
             if command -v curl >/dev/null 2>&1; then
               curl -fsSL "$NODE_URL" -o "$NODE_ARCHIVE"
             else
               wget -q "$NODE_URL" -O "$NODE_ARCHIVE"
             fi
-            tar -xzf "$NODE_ARCHIVE" -C "$HOME/.local"
+            tar -xJf "$NODE_ARCHIVE" -C "$HOME/.local" --strip-components=1
             rm -f "$NODE_ARCHIVE"
+            touch "$NODE_MARKER"
           fi
 
-          ln -sfn "$NODE_DIR/bin/node" "$HOME/.local/bin/node"
-          ln -sfn "$NODE_DIR/bin/npm" "$HOME/.local/bin/npm"
           "$BEGET_NODE_PATH" -v
           REMOTE
 
