@@ -34,6 +34,8 @@ const config = {
 };
 
 const htaccess = [
+  "PassengerEnabled on",
+  "PassengerBaseURI /api",
   `PassengerNodejs ${nodePath}`,
   `PassengerAppRoot ${sitePath}/api`,
   "PassengerAppType node",
