@@ -60,6 +60,57 @@ jobs:
           chmod 600 ~/.ssh/beget_deploy_key
           ssh-keyscan -p "$BEGET_PORT" "$BEGET_HOST" >> ~/.ssh/known_hosts
 
+      - name: Ensure Beget Node
+        env:
+          BEGET_HOST: ${{ secrets.BEGET_HOST }}
+          BEGET_USER: ${{ secrets.BEGET_USER }}
+          BEGET_PORT: ${{ secrets.BEGET_PORT }}
+          BEGET_NODE_PATH: ${{ secrets.BEGET_NODE_PATH }}
+        run: |
+          NODE_PATH_REMOTE="$BEGET_NODE_PATH"
+          if [ -z "$NODE_PATH_REMOTE" ]; then
+            FIRST_CHAR="${BEGET_USER:0:1}"
+            NODE_PATH_REMOTE="/home/$FIRST_CHAR/$BEGET_USER/.local/bin/node"
+          fi
+
+          ssh -i ~/.ssh/beget_deploy_key -p "$BEGET_PORT" "$BEGET_USER@$BEGET_HOST" "BEGET_NODE_PATH='$NODE_PATH_REMOTE' bash -s" <<'REMOTE'
+          set -euo pipefail
+
+          if [ -x "$BEGET_NODE_PATH" ]; then
+            "$BEGET_NODE_PATH" -v
+            exit 0
+          fi
+
+          NODE_VERSION="24.18.0"
+          case "$(uname -m)" in
+            x86_64) NODE_PLATFORM="linux-x64" ;;
+            aarch64|arm64) NODE_PLATFORM="linux-arm64" ;;
+            *) echo "Unsupported server architecture: $(uname -m)" >&2; exit 1 ;;
+          esac
+
+          NODE_NAME="node-v${NODE_VERSION}-${NODE_PLATFORM}"
+          NODE_DIR="$HOME/.local/${NODE_NAME}"
+          NODE_ARCHIVE="/tmp/${NODE_NAME}.tar.gz"
+          NODE_URL="https://nodejs.org/dist/v${NODE_VERSION}/${NODE_NAME}.tar.gz"
+
+          mkdir -p "$HOME/.local/bin"
+
+          if [ ! -x "$NODE_DIR/bin/node" ]; then
+            rm -rf "$NODE_DIR" "$NODE_ARCHIVE"
+            if command -v curl >/dev/null 2>&1; then
+              curl -fsSL "$NODE_URL" -o "$NODE_ARCHIVE"
+            else
+              wget -q "$NODE_URL" -O "$NODE_ARCHIVE"
+            fi
+            tar -xzf "$NODE_ARCHIVE" -C "$HOME/.local"
+            rm -f "$NODE_ARCHIVE"
+          fi
+
+          ln -sfn "$NODE_DIR/bin/node" "$HOME/.local/bin/node"
+          ln -sfn "$NODE_DIR/bin/npm" "$HOME/.local/bin/npm"
+          "$BEGET_NODE_PATH" -v
+          REMOTE
+
       - name: Deploy static files
         env:
           BEGET_HOST: ${{ secrets.BEGET_HOST }}
