@@ -45,7 +45,9 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           PUBLIC_SITE_URL: https://rwscargo.ru
-        run: node scripts/prepare-beget-api.mjs
+        run: |
+          node scripts/prepare-beget-api.mjs
+          docker run --rm -v "$PWD:/app" -w /app php:8.2-cli php -l dist/api/index.php
 
       - name: Prepare SSH
         env:

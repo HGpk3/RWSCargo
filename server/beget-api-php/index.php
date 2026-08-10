@@ -256,7 +256,7 @@ try {
     $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
     $path = preg_replace('#^/api(?=/|$)#', '', $path);
-    $path = $path === '' ? '/' : rtrim($path, '/') ?: '/';
+    $path = $path === '' ? '/' : (rtrim($path, '/') ?: '/');
 
     if ($method === 'OPTIONS') {
         http_response_code(204);
