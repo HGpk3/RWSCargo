@@ -1156,22 +1156,29 @@ const title = "RWSCargo CRM - заявки";
         }
 
         .app-shell {
-          gap: 10px;
-          width: min(100vw - 16px, 720px);
-          padding: 8px 0;
+          gap: 8px;
+          width: min(100vw - 8px, 720px);
+          padding: 4px 0;
         }
 
         .sidebar {
           position: static;
           display: grid;
           grid-template-columns: 1fr;
-          gap: 10px;
+          gap: 8px;
           height: auto;
-          border-radius: 16px;
-          padding: 12px;
+          border-radius: 12px;
+          padding: 8px;
         }
 
-        .sidebar-logo small,
+        .sidebar-logo strong {
+          font-size: 20px;
+        }
+
+        .sidebar-logo small {
+          display: none;
+        }
+
         .nav-item span:last-child {
           display: block;
         }
@@ -1179,33 +1186,33 @@ const title = "RWSCargo CRM - заявки";
         .nav {
           display: grid;
           grid-template-columns: repeat(4, minmax(0, 1fr));
-          gap: 6px;
+          gap: 4px;
           overflow: visible;
         }
 
         .nav-item {
           grid-template-columns: 1fr;
           justify-items: center;
-          gap: 5px;
+          gap: 3px;
           min-width: 0;
-          min-height: 56px;
+          min-height: 46px;
           border-radius: var(--radius);
-          padding: 7px 4px;
-          font-size: 11px;
+          padding: 5px 3px;
+          font-size: 10px;
           line-height: 1.1;
           text-align: center;
         }
 
         .nav-item span:first-child {
-          width: 26px;
-          height: 26px;
+          width: 24px;
+          height: 24px;
         }
 
         .sidebar-card {
           display: grid;
-          grid-template-columns: 1fr auto;
-          gap: 10px;
-          padding: 10px;
+          gap: 8px;
+          padding: 0;
+          background: transparent;
         }
 
         .operator-title,
@@ -1215,7 +1222,10 @@ const title = "RWSCargo CRM - заявки";
 
         .push-card {
           grid-column: 1 / -1;
-          padding: 12px;
+          grid-template-columns: minmax(0, 1fr) auto;
+          align-items: center;
+          gap: 8px;
+          padding: 10px;
         }
 
         .push-card strong,
@@ -1225,16 +1235,50 @@ const title = "RWSCargo CRM - заявки";
 
         .push-actions {
           grid-template-columns: 1fr 1fr;
+          min-width: 210px;
         }
 
-        .analytics,
         .donut-layout {
           grid-template-columns: 1fr;
         }
 
+        .analytics {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+          margin-bottom: 8px;
+        }
+
         .metric {
-          min-height: 104px;
-          gap: 12px;
+          min-height: 86px;
+          gap: 8px;
+          padding: 12px;
+        }
+
+        .metric > span,
+        .metric em {
+          font-size: 10px;
+        }
+
+        .metric strong {
+          font-size: 34px;
+        }
+
+        .topbar {
+          gap: 8px;
+          margin-bottom: 8px;
+          padding: 10px;
+        }
+
+        .page-title {
+          gap: 2px;
+        }
+
+        .page-title span {
+          display: none;
+        }
+
+        .page-title h1 {
+          font-size: 25px;
         }
 
         .top-actions,
@@ -1245,6 +1289,7 @@ const title = "RWSCargo CRM - заявки";
         .top-actions {
           display: grid;
           grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 6px;
         }
 
         #refresh {
@@ -1254,32 +1299,63 @@ const title = "RWSCargo CRM - заявки";
         .segments {
           overflow-x: auto;
           border-radius: var(--radius);
+          padding: 3px;
         }
 
         .segment {
           flex: 1 0 auto;
           min-width: max-content;
+          min-height: 32px;
+          padding: 0 10px;
+          font-size: 12px;
+        }
+
+        .chart-card {
+          min-height: 0;
+          padding: 12px;
+        }
+
+        .chart-head {
+          margin-bottom: 10px;
+        }
+
+        .charts {
+          gap: 8px;
+          margin-bottom: 8px;
         }
 
         .lead-head {
           position: relative;
           grid-template-columns: 1fr;
-          gap: 8px;
-          min-height: 120px;
-          padding-right: 78px;
+          gap: 5px;
+          min-height: 0;
+          padding: 10px 72px 10px 10px;
         }
 
         .lead-head::after {
           content: "Открыть";
           position: absolute;
-          top: 14px;
-          right: 14px;
+          top: 10px;
+          right: 10px;
           border-radius: 999px;
-          padding: 7px 9px;
+          padding: 6px 8px;
           color: var(--accent);
           background: var(--accent-soft);
-          font-size: 11px;
+          font-size: 10px;
           font-weight: 900;
+        }
+
+        .lead-date,
+        .lead-subtitle {
+          font-size: 12px;
+        }
+
+        .lead-name {
+          font-size: 16px;
+        }
+
+        .lead-title {
+          font-size: 15px;
         }
 
         .lead-card.is-expanded .lead-head::after {
@@ -1301,7 +1377,8 @@ const title = "RWSCargo CRM - заявки";
 
         .statusline {
           flex-direction: column;
-          gap: 5px;
+          gap: 3px;
+          padding: 8px 10px;
         }
       }
 
@@ -1311,8 +1388,8 @@ const title = "RWSCargo CRM - заявки";
         }
 
         .app-shell {
-          width: min(100vw - 12px, 440px);
-          padding: 6px 0;
+          width: min(100vw - 6px, 440px);
+          padding: 3px 0;
         }
 
         .sidebar,
@@ -1323,41 +1400,68 @@ const title = "RWSCargo CRM - заявки";
           border-radius: 14px;
         }
 
-        .login-brand,
-        .login-form,
+        .sidebar,
+        .topbar,
         .chart-card,
-        .metric,
         .feed-toolbar,
         .statusline,
         .lead-head,
         .lead-body > section {
+          padding: 10px;
+        }
+
+        .login-brand,
+        .login-form {
           padding: 14px;
         }
 
+        .metric {
+          min-height: 78px;
+          padding: 10px;
+        }
+
         .nav {
-          gap: 4px;
+          gap: 3px;
         }
 
         .nav-item {
-          min-height: 52px;
-          padding: 6px 3px;
-          font-size: 10px;
+          min-height: 42px;
+          padding: 4px 2px;
+          font-size: 9px;
         }
 
         .push-card {
+          grid-template-columns: 1fr;
           gap: 8px;
         }
 
         .push-actions {
-          grid-template-columns: 1fr;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          min-width: 0;
         }
 
         .top-actions {
-          grid-template-columns: 1fr;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        #copy-link {
+          display: none;
+        }
+
+        #refresh {
+          grid-column: auto;
+        }
+
+        .button,
+        .button.ghost,
+        .button.secondary {
+          min-height: 38px;
+          padding: 0 10px;
+          font-size: 12px;
         }
 
         .page-title h1 {
-          font-size: 26px;
+          font-size: 23px;
         }
 
         .page-title span,
@@ -1366,46 +1470,85 @@ const title = "RWSCargo CRM - заявки";
         }
 
         .metric strong {
-          font-size: 38px;
+          font-size: 30px;
+        }
+
+        .metric em {
+          display: none;
         }
 
         .chart-head {
           display: grid;
-          gap: 6px;
+          gap: 4px;
+          margin-bottom: 8px;
         }
 
-        .bar-chart {
-          gap: 6px;
-          height: 118px;
-        }
-
-        .donut {
-          width: 124px;
-          justify-self: center;
-        }
-
-        .feed-toolbar {
-          gap: 10px;
-        }
-
-        .statusline {
-          font-size: 12px;
-        }
-
-        .board {
-          padding: 0 10px 10px;
-        }
-
-        .lead-name {
+        .chart-head strong {
           font-size: 16px;
         }
 
-        .lead-title {
+        .chart-head span {
+          font-size: 11px;
+        }
+
+        .bar-chart {
+          gap: 4px;
+          height: 92px;
+        }
+
+        .donut {
+          width: 108px;
+          justify-self: center;
+        }
+
+        .donut::after {
+          inset: 14px;
+        }
+
+        .donut span {
+          font-size: 26px;
+        }
+
+        .feed-toolbar {
+          gap: 8px;
+        }
+
+        .statusline {
+          font-size: 11px;
+        }
+
+        .board {
+          gap: 6px;
+          padding: 0 8px 8px;
+        }
+
+        .lead-name {
           font-size: 15px;
         }
 
+        .lead-title {
+          font-size: 14px;
+        }
+
+        .lead-date,
+        .lead-subtitle,
+        .status-pill {
+          font-size: 11px;
+        }
+
         .field {
-          min-height: 56px;
+          min-height: 50px;
+          padding: 8px;
+        }
+
+        .actions {
+          gap: 6px;
+        }
+
+        .action-link,
+        .action-button {
+          min-height: 34px;
+          font-size: 12px;
         }
       }
 
