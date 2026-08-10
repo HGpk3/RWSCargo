@@ -43,8 +43,7 @@ const htaccess = [
 
 await fs.rm(DIST_API_DIR, { recursive: true, force: true });
 await fs.mkdir(path.join(DIST_API_DIR, "tmp"), { recursive: true });
-await fs.copyFile(path.resolve("server", "beget-api.mjs"), path.join(DIST_API_DIR, "server.js"));
-await fs.writeFile(path.join(DIST_API_DIR, "package.json"), `${JSON.stringify({ type: "module" }, null, 2)}\n`, "utf8");
+await fs.copyFile(path.resolve("server", "beget-api.cjs"), path.join(DIST_API_DIR, "server.js"));
 await fs.writeFile(path.join(DIST_API_DIR, ".htaccess"), htaccess, "utf8");
 await fs.writeFile(path.join(DIST_API_DIR, "config.json"), `${JSON.stringify(config, null, 2)}\n`, "utf8");
 await fs.writeFile(path.join(DIST_API_DIR, "tmp", "restart.txt"), `${new Date().toISOString()}\n`, "utf8");
