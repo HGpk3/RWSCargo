@@ -347,7 +347,6 @@ function route(req, res) {
 
 async function start() {
   config = await readConfig();
-  await ensureDataFile();
 
   http.createServer(route).listen(PORT, () => {
     console.log(`RWSCargo Beget API listening on ${PORT}`);
