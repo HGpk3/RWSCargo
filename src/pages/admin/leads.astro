@@ -8,6 +8,11 @@ const title = "RWSCargo CRM - заявки";
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex,nofollow" />
+    <meta name="theme-color" content="#f0441f" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="RWSCargo CRM" />
+    <link rel="manifest" href="/admin-manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -435,6 +440,41 @@ const title = "RWSCargo CRM - заявки";
         color: var(--muted);
         font-size: 12px;
         line-height: 1.45;
+      }
+
+      .push-card {
+        display: grid;
+        gap: 10px;
+        border: 1px solid rgba(240, 68, 31, 0.12);
+        border-radius: 14px;
+        padding: 14px;
+        background:
+          linear-gradient(135deg, rgba(240, 68, 31, 0.1), transparent 62%),
+          rgba(255, 255, 255, 0.62);
+      }
+
+      .push-card strong {
+        color: var(--ink);
+        font-size: 14px;
+        line-height: 1.2;
+      }
+
+      .push-card span {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .push-card.is-ready {
+        border-color: rgba(31, 141, 90, 0.22);
+        background:
+          linear-gradient(135deg, rgba(31, 141, 90, 0.12), transparent 64%),
+          rgba(255, 255, 255, 0.68);
+      }
+
+      .push-actions {
+        display: grid;
+        gap: 8px;
       }
 
       .content {
@@ -1298,6 +1338,14 @@ const title = "RWSCargo CRM - заявки";
         <div class="sidebar-card">
           <strong>Операторский режим</strong>
           <span>Новые заявки идут сверху. На телефоне карточки раскрываются нажатием.</span>
+          <div class="push-card" id="push-card">
+            <strong>Push на iPhone</strong>
+            <span id="push-status">Проверяем поддержку уведомлений...</span>
+            <div class="push-actions">
+              <button class="button ghost" id="push-enable" type="button">Включить push</button>
+              <button class="button ghost" id="push-test" type="button" hidden>Тестовый push</button>
+            </div>
+          </div>
           <button class="button ghost" id="logout-side" type="button">Выйти</button>
         </div>
       </aside>
@@ -1419,6 +1467,10 @@ const title = "RWSCargo CRM - заявки";
       const statusLegend = document.querySelector("#status-legend");
       const filterButtons = Array.from(document.querySelectorAll("[data-filter]"));
       const navLinks = Array.from(document.querySelectorAll("[data-nav-link]"));
+      const pushCard = document.querySelector("#push-card");
+      const pushStatus = document.querySelector("#push-status");
+      const pushEnable = document.querySelector("#push-enable");
+      const pushTest = document.querySelector("#push-test");
       const counters = {
         new: document.querySelector("#count-new"),
         progress: document.querySelector("#count-progress"),
@@ -1434,6 +1486,8 @@ const title = "RWSCargo CRM - заявки";
       let filterState = "all";
       let searchState = "";
       let authHeader = sessionStorage.getItem(AUTH_KEY) || "";
+      let pushConfig = null;
+      let pushRegistration = null;
 
       function escapeHtml(value) {
         return String(value ?? "")
@@ -1466,6 +1520,7 @@ const title = "RWSCargo CRM - заявки";
         crmView.hidden = false;
         loginError.classList.remove("is-visible");
         syncNav();
+        refreshPushPanel();
       }
 
       function logout() {
@@ -1480,6 +1535,159 @@ const title = "RWSCargo CRM - заявки";
         if (authHeader) headers.set("Authorization", authHeader);
         if (options.body && !headers.has("content-type")) headers.set("content-type", "application/json");
         return fetch(url, { ...options, headers, cache: "no-store" });
+      }
+
+      function setPushStatus(message, ready = false) {
+        if (pushStatus) pushStatus.textContent = message;
+        pushCard?.classList.toggle("is-ready", ready);
+      }
+
+      function isIosDevice() {
+        return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.userAgent.includes("Mac") && navigator.maxTouchPoints > 1);
+      }
+
+      function isStandaloneApp() {
+        return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+      }
+
+      function urlBase64ToUint8Array(value) {
+        const padded = `${value}${"=".repeat((4 - (value.length % 4)) % 4)}`;
+        const base64 = padded.replaceAll("-", "+").replaceAll("_", "/");
+        const raw = window.atob(base64);
+        return Uint8Array.from([...raw].map((char) => char.charCodeAt(0)));
+      }
+
+      async function ensurePushRegistration() {
+        if (pushRegistration) return pushRegistration;
+        pushRegistration = await navigator.serviceWorker.register("/admin-sw.js", { scope: "/" });
+        return pushRegistration;
+      }
+
+      async function refreshPushPanel() {
+        if (!pushEnable || !pushTest) return;
+
+        if (!("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)) {
+          pushEnable.disabled = true;
+          pushTest.hidden = true;
+          setPushStatus("Этот браузер не поддерживает Web Push.");
+          return;
+        }
+
+        try {
+          const response = await apiFetch("/api/push/config");
+          const result = await response.json().catch(() => ({}));
+
+          if (!response.ok || !result.ok) {
+            throw new Error(result.error || "Не удалось проверить push.");
+          }
+
+          pushConfig = result;
+
+          if (!result.enabled || !result.publicKey) {
+            pushEnable.disabled = true;
+            pushTest.hidden = true;
+            setPushStatus("Серверные VAPID-ключи еще не настроены.");
+            return;
+          }
+
+          const registration = await ensurePushRegistration();
+          const subscription = await registration.pushManager.getSubscription();
+
+          if (subscription) {
+            pushEnable.textContent = "Push подключен";
+            pushEnable.disabled = true;
+            pushTest.hidden = false;
+            setPushStatus("Уведомления будут приходить на это устройство.", true);
+            return;
+          }
+
+          pushEnable.disabled = false;
+          pushEnable.textContent = "Включить push";
+          pushTest.hidden = true;
+          setPushStatus(
+            isIosDevice() && !isStandaloneApp()
+              ? "На iPhone сначала добавьте CRM на экран Домой, затем откройте ее с иконки."
+              : "Нажмите кнопку и разрешите уведомления для CRM.",
+          );
+        } catch (error) {
+          pushEnable.disabled = true;
+          pushTest.hidden = true;
+          setPushStatus(error.message || "Push временно недоступен.");
+        }
+      }
+
+      async function enablePush() {
+        if (!pushConfig?.enabled || !pushConfig.publicKey) return;
+
+        if (isIosDevice() && !isStandaloneApp()) {
+          setPushStatus("Откройте CRM с иконки на экране Домой, потом нажмите включение еще раз.");
+          return;
+        }
+
+        pushEnable.disabled = true;
+        pushEnable.textContent = "Подключаем...";
+
+        try {
+          const permission = await Notification.requestPermission();
+
+          if (permission !== "granted") {
+            setPushStatus("Разрешение не выдано. Проверьте настройки уведомлений для CRM.");
+            pushEnable.disabled = false;
+            pushEnable.textContent = "Включить push";
+            return;
+          }
+
+          const registration = await ensurePushRegistration();
+          let subscription = await registration.pushManager.getSubscription();
+
+          if (!subscription) {
+            subscription = await registration.pushManager.subscribe({
+              userVisibleOnly: true,
+              applicationServerKey: urlBase64ToUint8Array(pushConfig.publicKey),
+            });
+          }
+
+          const response = await apiFetch("/api/push/subscriptions", {
+            method: "POST",
+            body: JSON.stringify(subscription.toJSON()),
+          });
+          const result = await response.json().catch(() => ({}));
+
+          if (!response.ok || !result.ok) {
+            throw new Error(result.error || "Не удалось сохранить подписку.");
+          }
+
+          pushEnable.textContent = "Push подключен";
+          pushTest.hidden = false;
+          setPushStatus("Готово. Новые заявки будут приходить пушами на это устройство.", true);
+        } catch (error) {
+          pushEnable.disabled = false;
+          pushEnable.textContent = "Включить push";
+          setPushStatus(error.message || "Не удалось включить push.");
+        }
+      }
+
+      async function sendTestPush() {
+        if (!pushTest) return;
+
+        pushTest.disabled = true;
+        pushTest.textContent = "Отправляем...";
+
+        try {
+          const response = await apiFetch("/api/push/test", { method: "POST" });
+          const result = await response.json().catch(() => ({}));
+
+          if (!response.ok || !result.ok) {
+            throw new Error(result.error || "Тест не отправился.");
+          }
+
+          setPushStatus("Тестовый push отправлен. Проверьте уведомления на устройстве.", true);
+        } catch (error) {
+          setPushStatus(error.message || "Не удалось отправить тестовый push.");
+        } finally {
+          pushTest.disabled = false;
+          pushTest.textContent = "Тестовый push";
+        }
       }
 
       function linkify(value, type) {
@@ -1903,6 +2111,8 @@ const title = "RWSCargo CRM - заявки";
       });
 
       refresh.addEventListener("click", load);
+      pushEnable?.addEventListener("click", enablePush);
+      pushTest?.addEventListener("click", sendTestPush);
       logoutButtons.forEach((button) => button.addEventListener("click", logout));
       searchInput.addEventListener("input", () => {
         searchState = normalize(searchInput.value);

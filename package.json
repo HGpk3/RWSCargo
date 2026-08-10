@@ -14,6 +14,7 @@
     "build": "node scripts/run-astro.mjs check && node scripts/run-astro.mjs build",
     "ci": "npm run build",
     "preview": "node scripts/run-astro.mjs preview --host 0.0.0.0",
+    "vapid": "node scripts/generate-vapid-keys.mjs",
     "astro": "node scripts/run-astro.mjs"
   },
   "dependencies": {

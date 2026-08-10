@@ -52,6 +52,9 @@ jobs:
           SMTP_TO: ${{ secrets.SMTP_TO }}
           LEAD_EMAIL_TO: ${{ secrets.LEAD_EMAIL_TO }}
           LEAD_EMAIL_FROM: ${{ secrets.LEAD_EMAIL_FROM }}
+          VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+          VAPID_SUBJECT: ${{ secrets.VAPID_SUBJECT }}
           PUBLIC_SITE_URL: https://rwscargo.ru
         run: |
           node scripts/prepare-beget-api.mjs

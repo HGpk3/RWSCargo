@@ -1,0 +1,25 @@
+{
+  "name": "RWSCargo CRM",
+  "short_name": "RWS CRM",
+  "description": "Рабочий стол заявок RWSCargo",
+  "id": "/admin/leads/",
+  "start_url": "/admin/leads/",
+  "scope": "/admin/",
+  "display": "standalone",
+  "background_color": "#dceae4",
+  "theme_color": "#f0441f",
+  "icons": [
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon-32.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

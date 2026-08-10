@@ -29,6 +29,10 @@ const config = {
   smtp_pass: process.env.SMTP_PASS || "",
   lead_email_to: process.env.LEAD_EMAIL_TO || process.env.SMTP_TO || process.env.SMTP_USER || "",
   lead_email_from: process.env.LEAD_EMAIL_FROM || process.env.SMTP_USER || "RWSCargo <leads@rwscargo.ru>",
+  push_subscriptions_file: path.posix.join(dataDir, "push-subscriptions.json"),
+  vapid_public_key: process.env.VAPID_PUBLIC_KEY || "",
+  vapid_private_key: process.env.VAPID_PRIVATE_KEY || "",
+  vapid_subject: process.env.VAPID_SUBJECT || "mailto:leads@rwscargo.ru",
 };
 
 const htaccess = [
