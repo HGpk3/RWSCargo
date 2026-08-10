@@ -27,7 +27,7 @@ const config = {
   smtp_secure: process.env.SMTP_SECURE === "true",
   smtp_user: process.env.SMTP_USER || "",
   smtp_pass: process.env.SMTP_PASS || "",
-  lead_email_to: process.env.LEAD_EMAIL_TO || "",
+  lead_email_to: process.env.LEAD_EMAIL_TO || process.env.SMTP_TO || process.env.SMTP_USER || "",
   lead_email_from: process.env.LEAD_EMAIL_FROM || process.env.SMTP_USER || "RWSCargo <leads@rwscargo.ru>",
 };
 
