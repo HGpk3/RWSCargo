@@ -62,6 +62,7 @@ const title = "RWSCargo CRM - заявки";
           radial-gradient(circle at 18% 0%, rgba(240, 68, 31, 0.1), transparent 28%),
           linear-gradient(180deg, #dceae4 0%, #ecf2eb 46%, #f4f5ef 100%);
         font-family: Manrope, "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        overflow-x: hidden;
       }
 
       button,
@@ -1155,17 +1156,19 @@ const title = "RWSCargo CRM - заявки";
         }
 
         .app-shell {
-          width: min(100vw - 20px, 720px);
-          padding: 10px 0;
+          gap: 10px;
+          width: min(100vw - 16px, 720px);
+          padding: 8px 0;
         }
 
         .sidebar {
           position: static;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 10px;
           height: auto;
           border-radius: 16px;
+          padding: 12px;
         }
 
         .sidebar-logo small,
@@ -1174,23 +1177,64 @@ const title = "RWSCargo CRM - заявки";
         }
 
         .nav {
-          display: flex;
-          overflow-x: auto;
+          display: grid;
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+          gap: 6px;
+          overflow: visible;
         }
 
         .nav-item {
-          grid-template-columns: 24px minmax(0, 1fr);
-          min-width: max-content;
-          padding: 0 12px 0 8px;
+          grid-template-columns: 1fr;
+          justify-items: center;
+          gap: 5px;
+          min-width: 0;
+          min-height: 56px;
+          border-radius: var(--radius);
+          padding: 7px 4px;
+          font-size: 11px;
+          line-height: 1.1;
+          text-align: center;
+        }
+
+        .nav-item span:first-child {
+          width: 26px;
+          height: 26px;
         }
 
         .sidebar-card {
-          display: none;
+          display: grid;
+          grid-template-columns: 1fr auto;
+          gap: 10px;
+          padding: 10px;
+        }
+
+        .operator-title,
+        .operator-copy {
+          display: none !important;
+        }
+
+        .push-card {
+          grid-column: 1 / -1;
+          padding: 12px;
+        }
+
+        .push-card strong,
+        .push-card span {
+          display: block;
+        }
+
+        .push-actions {
+          grid-template-columns: 1fr 1fr;
         }
 
         .analytics,
         .donut-layout {
           grid-template-columns: 1fr;
+        }
+
+        .metric {
+          min-height: 104px;
+          gap: 12px;
         }
 
         .top-actions,
@@ -1203,19 +1247,26 @@ const title = "RWSCargo CRM - заявки";
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
+        #refresh {
+          grid-column: 1 / -1;
+        }
+
         .segments {
           overflow-x: auto;
+          border-radius: var(--radius);
         }
 
         .segment {
-          flex: 1;
+          flex: 1 0 auto;
+          min-width: max-content;
         }
 
         .lead-head {
           position: relative;
           grid-template-columns: 1fr;
           gap: 8px;
-          padding-right: 76px;
+          min-height: 120px;
+          padding-right: 78px;
         }
 
         .lead-head::after {
@@ -1244,6 +1295,10 @@ const title = "RWSCargo CRM - заявки";
           grid-template-columns: 1fr;
         }
 
+        .lead-body {
+          gap: 0;
+        }
+
         .statusline {
           flex-direction: column;
           gap: 5px;
@@ -1253,6 +1308,19 @@ const title = "RWSCargo CRM - заявки";
       @media (max-width: 560px) {
         .login-view {
           padding: 10px;
+        }
+
+        .app-shell {
+          width: min(100vw - 12px, 440px);
+          padding: 6px 0;
+        }
+
+        .sidebar,
+        .topbar,
+        .metric,
+        .chart-card,
+        .feed-panel {
+          border-radius: 14px;
         }
 
         .login-brand,
@@ -1266,16 +1334,104 @@ const title = "RWSCargo CRM - заявки";
           padding: 14px;
         }
 
+        .nav {
+          gap: 4px;
+        }
+
+        .nav-item {
+          min-height: 52px;
+          padding: 6px 3px;
+          font-size: 10px;
+        }
+
+        .push-card {
+          gap: 8px;
+        }
+
+        .push-actions {
+          grid-template-columns: 1fr;
+        }
+
         .top-actions {
           grid-template-columns: 1fr;
         }
 
         .page-title h1 {
-          font-size: 30px;
+          font-size: 26px;
+        }
+
+        .page-title span,
+        .control-label {
+          font-size: 10px;
+        }
+
+        .metric strong {
+          font-size: 38px;
+        }
+
+        .chart-head {
+          display: grid;
+          gap: 6px;
         }
 
         .bar-chart {
           gap: 6px;
+          height: 118px;
+        }
+
+        .donut {
+          width: 124px;
+          justify-self: center;
+        }
+
+        .feed-toolbar {
+          gap: 10px;
+        }
+
+        .statusline {
+          font-size: 12px;
+        }
+
+        .board {
+          padding: 0 10px 10px;
+        }
+
+        .lead-name {
+          font-size: 16px;
+        }
+
+        .lead-title {
+          font-size: 15px;
+        }
+
+        .field {
+          min-height: 56px;
+        }
+      }
+
+      @media (max-width: 380px) {
+        .nav-item span:last-child {
+          display: none;
+        }
+
+        .nav-item {
+          min-height: 42px;
+        }
+
+        .nav-item span:first-child {
+          width: 28px;
+          height: 28px;
+        }
+
+        .lead-head {
+          padding-right: 14px;
+          padding-bottom: 48px;
+        }
+
+        .lead-head::after {
+          top: auto;
+          right: 14px;
+          bottom: 14px;
         }
       }
 
@@ -1336,8 +1492,8 @@ const title = "RWSCargo CRM - заявки";
           <a class="nav-item" href="#control" data-nav-link><span>✓</span><span>Контроль</span></a>
         </nav>
         <div class="sidebar-card">
-          <strong>Операторский режим</strong>
-          <span>Новые заявки идут сверху. На телефоне карточки раскрываются нажатием.</span>
+          <strong class="operator-title">Операторский режим</strong>
+          <span class="operator-copy">Новые заявки идут сверху. На телефоне карточки раскрываются нажатием.</span>
           <div class="push-card" id="push-card">
             <strong>Push на iPhone</strong>
             <span id="push-status">Проверяем поддержку уведомлений...</span>
