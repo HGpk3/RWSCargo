@@ -1559,7 +1559,7 @@ const title = "RWSCargo CRM - заявки";
 
       async function ensurePushRegistration() {
         if (pushRegistration) return pushRegistration;
-        pushRegistration = await navigator.serviceWorker.register("/admin-sw.js", { scope: "/" });
+        pushRegistration = await navigator.serviceWorker.register("/admin-sw.php", { scope: "/" });
         return pushRegistration;
       }
 
