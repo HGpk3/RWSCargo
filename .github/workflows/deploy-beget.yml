@@ -40,8 +40,6 @@ jobs:
       - name: Prepare Beget API
         env:
           BEGET_PATH: ${{ secrets.BEGET_PATH }}
-          BEGET_USER: ${{ secrets.BEGET_USER }}
-          BEGET_NODE_PATH: ${{ secrets.BEGET_NODE_PATH }}
           CRM_ADMIN_USER: ${{ secrets.CRM_ADMIN_USER }}
           CRM_ADMIN_PASSWORD: ${{ secrets.CRM_ADMIN_PASSWORD }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -60,46 +58,6 @@ jobs:
           chmod 600 ~/.ssh/beget_deploy_key
           ssh-keyscan -p "$BEGET_PORT" "$BEGET_HOST" >> ~/.ssh/known_hosts
 
-      - name: Ensure Beget Node
-        env:
-          BEGET_HOST: ${{ secrets.BEGET_HOST }}
-          BEGET_USER: ${{ secrets.BEGET_USER }}
-          BEGET_PORT: ${{ secrets.BEGET_PORT }}
-          BEGET_NODE_PATH: ${{ secrets.BEGET_NODE_PATH }}
-        run: |
-          NODE_PATH_REMOTE="$BEGET_NODE_PATH"
-          if [ -z "$NODE_PATH_REMOTE" ]; then
-            FIRST_CHAR="${BEGET_USER:0:1}"
-            NODE_PATH_REMOTE="/home/$FIRST_CHAR/$BEGET_USER/.local/bin/node"
-          fi
-
-          ssh -i ~/.ssh/beget_deploy_key -p "$BEGET_PORT" "$BEGET_USER@$BEGET_HOST" "BEGET_NODE_PATH='$NODE_PATH_REMOTE' bash -s" <<'REMOTE'
-          set -euo pipefail
-
-          NODE_VERSION="24.15.0"
-          NODE_PLATFORM="linux-x64"
-          NODE_ARCHIVE="/tmp/node-v${NODE_VERSION}-${NODE_PLATFORM}.tar.xz"
-          NODE_URL="https://nodejs.org/download/release/v${NODE_VERSION}/node-v${NODE_VERSION}-${NODE_PLATFORM}.tar.xz"
-          NODE_MARKER="$HOME/.local/.rwscargo-node-${NODE_VERSION}"
-
-          mkdir -p "$HOME/.local/bin"
-
-          if [ ! -x "$BEGET_NODE_PATH" ] || ! "$BEGET_NODE_PATH" -v | grep -q "v${NODE_VERSION}" || [ ! -f "$NODE_MARKER" ]; then
-            rm -f "$NODE_ARCHIVE" "$HOME/.local/bin/node" "$HOME/.local/bin/npm" "$HOME/.local/bin/npx"
-            if command -v curl >/dev/null 2>&1; then
-              curl -fsSL "$NODE_URL" -o "$NODE_ARCHIVE"
-            else
-              wget -q "$NODE_URL" -O "$NODE_ARCHIVE"
-            fi
-            tar -xJf "$NODE_ARCHIVE" -C "$HOME/.local" --strip-components=1
-            rm -f "$NODE_ARCHIVE"
-            touch "$NODE_MARKER"
-          fi
-
-          chmod -R a+rX "$HOME/.local"
-          "$BEGET_NODE_PATH" -v
-          REMOTE
-
       - name: Deploy static files
         env:
           BEGET_HOST: ${{ secrets.BEGET_HOST }}
@@ -112,7 +70,7 @@ jobs:
             -e "ssh -i ~/.ssh/beget_deploy_key -p $BEGET_PORT" \
             dist/ "$BEGET_USER@$BEGET_HOST:$BEGET_PATH/"
 
-      - name: Restart Beget API
+      - name: Prepare CRM storage
         env:
           BEGET_HOST: ${{ secrets.BEGET_HOST }}
           BEGET_USER: ${{ secrets.BEGET_USER }}
@@ -121,15 +79,9 @@ jobs:
         run: |
           DATA_DIR="$(dirname "$BEGET_PATH")/rwscargo-crm-data"
           ssh -i ~/.ssh/beget_deploy_key -p "$BEGET_PORT" "$BEGET_USER@$BEGET_HOST" \
-            "mkdir -p '$DATA_DIR' '$BEGET_PATH/api/tmp' && touch '$BEGET_PATH/api/tmp/restart.txt'"
+            "mkdir -p '$DATA_DIR' && chmod 775 '$DATA_DIR'"
 
       - name: Verify Beget API
-        env:
-          BEGET_HOST: ${{ secrets.BEGET_HOST }}
-          BEGET_USER: ${{ secrets.BEGET_USER }}
-          BEGET_PORT: ${{ secrets.BEGET_PORT }}
-          BEGET_PATH: ${{ secrets.BEGET_PATH }}
-          BEGET_NODE_PATH: ${{ secrets.BEGET_NODE_PATH }}
         run: |
           for attempt in 1 2 3 4 5; do
             if curl -fsS https://rwscargo.ru/api/health; then
@@ -137,27 +89,5 @@ jobs:
             fi
             sleep 5
           done
-
-          NODE_PATH_REMOTE="$BEGET_NODE_PATH"
-          if [ -z "$NODE_PATH_REMOTE" ]; then
-            FIRST_CHAR="${BEGET_USER:0:1}"
-            NODE_PATH_REMOTE="/home/$FIRST_CHAR/$BEGET_USER/.local/bin/node"
-          fi
-
-          ssh -i ~/.ssh/beget_deploy_key -p "$BEGET_PORT" "$BEGET_USER@$BEGET_HOST" "
-            set -u
-            echo '--- api dir ---'
-            ls -la '$BEGET_PATH/api' || true
-            echo '--- htaccess ---'
-            sed -n '1,80p' '$BEGET_PATH/api/.htaccess' || true
-            echo '--- node ---'
-            '$NODE_PATH_REMOTE' -v || true
-            echo '--- syntax ---'
-            cd '$BEGET_PATH/api' && '$NODE_PATH_REMOTE' --check server.js || true
-            echo '--- direct start ---'
-            cd '$BEGET_PATH/api' && rm -f /tmp/rwscargo-api-check.log /tmp/rwscargo-api-check.pid
-            cd '$BEGET_PATH/api' && timeout 5 env PORT=3999 '$NODE_PATH_REMOTE' server.js > /tmp/rwscargo-api-check.log 2>&1 || echo \"direct exit: \$?\"
-            cat /tmp/rwscargo-api-check.log || true
-          "
 
           exit 1
