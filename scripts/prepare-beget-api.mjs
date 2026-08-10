@@ -25,7 +25,6 @@ const config = {
 };
 
 const htaccess = [
-  "Options -Indexes",
   "RewriteEngine On",
   "RewriteCond %{REQUEST_FILENAME} !-f",
   "RewriteRule ^ index.php [QSA,L]",

@@ -2,16 +2,25 @@
 
 declare(strict_types=1);
 
-$configPath = __DIR__ . '/config.php';
-$config = is_file($configPath) ? require $configPath : [];
-$config = array_merge([
+function default_config(): array
+{
+    return [
     'admin_user' => 'admin',
     'admin_password' => 'change-me',
     'public_site_url' => 'https://rwscargo.ru',
     'data_file' => __DIR__ . '/data/leads.json',
     'telegram_bot_token' => '',
     'telegram_chat_id' => '',
-], is_array($config) ? $config : []);
+    ];
+}
+
+function load_config(): array
+{
+    $configPath = __DIR__ . '/config.php';
+    $config = is_file($configPath) ? require $configPath : [];
+
+    return array_merge(default_config(), is_array($config) ? $config : []);
+}
 
 function send_json(int $status, array $body): void
 {
@@ -256,10 +265,12 @@ try {
         exit;
     }
 
-    if ($method === 'GET' && ($path === '/' || $path === '/health')) {
+    if ($method === 'GET' && ($path === '/' || $path === '/health' || $path === '/index.php')) {
         send_json(200, ['ok' => true]);
         exit;
     }
+
+    $config = load_config();
 
     if ($method === 'POST' && $path === '/leads') {
         $normalized = normalize_lead(read_json_body());
