@@ -271,7 +271,7 @@ export function Scenarios() {
           {scenarios.map((s, i) => (
             <div
               key={s.title}
-              className="rounded-2xl p-6 md:p-8 bg-white md:min-h-[820px]"
+              className="rounded-2xl p-6 md:p-8 bg-white"
               style={{ border: `1px solid ${LINE}` }}
             >
               <div style={{ color: BRAND, fontSize: 12, letterSpacing: "0.14em" }}>
