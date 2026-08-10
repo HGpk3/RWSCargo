@@ -22,6 +22,8 @@ const faqs = [
   { q: "Какие данные нужны для расчёта?", a: "Товар, ссылка или контакт поставщика, вес, объём, город получения, желаемые сроки и формат оформления." },
 ];
 
+type ContactMethod = "phone" | "telegram" | "email" | "whatsapp";
+
 export function Faq() {
   const [open, setOpen] = useState(0);
   return (
@@ -283,7 +285,8 @@ export function CTA() {
   const [email, setEmail] = useState("");
   const [telegram, setTelegram] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
-  const [preferredContact, setPreferredContact] = useState("phone");
+  const [preferredContact, setPreferredContact] = useState<ContactMethod | "">("");
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const [importFormat, setImportFormat] = useState("Пока не знаю, нужно подобрать схему");
   const [supplierLink, setSupplierLink] = useState("");
   const [cargo, setCargo] = useState("");
@@ -318,7 +321,7 @@ export function CTA() {
     ["telegram", "Telegram"],
     ["email", "Email"],
     ["whatsapp", "WhatsApp"],
-  ] as const;
+  ] satisfies Array<[ContactMethod, string]>;
   const toggle = (v: string) =>
     setChecks((p) => (p.includes(v) ? p.filter((x) => x !== v) : [...p, v]));
 
@@ -335,7 +338,8 @@ export function CTA() {
       if (detail?.volume) setVolume(detail.volume);
       if (detail?.city) setCity(detail.city);
       if (detail?.calculator) setCalculator(detail.calculator);
-      setNotice({ type: "success", text: "Расчёт прикреплён к заявке. Оставьте любой удобный контакт." });
+      setDetailsOpen(true);
+      setNotice({ type: "success", text: "Расчёт прикреплён к заявке. Выберите удобный канал ответа и оставьте контакт." });
     };
 
     window.addEventListener("rwscargo:lead-prefill", onPrefill);
@@ -351,10 +355,16 @@ export function CTA() {
     event.preventDefault();
     setNotice(null);
 
-    const hasContact = Boolean(phone.trim() || email.trim() || telegram.trim() || whatsapp.trim());
+    if (!preferredContact) {
+      setNotice({ type: "error", text: "Выберите, как удобнее получить ответ." });
+      return;
+    }
+
+    const selectedContactValue = preferredContact ? contactField[preferredContact].value.trim() : "";
+    const hasContact = Boolean(selectedContactValue);
 
     if (!hasContact) {
-      setNotice({ type: "error", text: "Укажите хотя бы один способ связи: телефон, Telegram, email или WhatsApp." });
+      setNotice({ type: "error", text: "Укажите контакт для выбранного способа связи." });
       return;
     }
 
@@ -401,6 +411,7 @@ export function CTA() {
       setEmail("");
       setTelegram("");
       setWhatsapp("");
+      setPreferredContact("");
       setSupplierLink("");
       setCargo("");
       setWeight("");
@@ -409,6 +420,7 @@ export function CTA() {
       setComment("");
       setChecks([]);
       setCalculator(null);
+      setDetailsOpen(false);
       setConsents({ personalData: false, contact: false, legalCargo: false });
     } catch (error) {
       setNotice({ type: "error", text: error instanceof Error ? error.message : "Не удалось отправить заявку." });
@@ -424,6 +436,50 @@ export function CTA() {
     fontSize: 14,
   };
 
+  const selectedContact = contactOptions.find(([value]) => value === preferredContact);
+  const contactField = {
+    phone: {
+      value: phone,
+      setter: setPhone,
+      type: "tel",
+      inputMode: "tel" as const,
+      autoComplete: "tel",
+      placeholder: "Телефон для звонка",
+    },
+    telegram: {
+      value: telegram,
+      setter: setTelegram,
+      type: "text",
+      inputMode: "text" as const,
+      autoComplete: "off",
+      placeholder: "Telegram username или номер",
+    },
+    email: {
+      value: email,
+      setter: setEmail,
+      type: "email",
+      inputMode: "email" as const,
+      autoComplete: "email",
+      placeholder: "Email для ответа",
+    },
+    whatsapp: {
+      value: whatsapp,
+      setter: setWhatsapp,
+      type: "tel",
+      inputMode: "tel" as const,
+      autoComplete: "tel",
+      placeholder: "WhatsApp номер",
+    },
+  } satisfies Record<ContactMethod, {
+    value: string;
+    setter: (value: string) => void;
+    type: string;
+    inputMode: "tel" | "text" | "email";
+    autoComplete: string;
+    placeholder: string;
+  }>;
+  const activeContact = preferredContact ? contactField[preferredContact] : null;
+
   return (
     <section id="contacts" className="py-6">
       <Container>
@@ -435,14 +491,14 @@ export function CTA() {
             <EyebrowLabel onDark>ЗАЯВКА НА РАСЧЁТ</EyebrowLabel>
             <div className="mt-6">
               <Display size="lg" onDark>
-                Оставьте контакт,<br />
-                <span style={{ color: BRAND }}>остальное</span><br />
-                можно пропустить
+                Сначала выберите,<br />
+                <span style={{ color: BRAND }}>как ответить</span><br />
+                на заявку
               </Display>
             </div>
             <p className="text-white/65 mt-6 max-w-md" style={{ fontSize: 15, lineHeight: 1.6 }}>
-              Чем больше данных о товаре, поставщике, весе и городе, тем точнее будет расчёт.
-              Но для первого шага достаточно любого контакта и обязательных согласий.
+              После выбора канала появится короткая форма под него. Детали по товару,
+              поставщику и документам можно раскрыть отдельно, если они уже есть под рукой.
             </p>
             <a href={PHONE_HREF} className="inline-flex items-center gap-3 text-white mt-8" style={{ fontSize: 20, fontWeight: 500 }}>
               <div
@@ -455,53 +511,25 @@ export function CTA() {
             </a>
           </div>
           <form className="lg:col-span-7 space-y-3" onSubmit={submitLead}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <label className="grid gap-2">
-                <span className="sr-only">Ваше имя</span>
-                <input aria-label={t("Ваше имя")} name="name" autoComplete="name" placeholder="Ваше имя" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={name} onChange={(e) => setName(e.target.value)} />
-              </label>
-              <label className="grid gap-2">
-                <span className="sr-only">Телефон</span>
-                <input aria-label={t("Телефон")} name="phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="Телефон" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={phone} onChange={(e) => setPhone(e.target.value)} />
-              </label>
-              <label className="grid gap-2">
-                <span className="sr-only">Email</span>
-                <input aria-label="Email" name="email" type="email" autoComplete="email" placeholder="Email" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={email} onChange={(e) => setEmail(e.target.value)} />
-              </label>
-              <label className="grid gap-2">
-                <span className="sr-only">Telegram</span>
-                <input aria-label="Telegram" name="telegram" placeholder="Telegram" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={telegram} onChange={(e) => setTelegram(e.target.value)} />
-              </label>
-              <label className="grid gap-2">
-                <span className="sr-only">WhatsApp</span>
-                <input aria-label="WhatsApp" name="whatsapp" placeholder="WhatsApp" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} />
-              </label>
-              <label className="grid gap-2">
-                <span className="sr-only">Город получения</span>
-                <input aria-label="Город получения" name="city" placeholder="Город получения" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={city} onChange={(e) => setCity(e.target.value)} />
-              </label>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <input aria-label="Описание груза" name="cargo" placeholder="Что нужно привезти" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={cargo} onChange={(e) => setCargo(e.target.value)} />
-              <input aria-label="Ссылка на поставщика" name="supplierLink" placeholder="Ссылка на поставщика" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={supplierLink} onChange={(e) => setSupplierLink(e.target.value)} />
-              <input aria-label="Вес" name="weight" inputMode="decimal" placeholder="Вес, кг" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={weight} onChange={(e) => setWeight(e.target.value)} />
-              <input aria-label="Объём" name="volume" inputMode="decimal" placeholder="Объём, м³" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={volume} onChange={(e) => setVolume(e.target.value)} />
-            </div>
-            <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)" }}>
-              <div className="text-white/45 mb-3" style={{ fontSize: 11, letterSpacing: "0.12em" }}>УДОБНЫЙ КАНАЛ СВЯЗИ</div>
-              <div className="flex flex-wrap gap-2">
+            <div className="rounded-2xl p-4 md:p-5" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)" }}>
+              <div className="text-white/45 mb-3" style={{ fontSize: 11, letterSpacing: "0.12em" }}>КАК УДОБНЕЕ ПОЛУЧИТЬ ОТВЕТ?</div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                 {contactOptions.map(([value, label]) => (
                   <button
                     key={value}
                     type="button"
-                    onClick={() => setPreferredContact(value)}
+                    onClick={() => {
+                      setPreferredContact(value);
+                      setNotice(null);
+                    }}
                     aria-pressed={preferredContact === value}
-                    className="rounded-full px-4 py-2.5 transition-colors"
+                    className="rounded-xl px-3 py-3 transition-colors text-left"
                     style={{
                       background: preferredContact === value ? "rgba(240,68,31,0.18)" : "rgba(255,255,255,0.05)",
-                      color: preferredContact === value ? BRAND : "rgba(255,255,255,0.85)",
-                      border: `1px solid ${preferredContact === value ? "rgba(240,68,31,0.4)" : "rgba(255,255,255,0.1)"}`,
+                      color: preferredContact === value ? BRAND : "rgba(255,255,255,0.88)",
+                      border: `1px solid ${preferredContact === value ? "rgba(240,68,31,0.45)" : "rgba(255,255,255,0.1)"}`,
                       fontSize: 13,
+                      fontWeight: 700,
                     }}
                   >
                     {label}
@@ -509,80 +537,133 @@ export function CTA() {
                 ))}
               </div>
             </div>
-            <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)" }}>
-              <div className="text-white/45 mb-3" style={{ fontSize: 11, letterSpacing: "0.12em" }}>ФОРМАТ ПОСТАВКИ</div>
-              <div className="flex flex-wrap gap-2">
-                {formats.map((format) => (
-                  <button
-                    key={format}
-                    type="button"
-                    onClick={() => setImportFormat(format)}
-                    aria-pressed={importFormat === format}
-                    className="rounded-full px-4 py-2.5 transition-colors"
-                    style={{
-                      background: importFormat === format ? "rgba(240,68,31,0.18)" : "rgba(255,255,255,0.05)",
-                      color: importFormat === format ? BRAND : "rgba(255,255,255,0.85)",
-                      border: `1px solid ${importFormat === format ? "rgba(240,68,31,0.4)" : "rgba(255,255,255,0.1)"}`,
-                      fontSize: 13,
-                    }}
-                  >
-                    {format}
-                  </button>
-                ))}
+            {activeContact && selectedContact && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <label className="grid gap-2">
+                  <span className="sr-only">Ваше имя</span>
+                  <input aria-label={t("Ваше имя")} name="name" autoComplete="name" placeholder="Ваше имя" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={name} onChange={(e) => setName(e.target.value)} />
+                </label>
+                <label className="grid gap-2">
+                  <span className="sr-only">{selectedContact[1]}</span>
+                  <input
+                    aria-label={selectedContact[1]}
+                    name={preferredContact}
+                    type={activeContact.type}
+                    inputMode={activeContact.inputMode}
+                    autoComplete={activeContact.autoComplete}
+                    placeholder={activeContact.placeholder}
+                    className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40"
+                    style={fieldStyle}
+                    value={activeContact.value}
+                    onChange={(e) => activeContact.setter(e.target.value)}
+                    required
+                  />
+                </label>
               </div>
-            </div>
-            <div className="flex flex-wrap gap-2 pt-3">
-              {items.map((i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => toggle(i)}
-                  aria-pressed={checks.includes(i)}
-                  className="rounded-full px-4 py-2.5 transition-colors"
-                  style={{
-                    background: checks.includes(i) ? "rgba(240,68,31,0.18)" : "rgba(255,255,255,0.05)",
-                    color: checks.includes(i) ? BRAND : "rgba(255,255,255,0.85)",
-                    border: `1px solid ${checks.includes(i) ? "rgba(240,68,31,0.4)" : "rgba(255,255,255,0.1)"}`,
-                    fontSize: 13,
-                  }}
-                >
-                  {i}
-                </button>
-              ))}
-            </div>
-            <textarea
-              placeholder="Комментарий, сроки, особенности товара"
-              aria-label="Комментарий, сроки, особенности товара"
-              name="comment"
-              rows={4}
-              className="w-full rounded-xl px-4 py-3.5 outline-none resize-none placeholder:text-white/40"
-              style={fieldStyle}
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-            />
+            )}
+            {preferredContact && (
+              <button
+                type="button"
+                onClick={() => setDetailsOpen((value) => !value)}
+                className="w-full rounded-xl px-4 py-3 text-left transition-colors"
+                style={{
+                  background: detailsOpen ? "rgba(240,68,31,0.14)" : "rgba(255,255,255,0.05)",
+                  border: `1px solid ${detailsOpen ? "rgba(240,68,31,0.35)" : "rgba(255,255,255,0.1)"}`,
+                  color: "rgba(255,255,255,0.88)",
+                  fontSize: 13,
+                  fontWeight: 700,
+                }}
+              >
+                {detailsOpen ? "Скрыть детали груза" : "Добавить детали груза, поставщика и формата"}
+              </button>
+            )}
+            {detailsOpen && (
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <input aria-label="Город получения" name="city" placeholder="Город получения" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={city} onChange={(e) => setCity(e.target.value)} />
+                  <input aria-label="Описание груза" name="cargo" placeholder="Что нужно привезти" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={cargo} onChange={(e) => setCargo(e.target.value)} />
+                  <input aria-label="Ссылка на поставщика" name="supplierLink" placeholder="Ссылка на поставщика" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={supplierLink} onChange={(e) => setSupplierLink(e.target.value)} />
+                  <input aria-label="Вес" name="weight" inputMode="decimal" placeholder="Вес, кг" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={weight} onChange={(e) => setWeight(e.target.value)} />
+                  <input aria-label="Объём" name="volume" inputMode="decimal" placeholder="Объём, м³" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={volume} onChange={(e) => setVolume(e.target.value)} />
+                </div>
+                <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)" }}>
+                  <div className="text-white/45 mb-3" style={{ fontSize: 11, letterSpacing: "0.12em" }}>ФОРМАТ ПОСТАВКИ</div>
+                  <div className="flex flex-wrap gap-2">
+                    {formats.map((format) => (
+                      <button
+                        key={format}
+                        type="button"
+                        onClick={() => setImportFormat(format)}
+                        aria-pressed={importFormat === format}
+                        className="rounded-full px-4 py-2.5 transition-colors"
+                        style={{
+                          background: importFormat === format ? "rgba(240,68,31,0.18)" : "rgba(255,255,255,0.05)",
+                          color: importFormat === format ? BRAND : "rgba(255,255,255,0.85)",
+                          border: `1px solid ${importFormat === format ? "rgba(240,68,31,0.4)" : "rgba(255,255,255,0.1)"}`,
+                          fontSize: 13,
+                        }}
+                      >
+                        {format}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {items.map((i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => toggle(i)}
+                      aria-pressed={checks.includes(i)}
+                      className="rounded-full px-4 py-2.5 transition-colors"
+                      style={{
+                        background: checks.includes(i) ? "rgba(240,68,31,0.18)" : "rgba(255,255,255,0.05)",
+                        color: checks.includes(i) ? BRAND : "rgba(255,255,255,0.85)",
+                        border: `1px solid ${checks.includes(i) ? "rgba(240,68,31,0.4)" : "rgba(255,255,255,0.1)"}`,
+                        fontSize: 13,
+                      }}
+                    >
+                      {i}
+                    </button>
+                  ))}
+                </div>
+                <textarea
+                  placeholder="Комментарий, сроки, особенности товара"
+                  aria-label="Комментарий, сроки, особенности товара"
+                  name="comment"
+                  rows={3}
+                  className="w-full rounded-xl px-4 py-3.5 outline-none resize-none placeholder:text-white/40"
+                  style={fieldStyle}
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                />
+              </div>
+            )}
             {calculator && (
               <div className="rounded-2xl p-4 text-white/75" style={{ background: "rgba(240,68,31,0.12)", border: "1px solid rgba(240,68,31,0.35)", fontSize: 13 }}>
                 К заявке прикреплён предварительный расчёт: {String(calculator.estimate || "ориентир с калькулятора")}.
               </div>
             )}
-            <div className="grid gap-2 pt-2">
-              {[
-                ["personalData", "Согласен на обработку персональных данных"],
-                ["contact", "Согласен на связь по указанным контактам"],
-                ["legalCargo", "Подтверждаю, что заявка не касается запрещённого к ввозу или перевозке груза"],
-              ].map(([key, label]) => (
-                <label key={key} className="flex items-start gap-3 text-white/65" style={{ fontSize: 12, lineHeight: 1.45 }}>
-                  <input
-                    type="checkbox"
-                    checked={consents[key as keyof typeof consents]}
-                    onChange={() => updateConsent(key as keyof typeof consents)}
-                    className="mt-0.5 h-4 w-4 shrink-0"
-                    required
-                  />
-                  <span>{label}</span>
-                </label>
-              ))}
-            </div>
+            {preferredContact && (
+              <div className="grid gap-2 pt-2">
+                {[
+                  ["personalData", "Согласен на обработку персональных данных"],
+                  ["contact", "Согласен на связь по указанным контактам"],
+                  ["legalCargo", "Подтверждаю, что заявка не касается запрещённого к ввозу или перевозке груза"],
+                ].map(([key, label]) => (
+                  <label key={key} className="flex items-start gap-3 text-white/65" style={{ fontSize: 12, lineHeight: 1.45 }}>
+                    <input
+                      type="checkbox"
+                      checked={consents[key as keyof typeof consents]}
+                      onChange={() => updateConsent(key as keyof typeof consents)}
+                      className="mt-0.5 h-4 w-4 shrink-0"
+                      required
+                    />
+                    <span>{label}</span>
+                  </label>
+                ))}
+              </div>
+            )}
             {notice && (
               <div
                 className="rounded-2xl px-4 py-3"
@@ -596,14 +677,16 @@ export function CTA() {
                 {notice.text}
               </div>
             )}
-            <div className="pt-4 flex flex-wrap items-center gap-4">
-              <PillBtn size="lg" variant="primary" type="submit">
-                {submitting ? "Отправляем..." : "Отправить заявку"}
-              </PillBtn>
-              <div className="text-white/40" style={{ fontSize: 12 }}>
-                Нажимая, вы соглашаетесь с <a href="/privacy/" className="underline underline-offset-2">политикой ПДн</a>
+            {preferredContact && (
+              <div className="pt-2 flex flex-wrap items-center gap-4">
+                <PillBtn size="lg" variant="primary" type="submit">
+                  {submitting ? "Отправляем..." : "Отправить заявку"}
+                </PillBtn>
+                <div className="text-white/40" style={{ fontSize: 12 }}>
+                  Нажимая, вы соглашаетесь с <a href="/privacy/" className="underline underline-offset-2">политикой ПДн</a>
+                </div>
               </div>
-            </div>
+            )}
           </form>
         </div>
       </Container>
