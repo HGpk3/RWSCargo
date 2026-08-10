@@ -1,0 +1,308 @@
+---
+const title = "RWSCargo CRM - заявки";
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>{title}</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #0a1220;
+        --brand: #f0441f;
+        --page: #eeebe4;
+        --line: #e2ded3;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Manrope, Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--ink);
+        background: var(--page);
+      }
+
+      main {
+        width: min(1320px, calc(100vw - 32px));
+        margin: 0 auto;
+        padding: 32px 0;
+      }
+
+      header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 24px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(32px, 5vw, 64px);
+        line-height: 0.95;
+        font-weight: 500;
+        letter-spacing: 0;
+      }
+
+      .muted {
+        color: rgba(10, 18, 32, 0.55);
+      }
+
+      button,
+      select {
+        font: inherit;
+      }
+
+      .button {
+        border: 0;
+        border-radius: 999px;
+        background: var(--ink);
+        color: #fff;
+        padding: 12px 18px;
+        cursor: pointer;
+      }
+
+      .panel {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: #fff;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 16px;
+        border-top: 1px solid var(--line);
+        vertical-align: top;
+        text-align: left;
+        font-size: 14px;
+      }
+
+      th {
+        border-top: 0;
+        color: rgba(10, 18, 32, 0.45);
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      tr:target {
+        outline: 3px solid rgba(240, 68, 31, 0.25);
+        outline-offset: -3px;
+      }
+
+      select {
+        width: 150px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #f8f5ef;
+        padding: 8px 10px;
+        color: var(--ink);
+      }
+
+      .lead-id {
+        color: var(--brand);
+        font-size: 12px;
+      }
+
+      .details {
+        display: grid;
+        gap: 6px;
+      }
+
+      .details span {
+        color: rgba(10, 18, 32, 0.56);
+      }
+
+      .empty,
+      .error {
+        padding: 24px;
+      }
+
+      .error {
+        color: #b42318;
+      }
+
+      @media (max-width: 920px) {
+        header {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        table,
+        thead,
+        tbody,
+        tr,
+        th,
+        td {
+          display: block;
+        }
+
+        thead {
+          display: none;
+        }
+
+        tr {
+          border-top: 1px solid var(--line);
+        }
+
+        td {
+          border-top: 0;
+          padding: 10px 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <div class="muted">МИНИ-CRM</div>
+          <h1>Заявки RWSCargo</h1>
+        </div>
+        <button class="button" id="refresh" type="button">Обновить</button>
+      </header>
+
+      <section class="panel" id="app">
+        <div class="empty">Загружаем заявки...</div>
+      </section>
+    </main>
+
+    <script is:inline>
+      const app = document.querySelector("#app");
+      const refresh = document.querySelector("#refresh");
+      const statuses = [
+        ["new", "Новая"],
+        ["in_progress", "В работе"],
+        ["closed", "Закрыта"],
+      ];
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;");
+      }
+
+      function formatDate(value) {
+        return new Intl.DateTimeFormat("ru-RU", {
+          dateStyle: "short",
+          timeStyle: "short",
+        }).format(new Date(value));
+      }
+
+      function render(leads) {
+        if (!leads.length) {
+          app.innerHTML = '<div class="empty">Пока заявок нет.</div>';
+          return;
+        }
+
+        app.innerHTML = `
+          <table>
+            <thead>
+              <tr>
+                <th>Дата</th>
+                <th>Статус</th>
+                <th>Контакт</th>
+                <th>Формат и задачи</th>
+                <th>Груз</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${leads
+                .map((lead) => {
+                  const payload = lead.payload || {};
+                  const status = statuses
+                    .map(([value, label]) => `<option value="${value}" ${lead.status === value ? "selected" : ""}>${label}</option>`)
+                    .join("");
+
+                  return `
+                    <tr id="${escapeHtml(lead.id)}">
+                      <td>
+                        <div>${formatDate(lead.created_at)}</div>
+                        <div class="lead-id">${escapeHtml(lead.id)}</div>
+                      </td>
+                      <td>
+                        <select data-lead-status="${escapeHtml(lead.id)}">${status}</select>
+                      </td>
+                      <td class="details">
+                        <strong>${escapeHtml(lead.name || "Без имени")}</strong>
+                        <span>Телефон: ${escapeHtml(lead.phone || "не указан")}</span>
+                        <span>Email: ${escapeHtml(lead.email || "не указан")}</span>
+                        <span>Telegram: ${escapeHtml(lead.telegram || "не указан")}</span>
+                        <span>WhatsApp: ${escapeHtml(lead.whatsapp || "не указан")}</span>
+                        <span>Удобно: ${escapeHtml(lead.preferred_contact || "не выбрано")}</span>
+                      </td>
+                      <td class="details">
+                        <strong>${escapeHtml(lead.import_format || "Формат не выбран")}</strong>
+                        <span>${escapeHtml((lead.tasks || []).join(", ") || "задачи не выбраны")}</span>
+                      </td>
+                      <td class="details">
+                        <strong>${escapeHtml(payload.cargo || "Груз не указан")}</strong>
+                        <span>Поставщик: ${escapeHtml(payload.supplierLink || "не указан")}</span>
+                        <span>Вес: ${escapeHtml(payload.weight || "не указан")}</span>
+                        <span>Объём: ${escapeHtml(payload.volume || "не указан")}</span>
+                        <span>Город: ${escapeHtml(payload.city || "не указан")}</span>
+                        <span>Комментарий: ${escapeHtml(payload.comment || "не указан")}</span>
+                        ${
+                          payload.calculator
+                            ? `<span>Калькулятор: ${escapeHtml(payload.calculator.estimate || "прикреплён")}</span>`
+                            : ""
+                        }
+                      </td>
+                    </tr>
+                  `;
+                })
+                .join("")}
+            </tbody>
+          </table>
+        `;
+
+        app.querySelectorAll("[data-lead-status]").forEach((select) => {
+          select.addEventListener("change", async () => {
+            const id = select.getAttribute("data-lead-status");
+            await fetch(`/api/leads/${id}`, {
+              method: "PATCH",
+              headers: { "content-type": "application/json" },
+              body: JSON.stringify({ status: select.value }),
+            });
+          });
+        });
+      }
+
+      async function load() {
+        app.innerHTML = '<div class="empty">Загружаем заявки...</div>';
+
+        try {
+          const response = await fetch("/api/leads", { cache: "no-store" });
+          const result = await response.json();
+
+          if (!response.ok || !result.ok) {
+            throw new Error(result.error || "Не удалось загрузить заявки");
+          }
+
+          render(result.leads || []);
+        } catch (error) {
+          app.innerHTML = `<div class="error">${escapeHtml(error.message || "Ошибка загрузки")}</div>`;
+        }
+      }
+
+      refresh.addEventListener("click", load);
+      load();
+    </script>
+  </body>
+</html>

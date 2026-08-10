@@ -11,7 +11,7 @@ const HERO_AVIF = "/images/hero-logistics-import-1200.avif";
 const navItems = [
   ["Услуги", "#services"],
   ["Доставка", "#delivery"],
-  ["Калькулятор", "#calculator"],
+  ["Форматы", "#formats"],
   ["Процесс", "#process"],
   ["FAQ", "#faq"],
   ["Контакты", "#contacts"],
@@ -55,7 +55,7 @@ export function Header() {
             <Phone size={14} />
             +7 (921) 655-65-60
           </a>
-          <PillBtn size="sm" variant="ink" href="#calculator">Рассчитать</PillBtn>
+          <PillBtn size="sm" variant="ink" href="#contacts">Заявка</PillBtn>
           <button
             type="button"
             onClick={() => setMenuOpen((open) => !open)}
@@ -211,11 +211,11 @@ export function Hero() {
                 fontWeight: 500,
               }}
             >
-              ИМПОРТ<br />
+              ПОСТАВКИ<br />
               <span style={{ WebkitTextStroke: "1.5px rgba(255,255,255,0.9)", color: "transparent" }}>
                 ИЗ КИТАЯ
               </span><br />
-              ПОД&nbsp;<span style={{ color: BRAND }}>КЛЮЧ</span>
+              ПОД&nbsp;<span style={{ color: BRAND }}>ЗАДАЧУ</span>
             </div>
           </div>
 
@@ -224,11 +224,12 @@ export function Hero() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-end">
               <div className="lg:col-span-5">
                 <p className="text-white/80 max-w-md" style={{ fontSize: 15, lineHeight: 1.55 }}>
-                  Покупаем, проверяем, оформляем и доставляем товары из Китая в Россию.
-                  Сначала собираем понятную схему поставки — потом везём груз.
+                  Подбираем схему поставки под задачу: быстро и экономично, официально
+                  с документами или в смешанном формате. Сначала фиксируем маршрут и условия,
+                  потом двигаем груз.
                 </p>
                 <div className="mt-6 flex flex-wrap items-center gap-3">
-                  <PillBtn size="lg" variant="primary" href="#calculator">Получить расчёт</PillBtn>
+                  <PillBtn size="lg" variant="primary" href="#contacts">Оставить заявку</PillBtn>
                   <PillBtn size="lg" variant="ghost" onDark href="#process">Посмотреть процесс</PillBtn>
                 </div>
               </div>

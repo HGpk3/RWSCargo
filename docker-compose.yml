@@ -2,13 +2,38 @@ services:
   web:
     build:
       context: .
+      target: runner
     ports:
       - "4321:80"
+    depends_on:
+      - api
+
+  api:
+    build:
+      context: .
+      target: api
+    environment:
+      PORT: 3000
+      PUBLIC_SITE_URL: ${PUBLIC_SITE_URL:-https://rwscargo.ru}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://rwscargo:rwscargo_dev_password@postgres:5432/rwscargo}
+      ADMIN_USER: ${ADMIN_USER:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-change-me}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:-}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      LEAD_EMAIL_TO: ${LEAD_EMAIL_TO:-}
+      LEAD_EMAIL_FROM: ${LEAD_EMAIL_FROM:-}
+    depends_on:
+      - postgres
+    ports:
+      - "3000:3000"
 
   postgres:
     image: postgres:17-alpine
-    profiles:
-      - infra
     ports:
       - "5432:5432"
     environment:

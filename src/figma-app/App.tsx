@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { ArrowUp } from "lucide-react";
 import { Header, Hero } from "./components/Hero";
-import { Metrics, Tasks, Approach } from "./components/Sections1";
+import { Metrics, Tasks } from "./components/Sections1";
 import { Services } from "./components/Services";
-import { WhiteImport, FixBefore, DeliveryMethods, Formats, Enterprise } from "./components/Sections2";
-import { Routes, Documents, ProofPoints, CargoTypes, Process, Scenarios, Limits, SeoBlock } from "./components/Sections3";
+import { DeliveryMethods, Formats } from "./components/Sections2";
+import { Process, Scenarios } from "./components/Sections3";
 import { Faq, Calculator, CTA, Footer } from "./components/Sections4";
 import { BRAND } from "./components/shared";
 import { LanguageProvider, useLanguage } from "./i18n";
@@ -59,25 +59,15 @@ function AppContent() {
       <Header />
       <Hero />
       <Metrics />
-      <Tasks />
-      <Approach />
-      <Services />
-      <WhiteImport />
-      <FixBefore />
-      <DeliveryMethods />
       <Formats />
-      <Enterprise />
-      <Routes />
-      <Documents />
-      <ProofPoints />
-      <CargoTypes />
+      <Tasks />
+      <Services />
+      <DeliveryMethods />
       <Process />
       <Scenarios />
-      <Limits />
-      <SeoBlock />
-      <Faq />
       <Calculator />
       <CTA />
+      <Faq />
       <Footer />
       <BackToTopButton />
     </div>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type React from "react";
+import type { BaseSyntheticEvent, CSSProperties } from "react";
 import { Plus, Minus, Phone, ArrowUpRight } from "lucide-react";
 import { Container, PillBtn, EyebrowLabel, Display, Logo, BRAND, INK, LINE, NAVY, PHONE_HREF, MESSENGER_HREF } from "./shared";
 import { translateValue, useLanguage } from "../i18n";
@@ -126,21 +126,29 @@ export function Calculator() {
   const priceMin = Math.round(price * 0.86);
   const priceMax = Math.round(price * 1.18);
   const days = method === "Авиа" ? "5—10" : method === "ЖД" ? "20—35" : "10—30";
-  const calcMessage = [
-    t("Здравствуйте! Хочу обсудить расчёт доставки из Китая."),
-    `${t("Вес")}: ${weight || t("не указан")} kg`,
-    `${t("Объём")}: ${volume || t("не указан")} m³`,
-    `${t("Способ")}: ${t(method)}`,
-    `${t("Город")}: ${city ? t(city) : t("не указан")}`,
-    `${t("Дополнительно")}: ${extras.length ? extras.map(t).join(", ") : t("не выбрано")}`,
-    `${t("Ориентир на сайте")}: ${priceMin.toLocaleString(locale)}—${priceMax.toLocaleString(locale)} ₽, ${days} ${t("дней")}`,
-  ].join("\n");
-  const calcHref = `${MESSENGER_HREF}?text=${encodeURIComponent(calcMessage)}`;
+  const estimateText = `${priceMin.toLocaleString(locale)}—${priceMax.toLocaleString(locale)} ₽, ${days} ${t("дней")}`;
+  const sendToLeadForm = () => {
+    window.dispatchEvent(
+      new CustomEvent("rwscargo:lead-prefill", {
+        detail: {
+          weight,
+          volume,
+          city,
+          calculator: {
+            method,
+            extras,
+            estimate: estimateText,
+          },
+        },
+      }),
+    );
+    document.querySelector("#contacts")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   const toggleExtra = (e: string) =>
     setExtras((prev) => (prev.includes(e) ? prev.filter((x) => x !== e) : [...prev, e]));
 
-  const fieldStyle: React.CSSProperties = {
+  const fieldStyle: CSSProperties = {
     background: "#F5F2EB",
     border: `1px solid ${LINE}`,
     color: INK,
@@ -253,7 +261,7 @@ export function Calculator() {
               </div>
             </div>
             <div className="mt-6">
-              <PillBtn size="lg" variant="primary" href={calcHref} target="_blank" rel="noreferrer">Обсудить расчёт</PillBtn>
+              <PillBtn size="lg" variant="primary" onClick={sendToLeadForm}>Прикрепить к заявке</PillBtn>
             </div>
           </div>
         </div>
@@ -267,7 +275,25 @@ export function CTA() {
   const [checks, setChecks] = useState<string[]>([]);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [details, setDetails] = useState("");
+  const [email, setEmail] = useState("");
+  const [telegram, setTelegram] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
+  const [preferredContact, setPreferredContact] = useState("phone");
+  const [importFormat, setImportFormat] = useState("Пока не знаю, нужно подобрать схему");
+  const [supplierLink, setSupplierLink] = useState("");
+  const [cargo, setCargo] = useState("");
+  const [weight, setWeight] = useState("");
+  const [volume, setVolume] = useState("");
+  const [city, setCity] = useState("");
+  const [comment, setComment] = useState("");
+  const [calculator, setCalculator] = useState<Record<string, unknown> | null>(null);
+  const [consents, setConsents] = useState({
+    personalData: false,
+    contact: false,
+    legalCargo: false,
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [notice, setNotice] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const t = (value: string) => translateValue(value, lang);
   const items = [
     "поставщик уже найден",
@@ -277,18 +303,116 @@ export function CTA() {
     "нужны документы",
     "нужна доставка по РФ",
   ];
+  const formats = [
+    "Официальный импорт с документами",
+    "Экономичный формат",
+    "Пока не знаю, нужно подобрать схему",
+  ];
+  const contactOptions = [
+    ["phone", "Телефон"],
+    ["telegram", "Telegram"],
+    ["email", "Email"],
+    ["whatsapp", "WhatsApp"],
+  ] as const;
   const toggle = (v: string) =>
     setChecks((p) => (p.includes(v) ? p.filter((x) => x !== v) : [...p, v]));
-  const requestMessage = [
-    t("Здравствуйте! Хочу рассчитать поставку из Китая."),
-    `${t("Имя")}: ${name || t("не указано")}`,
-    `${t("Телефон")}: ${phone || t("не указан")}`,
-    `${t("Задачи")}: ${checks.length ? checks.map(t).join(", ") : t("не выбраны")}`,
-    `${t("Описание")}: ${details || t("не указано")}`,
-  ].join("\n");
-  const requestHref = `${MESSENGER_HREF}?text=${encodeURIComponent(requestMessage)}`;
 
-  const fieldStyle: React.CSSProperties = {
+  useEffect(() => {
+    const onPrefill = (event: Event) => {
+      const detail = (event as CustomEvent<{
+        weight?: string;
+        volume?: string;
+        city?: string;
+        calculator?: Record<string, unknown>;
+      }>).detail;
+
+      if (detail?.weight) setWeight(detail.weight);
+      if (detail?.volume) setVolume(detail.volume);
+      if (detail?.city) setCity(detail.city);
+      if (detail?.calculator) setCalculator(detail.calculator);
+      setNotice({ type: "success", text: "Расчёт прикреплён к заявке. Оставьте любой удобный контакт." });
+    };
+
+    window.addEventListener("rwscargo:lead-prefill", onPrefill);
+
+    return () => window.removeEventListener("rwscargo:lead-prefill", onPrefill);
+  }, []);
+
+  const updateConsent = (key: keyof typeof consents) => {
+    setConsents((current) => ({ ...current, [key]: !current[key] }));
+  };
+
+  const submitLead = async (event: BaseSyntheticEvent) => {
+    event.preventDefault();
+    setNotice(null);
+
+    const hasContact = Boolean(phone.trim() || email.trim() || telegram.trim() || whatsapp.trim());
+
+    if (!hasContact) {
+      setNotice({ type: "error", text: "Укажите хотя бы один способ связи: телефон, Telegram, email или WhatsApp." });
+      return;
+    }
+
+    if (!consents.personalData || !consents.contact || !consents.legalCargo) {
+      setNotice({ type: "error", text: "Отметьте обязательные согласия перед отправкой." });
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      const response = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          source: "site_form",
+          name,
+          phone,
+          email,
+          telegram,
+          whatsapp,
+          preferredContact,
+          importFormat,
+          tasks: checks,
+          supplierLink,
+          cargo,
+          weight,
+          volume,
+          city,
+          comment,
+          calculator,
+          consents,
+        }),
+      });
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok || !result.ok) {
+        throw new Error(result.error || "Не удалось отправить заявку.");
+      }
+
+      setNotice({ type: "success", text: "Заявка отправлена. Менеджер увидит её в CRM и получит уведомление." });
+      setName("");
+      setPhone("");
+      setEmail("");
+      setTelegram("");
+      setWhatsapp("");
+      setSupplierLink("");
+      setCargo("");
+      setWeight("");
+      setVolume("");
+      setCity("");
+      setComment("");
+      setChecks([]);
+      setCalculator(null);
+      setConsents({ personalData: false, contact: false, legalCargo: false });
+    } catch (error) {
+      setNotice({ type: "error", text: error instanceof Error ? error.message : "Не удалось отправить заявку." });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const fieldStyle: CSSProperties = {
     background: "rgba(255,255,255,0.06)",
     border: "1px solid rgba(255,255,255,0.12)",
     color: "#fff",
@@ -306,14 +430,14 @@ export function CTA() {
             <EyebrowLabel onDark>ЗАЯВКА НА РАСЧЁТ</EyebrowLabel>
             <div className="mt-6">
               <Display size="lg" onDark>
-                Обсудим груз,<br />
-                <span style={{ color: BRAND }}>поставщика</span><br />
-                и маршрут
+                Оставьте контакт,<br />
+                <span style={{ color: BRAND }}>остальное</span><br />
+                можно пропустить
               </Display>
             </div>
             <p className="text-white/65 mt-6 max-w-md" style={{ fontSize: 15, lineHeight: 1.6 }}>
-              Опишите товар, объём, ссылку на поставщика, город получения и желаемые сроки.
-              Менеджер предложит формат поставки и следующий шаг.
+              Чем больше данных о товаре, поставщике, весе и городе, тем точнее будет расчёт.
+              Но для первого шага достаточно любого контакта и обязательных согласий.
             </p>
             <a href={PHONE_HREF} className="inline-flex items-center gap-3 text-white mt-8" style={{ fontSize: 20, fontWeight: 500 }}>
               <div
@@ -325,7 +449,7 @@ export function CTA() {
               +7 (921) 655-65-60
             </a>
           </div>
-          <div className="lg:col-span-7 space-y-3">
+          <form className="lg:col-span-7 space-y-3" onSubmit={submitLead}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <label className="grid gap-2">
                 <span className="sr-only">Ваше имя</span>
@@ -335,17 +459,73 @@ export function CTA() {
                 <span className="sr-only">Телефон</span>
                 <input aria-label={t("Телефон")} name="phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="Телефон" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={phone} onChange={(e) => setPhone(e.target.value)} />
               </label>
+              <label className="grid gap-2">
+                <span className="sr-only">Email</span>
+                <input aria-label="Email" name="email" type="email" autoComplete="email" placeholder="Email" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={email} onChange={(e) => setEmail(e.target.value)} />
+              </label>
+              <label className="grid gap-2">
+                <span className="sr-only">Telegram</span>
+                <input aria-label="Telegram" name="telegram" placeholder="Telegram" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={telegram} onChange={(e) => setTelegram(e.target.value)} />
+              </label>
+              <label className="grid gap-2">
+                <span className="sr-only">WhatsApp</span>
+                <input aria-label="WhatsApp" name="whatsapp" placeholder="WhatsApp" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} />
+              </label>
+              <label className="grid gap-2">
+                <span className="sr-only">Город получения</span>
+                <input aria-label="Город получения" name="city" placeholder="Город получения" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={city} onChange={(e) => setCity(e.target.value)} />
+              </label>
             </div>
-            <textarea
-              placeholder="Опишите груз, ссылку на поставщика, город получения"
-              aria-label={t("Опишите груз, ссылку на поставщика, город получения")}
-              name="details"
-              rows={4}
-              className="w-full rounded-xl px-4 py-3.5 outline-none resize-none placeholder:text-white/40"
-              style={fieldStyle}
-              value={details}
-              onChange={(e) => setDetails(e.target.value)}
-            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <input aria-label="Описание груза" name="cargo" placeholder="Что нужно привезти" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={cargo} onChange={(e) => setCargo(e.target.value)} />
+              <input aria-label="Ссылка на поставщика" name="supplierLink" placeholder="Ссылка на поставщика" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={supplierLink} onChange={(e) => setSupplierLink(e.target.value)} />
+              <input aria-label="Вес" name="weight" inputMode="decimal" placeholder="Вес, кг" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={weight} onChange={(e) => setWeight(e.target.value)} />
+              <input aria-label="Объём" name="volume" inputMode="decimal" placeholder="Объём, м³" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={volume} onChange={(e) => setVolume(e.target.value)} />
+            </div>
+            <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)" }}>
+              <div className="text-white/45 mb-3" style={{ fontSize: 11, letterSpacing: "0.12em" }}>УДОБНЫЙ КАНАЛ СВЯЗИ</div>
+              <div className="flex flex-wrap gap-2">
+                {contactOptions.map(([value, label]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setPreferredContact(value)}
+                    aria-pressed={preferredContact === value}
+                    className="rounded-full px-4 py-2.5 transition-colors"
+                    style={{
+                      background: preferredContact === value ? "rgba(240,68,31,0.18)" : "rgba(255,255,255,0.05)",
+                      color: preferredContact === value ? BRAND : "rgba(255,255,255,0.85)",
+                      border: `1px solid ${preferredContact === value ? "rgba(240,68,31,0.4)" : "rgba(255,255,255,0.1)"}`,
+                      fontSize: 13,
+                    }}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)" }}>
+              <div className="text-white/45 mb-3" style={{ fontSize: 11, letterSpacing: "0.12em" }}>ФОРМАТ ПОСТАВКИ</div>
+              <div className="flex flex-wrap gap-2">
+                {formats.map((format) => (
+                  <button
+                    key={format}
+                    type="button"
+                    onClick={() => setImportFormat(format)}
+                    aria-pressed={importFormat === format}
+                    className="rounded-full px-4 py-2.5 transition-colors"
+                    style={{
+                      background: importFormat === format ? "rgba(240,68,31,0.18)" : "rgba(255,255,255,0.05)",
+                      color: importFormat === format ? BRAND : "rgba(255,255,255,0.85)",
+                      border: `1px solid ${importFormat === format ? "rgba(240,68,31,0.4)" : "rgba(255,255,255,0.1)"}`,
+                      fontSize: 13,
+                    }}
+                  >
+                    {format}
+                  </button>
+                ))}
+              </div>
+            </div>
             <div className="flex flex-wrap gap-2 pt-3">
               {items.map((i) => (
                 <button
@@ -365,13 +545,61 @@ export function CTA() {
                 </button>
               ))}
             </div>
+            <textarea
+              placeholder="Комментарий, сроки, особенности товара"
+              aria-label="Комментарий, сроки, особенности товара"
+              name="comment"
+              rows={4}
+              className="w-full rounded-xl px-4 py-3.5 outline-none resize-none placeholder:text-white/40"
+              style={fieldStyle}
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+            />
+            {calculator && (
+              <div className="rounded-2xl p-4 text-white/75" style={{ background: "rgba(240,68,31,0.12)", border: "1px solid rgba(240,68,31,0.35)", fontSize: 13 }}>
+                К заявке прикреплён предварительный расчёт: {String(calculator.estimate || "ориентир с калькулятора")}.
+              </div>
+            )}
+            <div className="grid gap-2 pt-2">
+              {[
+                ["personalData", "Согласен на обработку персональных данных"],
+                ["contact", "Согласен на связь по указанным контактам"],
+                ["legalCargo", "Подтверждаю, что заявка не касается запрещённого к ввозу или перевозке груза"],
+              ].map(([key, label]) => (
+                <label key={key} className="flex items-start gap-3 text-white/65" style={{ fontSize: 12, lineHeight: 1.45 }}>
+                  <input
+                    type="checkbox"
+                    checked={consents[key as keyof typeof consents]}
+                    onChange={() => updateConsent(key as keyof typeof consents)}
+                    className="mt-0.5 h-4 w-4 shrink-0"
+                    required
+                  />
+                  <span>{label}</span>
+                </label>
+              ))}
+            </div>
+            {notice && (
+              <div
+                className="rounded-2xl px-4 py-3"
+                style={{
+                  background: notice.type === "success" ? "rgba(16,185,129,0.12)" : "rgba(240,68,31,0.12)",
+                  border: `1px solid ${notice.type === "success" ? "rgba(16,185,129,0.35)" : "rgba(240,68,31,0.35)"}`,
+                  color: notice.type === "success" ? "rgba(209,250,229,0.95)" : "rgba(255,220,214,0.95)",
+                  fontSize: 13,
+                }}
+              >
+                {notice.text}
+              </div>
+            )}
             <div className="pt-4 flex flex-wrap items-center gap-4">
-              <PillBtn size="lg" variant="primary" href={requestHref} target="_blank" rel="noreferrer">Отправить в WhatsApp</PillBtn>
+              <PillBtn size="lg" variant="primary" type="submit">
+                {submitting ? "Отправляем..." : "Отправить заявку"}
+              </PillBtn>
               <div className="text-white/40" style={{ fontSize: 12 }}>
                 Нажимая, вы соглашаетесь с <a href="/privacy/" className="underline underline-offset-2">политикой ПДн</a>
               </div>
             </div>
-          </div>
+          </form>
         </div>
       </Container>
     </section>
