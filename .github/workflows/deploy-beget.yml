@@ -37,6 +37,18 @@ jobs:
       - name: Build
         run: npm run ci
 
+      - name: Prepare Beget API
+        env:
+          BEGET_PATH: ${{ secrets.BEGET_PATH }}
+          BEGET_USER: ${{ secrets.BEGET_USER }}
+          BEGET_NODE_PATH: ${{ secrets.BEGET_NODE_PATH }}
+          CRM_ADMIN_USER: ${{ secrets.CRM_ADMIN_USER }}
+          CRM_ADMIN_PASSWORD: ${{ secrets.CRM_ADMIN_PASSWORD }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          PUBLIC_SITE_URL: https://rwscargo.ru
+        run: node scripts/prepare-beget-api.mjs
+
       - name: Prepare SSH
         env:
           BEGET_HOST: ${{ secrets.BEGET_HOST }}
@@ -59,3 +71,14 @@ jobs:
             --exclude='cgi-bin/' \
             -e "ssh -i ~/.ssh/beget_deploy_key -p $BEGET_PORT" \
             dist/ "$BEGET_USER@$BEGET_HOST:$BEGET_PATH/"
+
+      - name: Restart Beget API
+        env:
+          BEGET_HOST: ${{ secrets.BEGET_HOST }}
+          BEGET_USER: ${{ secrets.BEGET_USER }}
+          BEGET_PORT: ${{ secrets.BEGET_PORT }}
+          BEGET_PATH: ${{ secrets.BEGET_PATH }}
+        run: |
+          DATA_DIR="$(dirname "$BEGET_PATH")/rwscargo-crm-data"
+          ssh -i ~/.ssh/beget_deploy_key -p "$BEGET_PORT" "$BEGET_USER@$BEGET_HOST" \
+            "mkdir -p '$DATA_DIR' '$BEGET_PATH/api/tmp' && touch '$BEGET_PATH/api/tmp/restart.txt'"
