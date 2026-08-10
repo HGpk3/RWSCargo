@@ -4,6 +4,7 @@ const path = require("node:path");
 const { randomUUID } = require("node:crypto");
 
 const PORT = Number(process.env.PORT || 3000);
+const HOST = process.env.HOST || process.env.IP || "127.0.0.1";
 const APP_ROOT = __dirname;
 const CONFIG_PATH = path.join(APP_ROOT, "config.json");
 const DEFAULT_CONFIG = {
@@ -348,8 +349,8 @@ function route(req, res) {
 async function start() {
   config = await readConfig();
 
-  http.createServer(route).listen(PORT, () => {
-    console.log(`RWSCargo Beget API listening on ${PORT}`);
+  http.createServer(route).listen(PORT, HOST, () => {
+    console.log(`RWSCargo Beget API listening on ${HOST}:${PORT}`);
   });
 }
 
