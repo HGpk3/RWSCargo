@@ -82,3 +82,45 @@ jobs:
           DATA_DIR="$(dirname "$BEGET_PATH")/rwscargo-crm-data"
           ssh -i ~/.ssh/beget_deploy_key -p "$BEGET_PORT" "$BEGET_USER@$BEGET_HOST" \
             "mkdir -p '$DATA_DIR' '$BEGET_PATH/api/tmp' && touch '$BEGET_PATH/api/tmp/restart.txt'"
+
+      - name: Verify Beget API
+        env:
+          BEGET_HOST: ${{ secrets.BEGET_HOST }}
+          BEGET_USER: ${{ secrets.BEGET_USER }}
+          BEGET_PORT: ${{ secrets.BEGET_PORT }}
+          BEGET_PATH: ${{ secrets.BEGET_PATH }}
+          BEGET_NODE_PATH: ${{ secrets.BEGET_NODE_PATH }}
+        run: |
+          for attempt in 1 2 3 4 5; do
+            if curl -fsS https://rwscargo.ru/api/health; then
+              exit 0
+            fi
+            sleep 5
+          done
+
+          NODE_PATH_REMOTE="$BEGET_NODE_PATH"
+          if [ -z "$NODE_PATH_REMOTE" ]; then
+            FIRST_CHAR="${BEGET_USER:0:1}"
+            NODE_PATH_REMOTE="/home/$FIRST_CHAR/$BEGET_USER/.local/bin/node"
+          fi
+
+          ssh -i ~/.ssh/beget_deploy_key -p "$BEGET_PORT" "$BEGET_USER@$BEGET_HOST" "
+            set -u
+            echo '--- api dir ---'
+            ls -la '$BEGET_PATH/api' || true
+            echo '--- htaccess ---'
+            sed -n '1,80p' '$BEGET_PATH/api/.htaccess' || true
+            echo '--- node ---'
+            '$NODE_PATH_REMOTE' -v || true
+            echo '--- syntax ---'
+            cd '$BEGET_PATH/api' && '$NODE_PATH_REMOTE' --check server.js || true
+            echo '--- direct start ---'
+            cd '$BEGET_PATH/api' && rm -f /tmp/rwscargo-api-check.log /tmp/rwscargo-api-check.pid
+            cd '$BEGET_PATH/api' && (PORT=3999 '$NODE_PATH_REMOTE' server.js > /tmp/rwscargo-api-check.log 2>&1 & echo \$! > /tmp/rwscargo-api-check.pid)
+            sleep 3
+            curl -sS -i http://127.0.0.1:3999/health || true
+            if [ -f /tmp/rwscargo-api-check.pid ]; then kill \$(cat /tmp/rwscargo-api-check.pid) 2>/dev/null || true; fi
+            cat /tmp/rwscargo-api-check.log || true
+          "
+
+          exit 1
