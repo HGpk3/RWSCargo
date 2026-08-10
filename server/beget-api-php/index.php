@@ -11,6 +11,13 @@ function default_config(): array
     'data_file' => __DIR__ . '/data/leads.json',
     'telegram_bot_token' => '',
     'telegram_chat_id' => '',
+    'smtp_host' => '',
+    'smtp_port' => 587,
+    'smtp_secure' => false,
+    'smtp_user' => '',
+    'smtp_pass' => '',
+    'lead_email_to' => '',
+    'lead_email_from' => 'RWSCargo <leads@rwscargo.ru>',
     ];
 }
 
@@ -252,6 +259,150 @@ function notify_telegram(array $lead, array $config): array
     return ['ok' => true];
 }
 
+function header_line(string $value): string
+{
+    return trim(str_replace(["\r", "\n"], '', $value));
+}
+
+function extract_email(string $value): string
+{
+    if (preg_match('/<([^>]+)>/', $value, $matches)) {
+        return trim($matches[1]);
+    }
+
+    return trim($value);
+}
+
+function smtp_read($stream): array
+{
+    $message = '';
+    $code = 0;
+
+    while (($line = fgets($stream, 1024)) !== false) {
+        $message .= $line;
+        $code = (int) substr($line, 0, 3);
+
+        if (strlen($line) >= 4 && $line[3] === ' ') {
+            break;
+        }
+    }
+
+    return [$code, $message];
+}
+
+function smtp_command($stream, string $command, array $expected): string
+{
+    if ($command !== '') {
+        fwrite($stream, $command . "\r\n");
+    }
+
+    [$code, $message] = smtp_read($stream);
+
+    if (!in_array($code, $expected, true)) {
+        throw new RuntimeException('SMTP error: ' . trim($message));
+    }
+
+    return $message;
+}
+
+function smtp_body(string $text): string
+{
+    $normalized = preg_replace("/\r\n|\r|\n/", "\r\n", $text);
+    $lines = explode("\r\n", (string) $normalized);
+
+    return implode("\r\n", array_map(static function (string $line): string {
+        return str_starts_with($line, '.') ? '.' . $line : $line;
+    }, $lines));
+}
+
+function notify_email(array $lead, array $config): array
+{
+    $to = header_line((string) ($config['lead_email_to'] ?? ''));
+
+    if ($to === '') {
+        return ['skipped' => true, 'reason' => 'LEAD_EMAIL_TO is not set'];
+    }
+
+    $host = (string) ($config['smtp_host'] ?? '');
+    $from = header_line((string) ($config['lead_email_from'] ?? 'RWSCargo <leads@rwscargo.ru>'));
+    $fromEmail = extract_email($from);
+    $subject = 'Новая заявка RWSCargo';
+    $text = lead_text($lead);
+    $encodedSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
+    $headers = [
+        'From: ' . $from,
+        'To: ' . $to,
+        'Subject: ' . $encodedSubject,
+        'MIME-Version: 1.0',
+        'Content-Type: text/plain; charset=UTF-8',
+        'Content-Transfer-Encoding: 8bit',
+        'Date: ' . date('r'),
+    ];
+
+    if ($host === '') {
+        $sent = mail($to, $encodedSubject, $text, implode("\r\n", array_filter($headers, static function (string $line): bool {
+            return !str_starts_with($line, 'To: ') && !str_starts_with($line, 'Subject: ');
+        })));
+
+        return $sent ? ['ok' => true, 'transport' => 'mail'] : ['ok' => false, 'error' => 'PHP mail failed'];
+    }
+
+    try {
+        $port = (int) ($config['smtp_port'] ?? 587);
+        $secure = !empty($config['smtp_secure']);
+        $socketHost = ($secure ? 'ssl://' : '') . $host;
+        $stream = stream_socket_client($socketHost . ':' . $port, $errno, $errstr, 8, STREAM_CLIENT_CONNECT);
+
+        if (!$stream) {
+            return ['ok' => false, 'error' => 'SMTP connect failed: ' . $errstr];
+        }
+
+        stream_set_timeout($stream, 8);
+        smtp_command($stream, '', [220]);
+        $ehlo = smtp_command($stream, 'EHLO rwscargo.ru', [250]);
+
+        if (!$secure && stripos($ehlo, 'STARTTLS') !== false) {
+            smtp_command($stream, 'STARTTLS', [220]);
+
+            if (!stream_socket_enable_crypto($stream, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) {
+                throw new RuntimeException('SMTP STARTTLS failed');
+            }
+
+            smtp_command($stream, 'EHLO rwscargo.ru', [250]);
+        }
+
+        if (!empty($config['smtp_user'])) {
+            smtp_command($stream, 'AUTH LOGIN', [334]);
+            smtp_command($stream, base64_encode((string) $config['smtp_user']), [334]);
+            smtp_command($stream, base64_encode((string) ($config['smtp_pass'] ?? '')), [235]);
+        }
+
+        smtp_command($stream, 'MAIL FROM:<' . $fromEmail . '>', [250]);
+
+        foreach (preg_split('/[,;]/', $to) as $recipient) {
+            $recipient = extract_email((string) $recipient);
+
+            if ($recipient !== '') {
+                smtp_command($stream, 'RCPT TO:<' . $recipient . '>', [250, 251]);
+            }
+        }
+
+        smtp_command($stream, 'DATA', [354]);
+        fwrite($stream, implode("\r\n", $headers) . "\r\n\r\n" . smtp_body($text) . "\r\n.\r\n");
+        smtp_command($stream, '', [250]);
+        smtp_command($stream, 'QUIT', [221]);
+        fclose($stream);
+
+        return ['ok' => true, 'transport' => 'smtp'];
+    } catch (Throwable $error) {
+        if (isset($stream) && is_resource($stream)) {
+            fclose($stream);
+        }
+
+        return ['ok' => false, 'error' => $error->getMessage()];
+    }
+}
+
 try {
     $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
@@ -282,6 +433,7 @@ try {
 
         $lead = $normalized['lead'];
         $lead['notification_status']['telegram'] = notify_telegram($lead, $config);
+        $lead['notification_status']['email'] = notify_email($lead, $config);
         with_leads_lock((string) $config['data_file'], function (array &$leads) use ($lead): void {
             array_unshift($leads, $lead);
         });

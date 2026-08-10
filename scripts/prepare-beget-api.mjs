@@ -22,6 +22,13 @@ const config = {
   data_file: path.posix.join(dataDir, "leads.json"),
   telegram_bot_token: process.env.TELEGRAM_BOT_TOKEN || "",
   telegram_chat_id: process.env.TELEGRAM_CHAT_ID || "",
+  smtp_host: process.env.SMTP_HOST || "",
+  smtp_port: Number(process.env.SMTP_PORT || 587),
+  smtp_secure: process.env.SMTP_SECURE === "true",
+  smtp_user: process.env.SMTP_USER || "",
+  smtp_pass: process.env.SMTP_PASS || "",
+  lead_email_to: process.env.LEAD_EMAIL_TO || "",
+  lead_email_from: process.env.LEAD_EMAIL_FROM || process.env.SMTP_USER || "RWSCargo <leads@rwscargo.ru>",
 };
 
 const htaccess = [
