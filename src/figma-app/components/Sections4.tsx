@@ -17,7 +17,7 @@ const faqs = [
   { q: "Какой срок доставки из Китая в Россию?", a: "Зависит от маршрута: авто 10—30 дней, авиа для срочных партий, ЖД и контейнер для объёмов. Точный срок рассчитаем после веса, объёма и города получения." },
   { q: "Можно ли выкупить товар у поставщика за меня?", a: "Да. Вы присылаете ссылку или контакт поставщика, мы проверяем условия, оплачиваем в юанях и принимаем товар на склад в Китае." },
   { q: "Можно ли оформить поставку официально?", a: "Да. Обсуждаем формат ввоза заранее: контрактная часть, инвойсы, упаковочные листы, закрывающие документы — для бухгалтерии и ВЭД." },
-  { q: "С какими товарами работает RWSCargo?", a: "Маркетплейсы, электроника, одежда, мебель, оборудование, автозапчасти, сборные и контейнерные грузы. Не берём запрещённые к ввозу." },
+  { q: "С какими товарами работает RWSCargo?", a: "Любые товары, кроме запрещённых к ввозу. Чаще всего работаем с маркетплейсами, электроникой, одеждой, мебелью, оборудованием, автозапчастями, сборными и контейнерными грузами." },
   { q: "Есть ли склады в Китае?", a: "Да, два склада — в Гуанчжоу и Иу. Принимаем товары, сверяем количество, консолидируем партии и готовим упаковку к отправке." },
   { q: "Какие данные нужны для расчёта?", a: "Товар, ссылка или контакт поставщика, вес, объём, город получения, желаемые сроки и формат оформления." },
 ];
@@ -484,7 +484,7 @@ export function CTA() {
     <section id="contacts" className="py-6">
       <Container>
         <div
-          className="rounded-[28px] p-8 md:p-14 grid grid-cols-1 lg:grid-cols-12 gap-10"
+          className="rounded-[28px] p-5 sm:p-6 md:p-14 grid grid-cols-1 lg:grid-cols-12 gap-7 lg:gap-10"
           style={{ background: NAVY }}
         >
           <div className="lg:col-span-5">
@@ -541,7 +541,7 @@ export function CTA() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <label className="grid gap-2">
                   <span className="sr-only">Ваше имя</span>
-                  <input aria-label={t("Ваше имя")} name="name" autoComplete="name" placeholder="Ваше имя" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={name} onChange={(e) => setName(e.target.value)} />
+                  <input aria-label={t("Ваше имя")} name="name" autoComplete="name" placeholder="Ваше имя" className="rounded-xl px-4 py-3 md:py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={name} onChange={(e) => setName(e.target.value)} />
                 </label>
                 <label className="grid gap-2">
                   <span className="sr-only">{selectedContact[1]}</span>
@@ -552,7 +552,7 @@ export function CTA() {
                     inputMode={activeContact.inputMode}
                     autoComplete={activeContact.autoComplete}
                     placeholder={activeContact.placeholder}
-                    className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40"
+                    className="rounded-xl px-4 py-3 md:py-3.5 outline-none placeholder:text-white/40"
                     style={fieldStyle}
                     value={activeContact.value}
                     onChange={(e) => activeContact.setter(e.target.value)}
@@ -574,17 +574,20 @@ export function CTA() {
                   fontWeight: 700,
                 }}
               >
-                {detailsOpen ? "Скрыть детали груза" : "Добавить детали груза, поставщика и формата"}
+                {detailsOpen ? "Скрыть детали груза" : "Добавить детали, если есть"}
               </button>
             )}
             {detailsOpen && (
               <div className="space-y-3">
+                <div className="text-white/45" style={{ fontSize: 11, letterSpacing: "0.12em" }}>
+                  НЕОБЯЗАТЕЛЬНО К ЗАПОЛНЕНИЮ
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <input aria-label="Город получения" name="city" placeholder="Город получения" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={city} onChange={(e) => setCity(e.target.value)} />
-                  <input aria-label="Описание груза" name="cargo" placeholder="Что нужно привезти" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={cargo} onChange={(e) => setCargo(e.target.value)} />
-                  <input aria-label="Ссылка на поставщика" name="supplierLink" placeholder="Ссылка на поставщика" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={supplierLink} onChange={(e) => setSupplierLink(e.target.value)} />
-                  <input aria-label="Вес" name="weight" inputMode="decimal" placeholder="Вес, кг" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={weight} onChange={(e) => setWeight(e.target.value)} />
-                  <input aria-label="Объём" name="volume" inputMode="decimal" placeholder="Объём, м³" className="rounded-xl px-4 py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={volume} onChange={(e) => setVolume(e.target.value)} />
+                  <input aria-label="Город получения" name="city" placeholder="Город получения" className="rounded-xl px-4 py-3 md:py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={city} onChange={(e) => setCity(e.target.value)} />
+                  <input aria-label="Описание груза" name="cargo" placeholder="Что нужно привезти" className="rounded-xl px-4 py-3 md:py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={cargo} onChange={(e) => setCargo(e.target.value)} />
+                  <input aria-label="Ссылка на поставщика" name="supplierLink" placeholder="Ссылка на поставщика, если есть" className="rounded-xl px-4 py-3 md:py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={supplierLink} onChange={(e) => setSupplierLink(e.target.value)} />
+                  <input aria-label="Вес" name="weight" inputMode="decimal" placeholder="Вес, кг" className="rounded-xl px-4 py-3 md:py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={weight} onChange={(e) => setWeight(e.target.value)} />
+                  <input aria-label="Объём" name="volume" inputMode="decimal" placeholder="Объём, м³" className="rounded-xl px-4 py-3 md:py-3.5 outline-none placeholder:text-white/40" style={fieldStyle} value={volume} onChange={(e) => setVolume(e.target.value)} />
                 </div>
                 <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)" }}>
                   <div className="text-white/45 mb-3" style={{ fontSize: 11, letterSpacing: "0.12em" }}>ФОРМАТ ПОСТАВКИ</div>
@@ -632,7 +635,7 @@ export function CTA() {
                   aria-label="Комментарий, сроки, особенности товара"
                   name="comment"
                   rows={3}
-                  className="w-full rounded-xl px-4 py-3.5 outline-none resize-none placeholder:text-white/40"
+                  className="w-full rounded-xl px-4 py-3 md:py-3.5 outline-none resize-none placeholder:text-white/40"
                   style={fieldStyle}
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}

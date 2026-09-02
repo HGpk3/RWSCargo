@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type React from "react";
-import { Phone, ArrowRight, MapPin, Calendar, Search, Menu, ClipboardCheck, TrendingUp } from "lucide-react";
+import { Phone, ArrowRight, Calendar, Menu, TrendingUp } from "lucide-react";
 import { Logo, PillBtn, BRAND, INK, Container, PHONE_HREF } from "./shared";
 import { LanguageSwitcher } from "../i18n";
 
@@ -55,7 +55,7 @@ export function Header() {
             <Phone size={14} />
             +7 (921) 655-65-60
           </a>
-          <PillBtn size="sm" variant="ink" href="#contacts">Заявка</PillBtn>
+          <PillBtn size="sm" variant="ink" href="#contacts">Оформить заявку</PillBtn>
           <button
             type="button"
             onClick={() => setMenuOpen((open) => !open)}
@@ -107,71 +107,11 @@ export function Header() {
   );
 }
 
-function TrackingWidget() {
-  const [tab, setTab] = useState<"track" | "quote">("quote");
-  const field: React.CSSProperties = {
-    background: "rgba(255,255,255,0.06)",
-    border: "1px solid rgba(255,255,255,0.1)",
-    color: "#fff",
-    fontSize: 13,
-  };
-  return (
-    <div
-      className="rounded-2xl p-3 w-full max-w-[360px] backdrop-blur-xl"
-      style={{
-        background: "rgba(10,18,32,0.55)",
-        border: "1px solid rgba(255,255,255,0.14)",
-        boxShadow: "0 30px 80px rgba(0,0,0,0.4)",
-      }}
-    >
-      <div className="flex gap-1 mb-3">
-        {(["quote", "track"] as const).map((t) => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            className="flex-1 rounded-full py-2 text-white transition-colors"
-            style={{
-              background: tab === t ? "rgba(255,255,255,0.14)" : "transparent",
-              fontSize: 12,
-              letterSpacing: "0.06em",
-            }}
-          >
-            {t === "quote" ? "РАСЧЁТ" : "ТРЕКИНГ"}
-          </button>
-        ))}
-      </div>
-      <div className="space-y-2">
-        <div className="flex items-center gap-2 rounded-xl px-3 py-2.5" style={field}>
-          <MapPin size={14} className="text-white/50" />
-          <span className="text-white/90">Гуанчжоу, Китай</span>
-        </div>
-        <div className="flex items-center gap-2 rounded-xl px-3 py-2.5" style={field}>
-          <MapPin size={14} style={{ color: BRAND }} />
-          <span className="text-white/90">Москва, Россия</span>
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          <div className="flex items-center gap-2 rounded-xl px-3 py-2.5" style={field}>
-            <Calendar size={14} className="text-white/50" />
-            <span className="text-white/80">06 июля</span>
-          </div>
-          <a
-            href={tab === "quote" ? "#calculator" : "#contacts"}
-            className="flex items-center justify-center gap-2 rounded-xl py-2.5 text-white"
-            style={{ background: BRAND, fontSize: 13 }}
-          >
-            Поиск <Search size={14} />
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export function Hero() {
   return (
     <section id="hero" className="pt-4 pb-6">
       <Container>
-        <div className="relative overflow-hidden rounded-[28px] md:rounded-[36px] min-h-[720px] sm:min-h-[780px] md:min-h-[820px]">
+        <div className="relative overflow-hidden rounded-[28px] md:rounded-[36px] min-h-[660px] sm:min-h-[720px] md:min-h-[820px]">
           <picture>
             <source type="image/avif" srcSet={HERO_AVIF} />
             <source
@@ -222,39 +162,18 @@ export function Hero() {
           </div>
 
           {/* Bottom overlay row */}
-          <div className="absolute z-10 left-0 right-0 bottom-0 px-6 md:px-10 pb-6 md:pb-8">
+          <div className="absolute z-10 left-0 right-0 bottom-5 sm:bottom-0 px-6 md:px-10 pb-[calc(30px+env(safe-area-inset-bottom))] sm:pb-6 md:pb-8">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-end">
-              <div className="lg:col-span-5">
+              <div className="lg:col-span-7">
                 <p className="text-white/80 max-w-md" style={{ fontSize: 15, lineHeight: 1.55 }}>
                   Подбираем схему поставки под задачу: быстро и экономично, официально
                   с документами или в смешанном формате. Сначала фиксируем маршрут и условия,
                   потом двигаем груз.
                 </p>
                 <div className="mt-6 flex flex-wrap items-center gap-3">
-                  <PillBtn size="lg" variant="primary" href="#contacts">Оставить заявку</PillBtn>
-                  <PillBtn size="lg" variant="ghost" onDark href="#process">Посмотреть процесс</PillBtn>
+                  <PillBtn size="lg" variant="primary" href="#calculator">Калькулятор доставки</PillBtn>
+                  <PillBtn size="lg" variant="ghost" onDark href="#contacts">Получить бесплатный расчёт</PillBtn>
                 </div>
-              </div>
-              <div className="lg:col-span-3 hidden lg:flex justify-center">
-                <div
-                  className="rounded-2xl bg-white p-5 w-full max-w-[260px]"
-                  style={{ boxShadow: "0 25px 60px rgba(0,0,0,0.35)" }}
-                >
-                  <div className="flex items-center justify-between">
-                    <div style={{ fontSize: 34, fontWeight: 600, letterSpacing: "-0.02em", lineHeight: 1, color: INK }}>
-                      <ClipboardCheck size={28} color={BRAND} />
-                    </div>
-                  </div>
-                  <div className="mt-3 text-neutral-500" style={{ fontSize: 10, letterSpacing: "0.14em" }}>
-                    СЛЕДУЮЩИЙ ШАГ
-                  </div>
-                  <div className="mt-1" style={{ fontSize: 13, fontWeight: 600, color: INK, lineHeight: 1.3 }}>
-                    Сверить объём и город получения
-                  </div>
-                </div>
-              </div>
-              <div className="lg:col-span-4 hidden sm:flex justify-end">
-                <TrackingWidget />
               </div>
             </div>
           </div>
@@ -276,8 +195,8 @@ export function Hero() {
           <div className="flex items-center gap-6 text-white/70" style={{ fontSize: 13 }}>
             <span className="flex items-center gap-2"><Calendar size={13} /> 10—30 дней</span>
             <span className="hidden md:flex items-center gap-2"><TrendingUp size={13} /> авто · авиа · ЖД</span>
-            <a href="#contacts" className="flex items-center gap-1" style={{ color: BRAND }}>
-              трек-поставки <ArrowRight size={13} />
+            <a href="#calculator" className="flex items-center gap-1" style={{ color: BRAND }}>
+              рассчитать маршрут <ArrowRight size={13} />
             </a>
           </div>
         </div>
